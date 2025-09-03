@@ -3,13 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dmgo1014/interviewing-golang.git/pkg/generator"
-	"github.com/dmgo1014/interviewing-golang.git/pkg/model"
-	"github.com/google/uuid"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/dmgo1014/interviewing-golang.git/pkg/generator"
+	"github.com/dmgo1014/interviewing-golang.git/pkg/model"
+	"github.com/google/uuid"
 )
 
 // Generates events and saves them to the specified output file.
