@@ -17,3 +17,11 @@
 target
 
 .idea
+
+# Generated artifacts (organized in .docs/artifacts/)
+# Uncomment to ignore these files during development:
+# *.json
+# *.prof
+
+# Build output
+bin/
