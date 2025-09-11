@@ -1,8 +1,0 @@
-{
-  "service": "generator",
-  "profile_type": "cpu",
-  "range_minutes": 15,
-  "min_flat_pct": 0.5,
-  "max_symbols": 10,
-  "tag_filters": {"env": "dev"}
-}
