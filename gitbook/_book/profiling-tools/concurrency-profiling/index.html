@@ -1,0 +1,3312 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Mutex & Block Profiling · Advanced Go Performance Engineering</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.0.3">
+        <meta name="author" content="Performance Engineering Team">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="mutex-contention.html" />
+    
+    
+    <link rel="prev" href="../goroutine-profiling/goroutine-leaks.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Part I: Fundamentals</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../../getting-started/">
+            
+                <a href="../../getting-started/">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../../getting-started/environment-setup.html">
+            
+                <a href="../../getting-started/environment-setup.html">
+            
+                    
+                    Environment Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../../getting-started/first-profile.html">
+            
+                <a href="../../getting-started/first-profile.html">
+            
+                    
+                    Your First Profile
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../../getting-started/understanding-output.html">
+            
+                <a href="../../getting-started/understanding-output.html">
+            
+                    
+                    Understanding Output
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../../getting-started/architecture-overview.html">
+            
+                <a href="../../getting-started/architecture-overview.html">
+            
+                    
+                    Architecture Overview (Mermaid)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../../fundamentals/">
+            
+                <a href="../../fundamentals/">
+            
+                    
+                    Performance Fundamentals
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../../fundamentals/runtime-internals.html">
+            
+                <a href="../../fundamentals/runtime-internals.html">
+            
+                    
+                    Go Runtime Internals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../../fundamentals/memory-model.html">
+            
+                <a href="../../fundamentals/memory-model.html">
+            
+                    
+                    Memory Model
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../../fundamentals/goroutine-scheduler.html">
+            
+                <a href="../../fundamentals/goroutine-scheduler.html">
+            
+                    
+                    Goroutine Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../../fundamentals/garbage-collector.html">
+            
+                <a href="../../fundamentals/garbage-collector.html">
+            
+                    
+                    Garbage Collector
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part II: Profiling Tools & Techniques</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Profiling Tools Overview
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../cpu-profiling/">
+            
+                <a href="../cpu-profiling/">
+            
+                    
+                    CPU Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.2.1" data-path="../cpu-profiling/basic-cpu-profiling.html">
+            
+                <a href="../cpu-profiling/basic-cpu-profiling.html">
+            
+                    
+                    Basic CPU Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.2" data-path="../cpu-profiling/advanced-techniques.html">
+            
+                <a href="../cpu-profiling/advanced-techniques.html">
+            
+                    
+                    Advanced Techniques
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="../cpu-profiling/flamegraph-analysis.html">
+            
+                <a href="../cpu-profiling/flamegraph-analysis.html">
+            
+                    
+                    Flamegraph Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../memory-profiling/">
+            
+                <a href="../memory-profiling/">
+            
+                    
+                    Memory Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.3.1" data-path="../memory-profiling/heap-profiling.html">
+            
+                <a href="../memory-profiling/heap-profiling.html">
+            
+                    
+                    Heap Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.2" data-path="../memory-profiling/allocation-profiling.html">
+            
+                <a href="../memory-profiling/allocation-profiling.html">
+            
+                    
+                    Allocation Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.3" data-path="../memory-profiling/leak-detection.html">
+            
+                <a href="../memory-profiling/leak-detection.html">
+            
+                    
+                    Memory Leaks Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../goroutine-profiling/">
+            
+                <a href="../goroutine-profiling/">
+            
+                    
+                    Goroutine Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.4.1" data-path="../goroutine-profiling/goroutine-analysis.html">
+            
+                <a href="../goroutine-profiling/goroutine-analysis.html">
+            
+                    
+                    Goroutine Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.2" data-path="../goroutine-profiling/deadlock-detection.html">
+            
+                <a href="../goroutine-profiling/deadlock-detection.html">
+            
+                    
+                    Deadlock Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.3" data-path="../goroutine-profiling/goroutine-leaks.html">
+            
+                <a href="../goroutine-profiling/goroutine-leaks.html">
+            
+                    
+                    Goroutine Leaks
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.5" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Mutex & Block Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.5.1" data-path="mutex-contention.html">
+            
+                <a href="mutex-contention.html">
+            
+                    
+                    Mutex Contention
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5.2" data-path="block-profiling.html">
+            
+                <a href="block-profiling.html">
+            
+                    
+                    Block Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5.3" data-path="channel-analysis.html">
+            
+                <a href="channel-analysis.html">
+            
+                    
+                    Channel Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="../custom-profiling/">
+            
+                <a href="../custom-profiling/">
+            
+                    
+                    Custom Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.6.1" data-path="../custom-profiling/custom-profiles.html">
+            
+                <a href="../custom-profiling/custom-profiles.html">
+            
+                    
+                    Custom Profiles
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6.2" data-path="../custom-profiling/runtime-metrics.html">
+            
+                <a href="../custom-profiling/runtime-metrics.html">
+            
+                    
+                    Runtime Metrics
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6.3" data-path="../custom-profiling/execution-tracing.html">
+            
+                <a href="../custom-profiling/execution-tracing.html">
+            
+                    
+                    Execution Tracing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part III: Benchmarking Excellence</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../../benchmarking/">
+            
+                <a href="../../benchmarking/">
+            
+                    
+                    Benchmarking Fundamentals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../../benchmarking/writing-benchmarks/">
+            
+                <a href="../../benchmarking/writing-benchmarks/">
+            
+                    
+                    Writing Effective Benchmarks
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="../../benchmarking/writing-benchmarks/basic-benchmarks.html">
+            
+                <a href="../../benchmarking/writing-benchmarks/basic-benchmarks.html">
+            
+                    
+                    Basic Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="../../benchmarking/writing-benchmarks/sub-benchmarks.html">
+            
+                <a href="../../benchmarking/writing-benchmarks/sub-benchmarks.html">
+            
+                    
+                    Sub-benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="../../benchmarking/writing-benchmarks/parallel-benchmarks.html">
+            
+                <a href="../../benchmarking/writing-benchmarks/parallel-benchmarks.html">
+            
+                    
+                    Parallel Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="../../benchmarking/analysis/">
+            
+                <a href="../../benchmarking/analysis/">
+            
+                    
+                    Benchmark Analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="../../benchmarking/analysis/statistical-analysis.html">
+            
+                <a href="../../benchmarking/analysis/statistical-analysis.html">
+            
+                    
+                    Statistical Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="../../benchmarking/analysis/performance-regression.html">
+            
+                <a href="../../benchmarking/analysis/performance-regression.html">
+            
+                    
+                    Performance Regression
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="../../benchmarking/analysis/comparative-benchmarking.html">
+            
+                <a href="../../benchmarking/analysis/comparative-benchmarking.html">
+            
+                    
+                    Comparative Benchmarking
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../../benchmarking/advanced/">
+            
+                <a href="../../benchmarking/advanced/">
+            
+                    
+                    Advanced Benchmarking
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.4.1" data-path="../../benchmarking/advanced/micro-benchmarks.html">
+            
+                <a href="../../benchmarking/advanced/micro-benchmarks.html">
+            
+                    
+                    Micro-benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.2" data-path="../../benchmarking/advanced/e2e-benchmarks.html">
+            
+                <a href="../../benchmarking/advanced/e2e-benchmarks.html">
+            
+                    
+                    End-to-End Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.3" data-path="../../benchmarking/advanced/load-testing.html">
+            
+                <a href="../../benchmarking/advanced/load-testing.html">
+            
+                    
+                    Load Testing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part IV: Optimization Techniques</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../../optimization/">
+            
+                <a href="../../optimization/">
+            
+                    
+                    Optimization Strategies
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../../optimization/algorithms/">
+            
+                <a href="../../optimization/algorithms/">
+            
+                    
+                    Algorithm Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="../../optimization/algorithms/time-complexity.html">
+            
+                <a href="../../optimization/algorithms/time-complexity.html">
+            
+                    
+                    Time Complexity Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="../../optimization/algorithms/space-complexity.html">
+            
+                <a href="../../optimization/algorithms/space-complexity.html">
+            
+                    
+                    Space Complexity Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="../../optimization/algorithms/data-structures.html">
+            
+                <a href="../../optimization/algorithms/data-structures.html">
+            
+                    
+                    Data Structure Selection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="../../optimization/memory/">
+            
+                <a href="../../optimization/memory/">
+            
+                    
+                    Memory Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="../../optimization/memory/memory-pools.html">
+            
+                <a href="../../optimization/memory/memory-pools.html">
+            
+                    
+                    Memory Pools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="../../optimization/memory/object-reuse.html">
+            
+                <a href="../../optimization/memory/object-reuse.html">
+            
+                    
+                    Object Reuse
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="../../optimization/memory/stack-vs-heap.html">
+            
+                <a href="../../optimization/memory/stack-vs-heap.html">
+            
+                    
+                    Stack vs Heap
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="../../optimization/memory/memory-layout.html">
+            
+                <a href="../../optimization/memory/memory-layout.html">
+            
+                    
+                    Memory Layout
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="../../optimization/concurrency/">
+            
+                <a href="../../optimization/concurrency/">
+            
+                    
+                    Concurrency Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.4.1" data-path="../../optimization/concurrency/goroutine-patterns.html">
+            
+                <a href="../../optimization/concurrency/goroutine-patterns.html">
+            
+                    
+                    Goroutine Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.2" data-path="../../optimization/concurrency/channel-optimization.html">
+            
+                <a href="../../optimization/concurrency/channel-optimization.html">
+            
+                    
+                    Channel Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.3" data-path="../../optimization/concurrency/worker-pools.html">
+            
+                <a href="../../optimization/concurrency/worker-pools.html">
+            
+                    
+                    Worker Pools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.4" data-path="../../optimization/concurrency/lock-free.html">
+            
+                <a href="../../optimization/concurrency/lock-free.html">
+            
+                    
+                    Lock-Free Programming
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="../../optimization/io/">
+            
+                <a href="../../optimization/io/">
+            
+                    
+                    I/O Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.5.1" data-path="../../optimization/io/buffer-management.html">
+            
+                <a href="../../optimization/io/buffer-management.html">
+            
+                    
+                    Buffer Management
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.2" data-path="../../optimization/io/streaming.html">
+            
+                <a href="../../optimization/io/streaming.html">
+            
+                    
+                    Streaming Processing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.3" data-path="../../optimization/io/network-optimization.html">
+            
+                <a href="../../optimization/io/network-optimization.html">
+            
+                    
+                    Network Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="../../optimization/compiler/">
+            
+                <a href="../../optimization/compiler/">
+            
+                    
+                    Compiler Optimizations
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.6.1" data-path="../../optimization/compiler/inlining.html">
+            
+                <a href="../../optimization/compiler/inlining.html">
+            
+                    
+                    Inlining
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.2" data-path="../../optimization/compiler/escape-analysis.html">
+            
+                <a href="../../optimization/compiler/escape-analysis.html">
+            
+                    
+                    Escape Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.3" data-path="../../optimization/compiler/build-optimization.html">
+            
+                <a href="../../optimization/compiler/build-optimization.html">
+            
+                    
+                    Build Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part V: Production Performance</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../../production/">
+            
+                <a href="../../production/">
+            
+                    
+                    Production Monitoring
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="../../production/continuous-profiling/">
+            
+                <a href="../../production/continuous-profiling/">
+            
+                    
+                    Continuous Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.2.1" data-path="../../production/continuous-profiling/setup.html">
+            
+                <a href="../../production/continuous-profiling/setup.html">
+            
+                    
+                    Production Profiling Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.2" data-path="../../production/continuous-profiling/pyroscope-examples.html">
+            
+                <a href="../../production/continuous-profiling/pyroscope-examples.html">
+            
+                    
+                    Pyroscope Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.3" data-path="../../production/continuous-profiling/automated-analysis.html">
+            
+                <a href="../../production/continuous-profiling/automated-analysis.html">
+            
+                    
+                    Automated Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.4" data-path="../../production/continuous-profiling/alerting.html">
+            
+                <a href="../../production/continuous-profiling/alerting.html">
+            
+                    
+                    Alert Systems
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.5" data-path="../../production/continuous-profiling/ci-pipelines.html">
+            
+                <a href="../../production/continuous-profiling/ci-pipelines.html">
+            
+                    
+                    CI Pipelines (PR Profiling)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.6" data-path="../../production/continuous-profiling/advanced-ci-profiling.html">
+            
+                <a href="../../production/continuous-profiling/advanced-ci-profiling.html">
+            
+                    
+                    Advanced CI Profiling & Regression Gates
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.7" data-path="../../production/continuous-profiling/staff-architecture-guide.html">
+            
+                <a href="../../production/continuous-profiling/staff-architecture-guide.html">
+            
+                    
+                    Staff / Architect Observability Strategy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.8" data-path="../../production/continuous-profiling/trace-correlation.html">
+            
+                <a href="../../production/continuous-profiling/trace-correlation.html">
+            
+                    
+                    Trace ↔ Profile Correlation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.9" data-path="../../production/continuous-profiling/hybrid-otel-pyroscope.html">
+            
+                <a href="../../production/continuous-profiling/hybrid-otel-pyroscope.html">
+            
+                    
+                    Hybrid OTel + Pyroscope
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.10" data-path="../../production/continuous-profiling/ai-assisted-analysis.html">
+            
+                <a href="../../production/continuous-profiling/ai-assisted-analysis.html">
+            
+                    
+                    AI-Assisted Analysis Pipeline
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.11" data-path="../../production/continuous-profiling/regression-gates-and-workflow.html">
+            
+                <a href="../../production/continuous-profiling/regression-gates-and-workflow.html">
+            
+                    
+                    Regression Gates & Workflow Automation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.12" data-path="../../production/continuous-profiling/observability-architecture-deep-dive.html">
+            
+                <a href="../../production/continuous-profiling/observability-architecture-deep-dive.html">
+            
+                    
+                    Observability Architecture Deep Dive
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.13" data-path="../../production/continuous-profiling/continuous-optimization-playbook.html">
+            
+                <a href="../../production/continuous-profiling/continuous-optimization-playbook.html">
+            
+                    
+                    Continuous Optimization Playbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.14" data-path="../../production/continuous-profiling/build-metadata-linking.html">
+            
+                <a href="../../production/continuous-profiling/build-metadata-linking.html">
+            
+                    
+                    Build Metadata & Deep Linking
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.15" data-path="../../production/continuous-profiling/performance-pr-checklist.html">
+            
+                <a href="../../production/continuous-profiling/performance-pr-checklist.html">
+            
+                    
+                    Performance PR Checklist
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.16" data-path="../../production/continuous-profiling/speedscope-and-gates.html">
+            
+                <a href="../../production/continuous-profiling/speedscope-and-gates.html">
+            
+                    
+                    Speedscope & Enforced Gates
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="../../production/metrics/">
+            
+                <a href="../../production/metrics/">
+            
+                    
+                    Metrics with Prometheus
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.3.1" data-path="../../production/metrics/prometheus-examples.html">
+            
+                <a href="../../production/metrics/prometheus-examples.html">
+            
+                    
+                    Prometheus Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.2" data-path="../../production/metrics/unobtrusive-metrics.html">
+            
+                <a href="../../production/metrics/unobtrusive-metrics.html">
+            
+                    
+                    Unobtrusive Metrics (CLI Jobs)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="../../production/tracing/">
+            
+                <a href="../../production/tracing/">
+            
+                    
+                    Distributed Tracing with OpenTelemetry
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.4.1" data-path="../../production/tracing/local-setup.html">
+            
+                <a href="../../production/tracing/local-setup.html">
+            
+                    
+                    Local Setup (OTel Collector)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4.2" data-path="../../production/tracing/vendor-guides.html">
+            
+                <a href="../../production/tracing/vendor-guides.html">
+            
+                    
+                    Vendor Guides (Datadog, New Relic, Splunk)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4.3" data-path="../../production/tracing/dynatrace-integration.html">
+            
+                <a href="../../production/tracing/dynatrace-integration.html">
+            
+                    
+                    Dynatrace Integration (OTLP)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="../../production/logging/">
+            
+                <a href="../../production/logging/">
+            
+                    
+                    Centralized Logging
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.5.1" data-path="../../production/logging/fluentd-loki-examples.html">
+            
+                <a href="../../production/logging/fluentd-loki-examples.html">
+            
+                    
+                    Fluentd → Loki Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5.2" data-path="../../production/logging/elk-setup.html">
+            
+                <a href="../../production/logging/elk-setup.html">
+            
+                    
+                    Advanced ELK Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6" data-path="../../production/performance-testing/">
+            
+                <a href="../../production/performance-testing/">
+            
+                    
+                    Performance Testing
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.6.1" data-path="../../production/performance-testing/test-design.html">
+            
+                <a href="../../production/performance-testing/test-design.html">
+            
+                    
+                    Performance Test Design
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6.2" data-path="../../production/performance-testing/cicd-integration.html">
+            
+                <a href="../../production/performance-testing/cicd-integration.html">
+            
+                    
+                    CI/CD Integration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6.3" data-path="../../production/performance-testing/regression-detection.html">
+            
+                <a href="../../production/performance-testing/regression-detection.html">
+            
+                    
+                    Regression Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7" data-path="../../production/scalability/">
+            
+                <a href="../../production/scalability/">
+            
+                    
+                    Scalability Analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.7.1" data-path="../../production/scalability/horizontal-scaling.html">
+            
+                <a href="../../production/scalability/horizontal-scaling.html">
+            
+                    
+                    Horizontal Scaling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7.2" data-path="../../production/scalability/vertical-scaling.html">
+            
+                <a href="../../production/scalability/vertical-scaling.html">
+            
+                    
+                    Vertical Scaling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7.3" data-path="../../production/scalability/bottleneck-analysis.html">
+            
+                <a href="../../production/scalability/bottleneck-analysis.html">
+            
+                    
+                    Bottleneck Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VI: Case Studies & Best Practices</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../../case-studies/">
+            
+                <a href="../../case-studies/">
+            
+                    
+                    Real-World Case Studies
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.1.1" data-path="../../case-studies/web-service-optimization.html">
+            
+                <a href="../../case-studies/web-service-optimization.html">
+            
+                    
+                    Web Service Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.2" data-path="../../case-studies/microservices-optimization.html">
+            
+                <a href="../../case-studies/microservices-optimization.html">
+            
+                    
+                    Microservices Performance
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.3" data-path="../../case-studies/database-optimization.html">
+            
+                <a href="../../case-studies/database-optimization.html">
+            
+                    
+                    Database Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../../best-practices/">
+            
+                <a href="../../best-practices/">
+            
+                    
+                    Best Practices
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.2.1" data-path="../../best-practices/development-workflow.html">
+            
+                <a href="../../best-practices/development-workflow.html">
+            
+                    
+                    Development Workflow
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.2" data-path="../../best-practices/production-deployment.html">
+            
+                <a href="../../best-practices/production-deployment.html">
+            
+                    
+                    Production Deployment
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.3" data-path="../../best-practices/team-culture.html">
+            
+                <a href="../../best-practices/team-culture.html">
+            
+                    
+                    Team Culture
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VII: Tools & Resources</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="../../tools-resources/">
+            
+                <a href="../../tools-resources/">
+            
+                    
+                    Tools & Resources
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="7.1.1" data-path="../../tools-resources/essential-tools.html">
+            
+                <a href="../../tools-resources/essential-tools.html">
+            
+                    
+                    Essential Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.1.2" data-path="../../tools-resources/external-resources.html">
+            
+                <a href="../../tools-resources/external-resources.html">
+            
+                    
+                    External Resources
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.1.3" data-path="../../tools-resources/community.html">
+            
+                <a href="../../tools-resources/community.html">
+            
+                    
+                    Community Guide
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendices</li>
+        
+        
+    
+        <li class="chapter " data-level="8.1" data-path="../../appendices/runtime-flags.html">
+            
+                <a href="../../appendices/runtime-flags.html">
+            
+                    
+                    Appendix A: Go Runtime Flags
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.2" data-path="../../appendices/metrics-glossary.html">
+            
+                <a href="../../appendices/metrics-glossary.html">
+            
+                    
+                    Appendix B: Performance Metrics Glossary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.3" data-path="../../appendices/troubleshooting.html">
+            
+                <a href="../../appendices/troubleshooting.html">
+            
+                    
+                    Appendix C: Troubleshooting Guide
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.4" data-path="../../appendices/performance-patterns.html">
+            
+                <a href="../../appendices/performance-patterns.html">
+            
+                    
+                    Appendix D: Performance Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VIII: Observability & Performance MCPs</li>
+        
+        
+    
+        <li class="chapter " data-level="9.1" data-path="../../mcp/">
+            
+                <a href="../../mcp/">
+            
+                    
+                    MCP Overview
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2" data-path="../../mcp/observability/">
+            
+                <a href="../../mcp/observability/">
+            
+                    
+                    Observability MCPs
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.2.1" data-path="../../mcp/observability/prometheus-query-assistant.html">
+            
+                <a href="../../mcp/observability/prometheus-query-assistant.html">
+            
+                    
+                    Prometheus Query Assistant
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.2" data-path="../../mcp/observability/prometheus-alert-explainer.html">
+            
+                <a href="../../mcp/observability/prometheus-alert-explainer.html">
+            
+                    
+                    Prometheus Alert Explainer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.3" data-path="../../mcp/observability/pyroscope-profile-explorer.html">
+            
+                <a href="../../mcp/observability/pyroscope-profile-explorer.html">
+            
+                    
+                    Pyroscope Profile Explorer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.4" data-path="../../mcp/observability/pyroscope-diff-analyzer.html">
+            
+                <a href="../../mcp/observability/pyroscope-diff-analyzer.html">
+            
+                    
+                    Pyroscope Diff Analyzer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.5" data-path="../../mcp/observability/grafana-dashboard-author.html">
+            
+                <a href="../../mcp/observability/grafana-dashboard-author.html">
+            
+                    
+                    Grafana Dashboard Author
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.6" data-path="../../mcp/observability/log-aggregation-slicer.html">
+            
+                <a href="../../mcp/observability/log-aggregation-slicer.html">
+            
+                    
+                    Log Aggregation Slicer
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3" data-path="../../mcp/tracing/">
+            
+                <a href="../../mcp/tracing/">
+            
+                    
+                    Tracing MCPs
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.3.1" data-path="../../mcp/tracing/otel-trace-summarizer.html">
+            
+                <a href="../../mcp/tracing/otel-trace-summarizer.html">
+            
+                    
+                    OTel Trace Summarizer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3.2" data-path="../../mcp/tracing/span-anomaly-detector.html">
+            
+                <a href="../../mcp/tracing/span-anomaly-detector.html">
+            
+                    
+                    Span Anomaly Detector
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3.3" data-path="../../mcp/tracing/latency-regression-detector.html">
+            
+                <a href="../../mcp/tracing/latency-regression-detector.html">
+            
+                    
+                    Latency Regression Detector
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3.4" data-path="../../mcp/tracing/trace-profile-correlator.html">
+            
+                <a href="../../mcp/tracing/trace-profile-correlator.html">
+            
+                    
+                    Trace ↔ Profile Correlator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3.5" data-path="../../mcp/tracing/critical-path-extractor.html">
+            
+                <a href="../../mcp/tracing/critical-path-extractor.html">
+            
+                    
+                    Critical Path Extractor
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4" data-path="../../mcp/performance/">
+            
+                <a href="../../mcp/performance/">
+            
+                    
+                    Performance MCPs
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.4.1" data-path="../../mcp/performance/benchmark-trend-analyzer.html">
+            
+                <a href="../../mcp/performance/benchmark-trend-analyzer.html">
+            
+                    
+                    Benchmark Trend Analyzer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.2" data-path="../../mcp/performance/regression-gatekeeper.html">
+            
+                <a href="../../mcp/performance/regression-gatekeeper.html">
+            
+                    
+                    Regression Gatekeeper
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.3" data-path="../../mcp/performance/flamegraph-diff-explainer.html">
+            
+                <a href="../../mcp/performance/flamegraph-diff-explainer.html">
+            
+                    
+                    Flamegraph Diff Explainer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.4" data-path="../../mcp/performance/allocation-hotspot-classifier.html">
+            
+                <a href="../../mcp/performance/allocation-hotspot-classifier.html">
+            
+                    
+                    Allocation Hotspot Classifier
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.5" data-path="../../mcp/performance/gc-pressure-advisor.html">
+            
+                <a href="../../mcp/performance/gc-pressure-advisor.html">
+            
+                    
+                    GC Pressure Advisor
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.6" data-path="../../mcp/performance/concurrency-contention-advisor.html">
+            
+                <a href="../../mcp/performance/concurrency-contention-advisor.html">
+            
+                    
+                    Concurrency Contention Advisor
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.7" data-path="../../mcp/performance/io-latency-bottleneck-finder.html">
+            
+                <a href="../../mcp/performance/io-latency-bottleneck-finder.html">
+            
+                    
+                    I/O Latency Bottleneck Finder
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.8" data-path="../../mcp/performance/query-plan-regression-analyzer.html">
+            
+                <a href="../../mcp/performance/query-plan-regression-analyzer.html">
+            
+                    
+                    Query Plan Regression Analyzer
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5" data-path="../../mcp/cross-cutting/">
+            
+                <a href="../../mcp/cross-cutting/">
+            
+                    
+                    Cross-Cutting MCPs
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.5.1" data-path="../../mcp/cross-cutting/slo-error-budget-monitor.html">
+            
+                <a href="../../mcp/cross-cutting/slo-error-budget-monitor.html">
+            
+                    
+                    SLO Error Budget Monitor
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.2" data-path="../../mcp/cross-cutting/capacity-forecasting-engine.html">
+            
+                <a href="../../mcp/cross-cutting/capacity-forecasting-engine.html">
+            
+                    
+                    Capacity Forecasting Engine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.3" data-path="../../mcp/cross-cutting/cost-efficiency-analyzer.html">
+            
+                <a href="../../mcp/cross-cutting/cost-efficiency-analyzer.html">
+            
+                    
+                    Cost Efficiency Analyzer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.4" data-path="../../mcp/cross-cutting/performance-risk-scoring.html">
+            
+                <a href="../../mcp/cross-cutting/performance-risk-scoring.html">
+            
+                    
+                    Performance Risk Scoring
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.5" data-path="../../mcp/cross-cutting/golden-signals-aggregator.html">
+            
+                <a href="../../mcp/cross-cutting/golden-signals-aggregator.html">
+            
+                    
+                    Golden Signals Aggregator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.6" data-path="../../mcp/cross-cutting/optimization-recommendation-orchestrator.html">
+            
+                <a href="../../mcp/cross-cutting/optimization-recommendation-orchestrator.html">
+            
+                    
+                    Optimization Recommendation Orchestrator
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="9.6" data-path="../../mcp/patterns/">
+            
+                <a href="../../mcp/patterns/">
+            
+                    
+                    MCP Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.7" data-path="../../mcp/references/">
+            
+                <a href="../../mcp/references/">
+            
+                    
+                    Reference Catalog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.8" data-path="../../mcp/index-table.html">
+            
+                <a href="../../mcp/index-table.html">
+            
+                    
+                    MCP Index Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.9" data-path="../../mcp/schemas/">
+            
+                <a href="../../mcp/schemas/">
+            
+                    
+                    Schemas
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.10" data-path="../../mcp/integration/architecture.html">
+            
+                <a href="../../mcp/integration/architecture.html">
+            
+                    
+                    Integration Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.11" data-path="../../mcp/quickstart.html">
+            
+                <a href="../../mcp/quickstart.html">
+            
+                    
+                    Quickstart
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.12" data-path="../../mcp/cli-usage.html">
+            
+                <a href="../../mcp/cli-usage.html">
+            
+                    
+                    CLI Usage
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.13" data-path="../../mcp/ci-examples.html">
+            
+                <a href="../../mcp/ci-examples.html">
+            
+                    
+                    CI Integration Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14" data-path="../../mcp/tutorials/">
+            
+                <a href="../../mcp/tutorials/">
+            
+                    
+                    Tutorials
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.14.1" data-path="../../mcp/tutorials/trace-summarizer.html">
+            
+                <a href="../../mcp/tutorials/trace-summarizer.html">
+            
+                    
+                    Building a Trace Summarizer MCP
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.2" data-path="../../mcp/tutorials/pyroscope-correlation.html">
+            
+                <a href="../../mcp/tutorials/pyroscope-correlation.html">
+            
+                    
+                    Adding Pyroscope Correlation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.3" data-path="../../mcp/tutorials/regression-gatekeeper.html">
+            
+                <a href="../../mcp/tutorials/regression-gatekeeper.html">
+            
+                    
+                    Implementing Regression Gatekeeper
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.4" data-path="../../mcp/tutorials/multi-source-flow.html">
+            
+                <a href="../../mcp/tutorials/multi-source-flow.html">
+            
+                    
+                    Multi-Source Observability Flow
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.5" data-path="../../mcp/tutorials/golden-signals-aggregator.html">
+            
+                <a href="../../mcp/tutorials/golden-signals-aggregator.html">
+            
+                    
+                    Golden Signals Aggregator Tutorial
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.6" data-path="../../mcp/tutorials/capacity-forecasting.html">
+            
+                <a href="../../mcp/tutorials/capacity-forecasting.html">
+            
+                    
+                    Capacity Forecasting Tutorial
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.7" data-path="../../mcp/tutorials/schema-validation.html">
+            
+                <a href="../../mcp/tutorials/schema-validation.html">
+            
+                    
+                    Schema Validation & Contracts
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.8" data-path="../../mcp/tutorials/ci-orchestration.html">
+            
+                <a href="../../mcp/tutorials/ci-orchestration.html">
+            
+                    
+                    CI Orchestration & Chaining
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >Mutex & Block Profiling</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="mutex--block-profiling">Mutex &amp; Block Profiling</h1>
+<p>Concurrency profiling in Go focuses on analyzing synchronization primitives, identifying contention points, and optimizing parallel performance. This comprehensive guide covers mutex profiling, block profiling, and channel analysis for building efficient concurrent Go applications.</p>
+<h2 id="introduction-to-concurrency-profiling">Introduction to Concurrency Profiling</h2>
+<p>Concurrency profiling helps identify:</p>
+<ul>
+<li><strong>Mutex contention</strong> - Where threads compete for locks</li>
+<li><strong>Blocking operations</strong> - Time spent waiting on synchronization</li>
+<li><strong>Channel bottlenecks</strong> - Inefficient channel usage patterns</li>
+<li><strong>Goroutine coordination</strong> - Overhead in concurrent operations</li>
+<li><strong>Lock-free opportunities</strong> - Places to eliminate synchronization</li>
+</ul>
+<h3 id="understanding-go-concurrency-primitives">Understanding Go Concurrency Primitives</h3>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"context"</span>
+    <span class="hljs-string">"fmt"</span>
+    <span class="hljs-string">"runtime"</span>
+    <span class="hljs-string">"sync"</span>
+    <span class="hljs-string">"sync/atomic"</span>
+    <span class="hljs-string">"time"</span>
+)
+
+<span class="hljs-comment">// ConcurrencyProfiler provides comprehensive concurrency analysis</span>
+<span class="hljs-keyword">type</span> ConcurrencyProfiler <span class="hljs-keyword">struct</span> {
+    mutexProfile    *MutexProfiler
+    blockProfile    *BlockProfiler
+    channelProfile  *ChannelProfiler
+    enabled         <span class="hljs-type">bool</span>
+    mu              sync.RWMutex
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewConcurrencyProfiler</span><span class="hljs-params">()</span></span> *ConcurrencyProfiler {
+    <span class="hljs-keyword">return</span> &amp;ConcurrencyProfiler{
+        mutexProfile:   NewMutexProfiler(),
+        blockProfile:   NewBlockProfiler(),
+        channelProfile: NewChannelProfiler(),
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cp *ConcurrencyProfiler)</span></span> Enable() {
+    cp.mu.Lock()
+    <span class="hljs-keyword">defer</span> cp.mu.Unlock()
+
+    <span class="hljs-keyword">if</span> cp.enabled {
+        <span class="hljs-keyword">return</span>
+    }
+
+    <span class="hljs-comment">// Enable mutex profiling</span>
+    runtime.SetMutexProfileFraction(<span class="hljs-number">1</span>)
+
+    <span class="hljs-comment">// Enable block profiling</span>
+    runtime.SetBlockProfileRate(<span class="hljs-number">1</span>)
+
+    cp.enabled = <span class="hljs-literal">true</span>
+    fmt.Println(<span class="hljs-string">"Concurrency profiling enabled"</span>)
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cp *ConcurrencyProfiler)</span></span> Disable() {
+    cp.mu.Lock()
+    <span class="hljs-keyword">defer</span> cp.mu.Unlock()
+
+    <span class="hljs-keyword">if</span> !cp.enabled {
+        <span class="hljs-keyword">return</span>
+    }
+
+    <span class="hljs-comment">// Disable profiling</span>
+    runtime.SetMutexProfileFraction(<span class="hljs-number">0</span>)
+    runtime.SetBlockProfileRate(<span class="hljs-number">0</span>)
+
+    cp.enabled = <span class="hljs-literal">false</span>
+    fmt.Println(<span class="hljs-string">"Concurrency profiling disabled"</span>)
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cp *ConcurrencyProfiler)</span></span> GetComprehensiveReport() ConcurrencyReport {
+    <span class="hljs-keyword">return</span> ConcurrencyReport{
+        MutexReport:   cp.mutexProfile.GetReport(),
+        BlockReport:   cp.blockProfile.GetReport(),
+        ChannelReport: cp.channelProfile.GetReport(),
+        Enabled:       cp.enabled,
+    }
+}
+
+<span class="hljs-keyword">type</span> ConcurrencyReport <span class="hljs-keyword">struct</span> {
+    MutexReport   MutexReport
+    BlockReport   BlockReport
+    ChannelReport ChannelReport
+    Enabled       <span class="hljs-type">bool</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cr ConcurrencyReport)</span></span> String() <span class="hljs-type">string</span> {
+    result := fmt.Sprintf(<span class="hljs-string">"Concurrency Profiling Report (Enabled: %v)\n"</span>, cr.Enabled)
+    result += <span class="hljs-string">"="</span> + strings.Repeat(<span class="hljs-string">"="</span>, <span class="hljs-number">50</span>) + <span class="hljs-string">"\n\n"</span>
+    result += cr.MutexReport.String() + <span class="hljs-string">"\n\n"</span>
+    result += cr.BlockReport.String() + <span class="hljs-string">"\n\n"</span>
+    result += cr.ChannelReport.String()
+    <span class="hljs-keyword">return</span> result
+}
+
+<span class="hljs-comment">// MutexProfiler tracks mutex contention</span>
+<span class="hljs-keyword">type</span> MutexProfiler <span class="hljs-keyword">struct</span> {
+    mutexes    <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]*MutexStats
+    mu         sync.RWMutex
+    totalLocks <span class="hljs-type">int64</span>
+    totalTime  <span class="hljs-type">int64</span>
+}
+
+<span class="hljs-keyword">type</span> MutexStats <span class="hljs-keyword">struct</span> {
+    Name          <span class="hljs-type">string</span>
+    Contentions   <span class="hljs-type">int64</span>
+    ContentionTime <span class="hljs-type">int64</span>
+    AvgWaitTime   time.Duration
+    MaxWaitTime   time.Duration
+    FirstSeen     time.Time
+    LastSeen      time.Time
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewMutexProfiler</span><span class="hljs-params">()</span></span> *MutexProfiler {
+    <span class="hljs-keyword">return</span> &amp;MutexProfiler{
+        mutexes: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]*MutexStats),
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mp *MutexProfiler)</span></span> RecordContention(mutexName <span class="hljs-type">string</span>, waitTime time.Duration) {
+    mp.mu.Lock()
+    <span class="hljs-keyword">defer</span> mp.mu.Unlock()
+
+    stats, exists := mp.mutexes[mutexName]
+    <span class="hljs-keyword">if</span> !exists {
+        stats = &amp;MutexStats{
+            Name:      mutexName,
+            FirstSeen: time.Now(),
+        }
+        mp.mutexes[mutexName] = stats
+    }
+
+    stats.Contentions++
+    stats.ContentionTime += <span class="hljs-type">int64</span>(waitTime)
+    stats.LastSeen = time.Now()
+    stats.AvgWaitTime = time.Duration(stats.ContentionTime / stats.Contentions)
+
+    <span class="hljs-keyword">if</span> waitTime &gt; stats.MaxWaitTime {
+        stats.MaxWaitTime = waitTime
+    }
+
+    atomic.AddInt64(&amp;mp.totalLocks, <span class="hljs-number">1</span>)
+    atomic.AddInt64(&amp;mp.totalTime, <span class="hljs-type">int64</span>(waitTime))
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mp *MutexProfiler)</span></span> GetReport() MutexReport {
+    mp.mu.RLock()
+    <span class="hljs-keyword">defer</span> mp.mu.RUnlock()
+
+    <span class="hljs-keyword">var</span> mutexStats []MutexStats
+    <span class="hljs-keyword">for</span> _, stats := <span class="hljs-keyword">range</span> mp.mutexes {
+        mutexStats = <span class="hljs-built_in">append</span>(mutexStats, *stats)
+    }
+
+    <span class="hljs-comment">// Sort by contention time</span>
+    sort.Slice(mutexStats, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i, j <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> {
+        <span class="hljs-keyword">return</span> mutexStats[i].ContentionTime &gt; mutexStats[j].ContentionTime
+    })
+
+    <span class="hljs-keyword">return</span> MutexReport{
+        TotalMutexes:   <span class="hljs-built_in">len</span>(mutexStats),
+        TotalLocks:     atomic.LoadInt64(&amp;mp.totalLocks),
+        TotalWaitTime:  time.Duration(atomic.LoadInt64(&amp;mp.totalTime)),
+        MutexStats:     mutexStats,
+    }
+}
+
+<span class="hljs-keyword">type</span> MutexReport <span class="hljs-keyword">struct</span> {
+    TotalMutexes  <span class="hljs-type">int</span>
+    TotalLocks    <span class="hljs-type">int64</span>
+    TotalWaitTime time.Duration
+    MutexStats    []MutexStats
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mr MutexReport)</span></span> String() <span class="hljs-type">string</span> {
+    result := fmt.Sprintf(<span class="hljs-string">`Mutex Contention Report:
+  Total Mutexes: %d
+  Total Locks: %d
+  Total Wait Time: %v`</span>,
+        mr.TotalMutexes,
+        mr.TotalLocks,
+        mr.TotalWaitTime)
+
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(mr.MutexStats) &gt; <span class="hljs-number">0</span> {
+        result += <span class="hljs-string">"\n\nTop Contended Mutexes:"</span>
+        <span class="hljs-keyword">for</span> i, stats := <span class="hljs-keyword">range</span> mr.MutexStats {
+            <span class="hljs-keyword">if</span> i &gt;= <span class="hljs-number">5</span> { <span class="hljs-comment">// Top 5</span>
+                <span class="hljs-keyword">break</span>
+            }
+            result += fmt.Sprintf(<span class="hljs-string">"\n  %d. %s"</span>, i+<span class="hljs-number">1</span>, stats.Name)
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Contentions: %d"</span>, stats.Contentions)
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Total Wait: %v"</span>, time.Duration(stats.ContentionTime))
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Avg Wait: %v"</span>, stats.AvgWaitTime)
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Max Wait: %v"</span>, stats.MaxWaitTime)
+        }
+    }
+
+    <span class="hljs-keyword">return</span> result
+}
+
+<span class="hljs-comment">// BlockProfiler tracks blocking operations</span>
+<span class="hljs-keyword">type</span> BlockProfiler <span class="hljs-keyword">struct</span> {
+    blockEvents <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]*BlockStats
+    mu          sync.RWMutex
+    totalBlocks <span class="hljs-type">int64</span>
+    totalTime   <span class="hljs-type">int64</span>
+}
+
+<span class="hljs-keyword">type</span> BlockStats <span class="hljs-keyword">struct</span> {
+    Operation   <span class="hljs-type">string</span>
+    Count       <span class="hljs-type">int64</span>
+    TotalTime   <span class="hljs-type">int64</span>
+    AvgTime     time.Duration
+    MaxTime     time.Duration
+    FirstSeen   time.Time
+    LastSeen    time.Time
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewBlockProfiler</span><span class="hljs-params">()</span></span> *BlockProfiler {
+    <span class="hljs-keyword">return</span> &amp;BlockProfiler{
+        blockEvents: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]*BlockStats),
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(bp *BlockProfiler)</span></span> RecordBlock(operation <span class="hljs-type">string</span>, blockTime time.Duration) {
+    bp.mu.Lock()
+    <span class="hljs-keyword">defer</span> bp.mu.Unlock()
+
+    stats, exists := bp.blockEvents[operation]
+    <span class="hljs-keyword">if</span> !exists {
+        stats = &amp;BlockStats{
+            Operation: operation,
+            FirstSeen: time.Now(),
+        }
+        bp.blockEvents[operation] = stats
+    }
+
+    stats.Count++
+    stats.TotalTime += <span class="hljs-type">int64</span>(blockTime)
+    stats.LastSeen = time.Now()
+    stats.AvgTime = time.Duration(stats.TotalTime / stats.Count)
+
+    <span class="hljs-keyword">if</span> blockTime &gt; stats.MaxTime {
+        stats.MaxTime = blockTime
+    }
+
+    atomic.AddInt64(&amp;bp.totalBlocks, <span class="hljs-number">1</span>)
+    atomic.AddInt64(&amp;bp.totalTime, <span class="hljs-type">int64</span>(blockTime))
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(bp *BlockProfiler)</span></span> GetReport() BlockReport {
+    bp.mu.RLock()
+    <span class="hljs-keyword">defer</span> bp.mu.RUnlock()
+
+    <span class="hljs-keyword">var</span> blockStats []BlockStats
+    <span class="hljs-keyword">for</span> _, stats := <span class="hljs-keyword">range</span> bp.blockEvents {
+        blockStats = <span class="hljs-built_in">append</span>(blockStats, *stats)
+    }
+
+    <span class="hljs-comment">// Sort by total time</span>
+    sort.Slice(blockStats, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i, j <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> {
+        <span class="hljs-keyword">return</span> blockStats[i].TotalTime &gt; blockStats[j].TotalTime
+    })
+
+    <span class="hljs-keyword">return</span> BlockReport{
+        TotalOperations: <span class="hljs-built_in">len</span>(blockStats),
+        TotalBlocks:     atomic.LoadInt64(&amp;bp.totalBlocks),
+        TotalBlockTime:  time.Duration(atomic.LoadInt64(&amp;bp.totalTime)),
+        BlockStats:      blockStats,
+    }
+}
+
+<span class="hljs-keyword">type</span> BlockReport <span class="hljs-keyword">struct</span> {
+    TotalOperations <span class="hljs-type">int</span>
+    TotalBlocks     <span class="hljs-type">int64</span>
+    TotalBlockTime  time.Duration
+    BlockStats      []BlockStats
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(br BlockReport)</span></span> String() <span class="hljs-type">string</span> {
+    result := fmt.Sprintf(<span class="hljs-string">`Block Profiling Report:
+  Total Operations: %d
+  Total Blocks: %d
+  Total Block Time: %v`</span>,
+        br.TotalOperations,
+        br.TotalBlocks,
+        br.TotalBlockTime)
+
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(br.BlockStats) &gt; <span class="hljs-number">0</span> {
+        result += <span class="hljs-string">"\n\nTop Blocking Operations:"</span>
+        <span class="hljs-keyword">for</span> i, stats := <span class="hljs-keyword">range</span> br.BlockStats {
+            <span class="hljs-keyword">if</span> i &gt;= <span class="hljs-number">5</span> { <span class="hljs-comment">// Top 5</span>
+                <span class="hljs-keyword">break</span>
+            }
+            result += fmt.Sprintf(<span class="hljs-string">"\n  %d. %s"</span>, i+<span class="hljs-number">1</span>, stats.Operation)
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Blocks: %d"</span>, stats.Count)
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Total Time: %v"</span>, time.Duration(stats.TotalTime))
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Avg Time: %v"</span>, stats.AvgTime)
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Max Time: %v"</span>, stats.MaxTime)
+        }
+    }
+
+    <span class="hljs-keyword">return</span> result
+}
+
+<span class="hljs-comment">// ChannelProfiler tracks channel operations</span>
+<span class="hljs-keyword">type</span> ChannelProfiler <span class="hljs-keyword">struct</span> {
+    channels <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]*ChannelStats
+    mu       sync.RWMutex
+}
+
+<span class="hljs-keyword">type</span> ChannelStats <span class="hljs-keyword">struct</span> {
+    Name        <span class="hljs-type">string</span>
+    SendOps     <span class="hljs-type">int64</span>
+    RecvOps     <span class="hljs-type">int64</span>
+    SendBlocks  <span class="hljs-type">int64</span>
+    RecvBlocks  <span class="hljs-type">int64</span>
+    SendTime    <span class="hljs-type">int64</span>
+    RecvTime    <span class="hljs-type">int64</span>
+    BufferSize  <span class="hljs-type">int</span>
+    FirstSeen   time.Time
+    LastSeen    time.Time
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewChannelProfiler</span><span class="hljs-params">()</span></span> *ChannelProfiler {
+    <span class="hljs-keyword">return</span> &amp;ChannelProfiler{
+        channels: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]*ChannelStats),
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cp *ChannelProfiler)</span></span> RecordChannelOp(channelName <span class="hljs-type">string</span>, operation <span class="hljs-type">string</span>, blocked <span class="hljs-type">bool</span>, duration time.Duration, bufferSize <span class="hljs-type">int</span>) {
+    cp.mu.Lock()
+    <span class="hljs-keyword">defer</span> cp.mu.Unlock()
+
+    stats, exists := cp.channels[channelName]
+    <span class="hljs-keyword">if</span> !exists {
+        stats = &amp;ChannelStats{
+            Name:       channelName,
+            BufferSize: bufferSize,
+            FirstSeen:  time.Now(),
+        }
+        cp.channels[channelName] = stats
+    }
+
+    stats.LastSeen = time.Now()
+
+    <span class="hljs-keyword">switch</span> operation {
+    <span class="hljs-keyword">case</span> <span class="hljs-string">"send"</span>:
+        stats.SendOps++
+        <span class="hljs-keyword">if</span> blocked {
+            stats.SendBlocks++
+            stats.SendTime += <span class="hljs-type">int64</span>(duration)
+        }
+    <span class="hljs-keyword">case</span> <span class="hljs-string">"recv"</span>:
+        stats.RecvOps++
+        <span class="hljs-keyword">if</span> blocked {
+            stats.RecvBlocks++
+            stats.RecvTime += <span class="hljs-type">int64</span>(duration)
+        }
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cp *ChannelProfiler)</span></span> GetReport() ChannelReport {
+    cp.mu.RLock()
+    <span class="hljs-keyword">defer</span> cp.mu.RUnlock()
+
+    <span class="hljs-keyword">var</span> channelStats []ChannelStats
+    <span class="hljs-keyword">for</span> _, stats := <span class="hljs-keyword">range</span> cp.channels {
+        channelStats = <span class="hljs-built_in">append</span>(channelStats, *stats)
+    }
+
+    <span class="hljs-comment">// Sort by total operations</span>
+    sort.Slice(channelStats, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i, j <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> {
+        <span class="hljs-keyword">return</span> (channelStats[i].SendOps + channelStats[i].RecvOps) &gt; 
+               (channelStats[j].SendOps + channelStats[j].RecvOps)
+    })
+
+    <span class="hljs-keyword">return</span> ChannelReport{
+        TotalChannels: <span class="hljs-built_in">len</span>(channelStats),
+        ChannelStats:  channelStats,
+    }
+}
+
+<span class="hljs-keyword">type</span> ChannelReport <span class="hljs-keyword">struct</span> {
+    TotalChannels <span class="hljs-type">int</span>
+    ChannelStats  []ChannelStats
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cr ChannelReport)</span></span> String() <span class="hljs-type">string</span> {
+    result := fmt.Sprintf(<span class="hljs-string">"Channel Analysis Report:\n  Total Channels: %d"</span>, cr.TotalChannels)
+
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(cr.ChannelStats) &gt; <span class="hljs-number">0</span> {
+        result += <span class="hljs-string">"\n\nChannel Usage:"</span>
+        <span class="hljs-keyword">for</span> i, stats := <span class="hljs-keyword">range</span> cr.ChannelStats {
+            <span class="hljs-keyword">if</span> i &gt;= <span class="hljs-number">5</span> { <span class="hljs-comment">// Top 5</span>
+                <span class="hljs-keyword">break</span>
+            }
+
+            sendBlockRate := <span class="hljs-type">float64</span>(<span class="hljs-number">0</span>)
+            <span class="hljs-keyword">if</span> stats.SendOps &gt; <span class="hljs-number">0</span> {
+                sendBlockRate = <span class="hljs-type">float64</span>(stats.SendBlocks) / <span class="hljs-type">float64</span>(stats.SendOps) * <span class="hljs-number">100</span>
+            }
+
+            recvBlockRate := <span class="hljs-type">float64</span>(<span class="hljs-number">0</span>)
+            <span class="hljs-keyword">if</span> stats.RecvOps &gt; <span class="hljs-number">0</span> {
+                recvBlockRate = <span class="hljs-type">float64</span>(stats.RecvBlocks) / <span class="hljs-type">float64</span>(stats.RecvOps) * <span class="hljs-number">100</span>
+            }
+
+            result += fmt.Sprintf(<span class="hljs-string">"\n  %d. %s (buffer: %d)"</span>, i+<span class="hljs-number">1</span>, stats.Name, stats.BufferSize)
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Send Ops: %d (%.1f%% blocked)"</span>, stats.SendOps, sendBlockRate)
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Recv Ops: %d (%.1f%% blocked)"</span>, stats.RecvOps, recvBlockRate)
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Send Time: %v"</span>, time.Duration(stats.SendTime))
+            result += fmt.Sprintf(<span class="hljs-string">"\n     Recv Time: %v"</span>, time.Duration(stats.RecvTime))
+        }
+    }
+
+    <span class="hljs-keyword">return</span> result
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">demonstrateConcurrencyProfiling</span><span class="hljs-params">()</span></span> {
+    fmt.Println(<span class="hljs-string">"=== COMPREHENSIVE CONCURRENCY PROFILING ==="</span>)
+
+    profiler := NewConcurrencyProfiler()
+    profiler.Enable()
+    <span class="hljs-keyword">defer</span> profiler.Disable()
+
+    <span class="hljs-comment">// Simulate various concurrency scenarios</span>
+    simulateMutexContention(profiler)
+    simulateChannelOperations(profiler)
+    simulateBlockingOperations(profiler)
+
+    <span class="hljs-comment">// Get comprehensive report</span>
+    report := profiler.GetComprehensiveReport()
+    fmt.Printf(<span class="hljs-string">"\n%s\n"</span>, report)
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">simulateMutexContention</span><span class="hljs-params">(profiler *ConcurrencyProfiler)</span></span> {
+    fmt.Println(<span class="hljs-string">"Simulating mutex contention..."</span>)
+
+    <span class="hljs-keyword">var</span> mu sync.Mutex
+    <span class="hljs-keyword">var</span> wg sync.WaitGroup
+
+    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++ {
+        wg.Add(<span class="hljs-number">1</span>)
+        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(id <span class="hljs-type">int</span>)</span></span> {
+            <span class="hljs-keyword">defer</span> wg.Done()
+            <span class="hljs-keyword">for</span> j := <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">100</span>; j++ {
+                start := time.Now()
+                mu.Lock()
+
+                <span class="hljs-comment">// Record contention if we waited</span>
+                waitTime := time.Since(start)
+                <span class="hljs-keyword">if</span> waitTime &gt; time.Microsecond {
+                    profiler.mutexProfile.RecordContention(<span class="hljs-string">"main_mutex"</span>, waitTime)
+                }
+
+                <span class="hljs-comment">// Hold lock for some time</span>
+                time.Sleep(time.Microsecond * <span class="hljs-number">100</span>)
+                mu.Unlock()
+
+                time.Sleep(time.Microsecond * <span class="hljs-number">50</span>)
+            }
+        }(i)
+    }
+
+    wg.Wait()
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">simulateChannelOperations</span><span class="hljs-params">(profiler *ConcurrencyProfiler)</span></span> {
+    fmt.Println(<span class="hljs-string">"Simulating channel operations..."</span>)
+
+    ch := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">int</span>, <span class="hljs-number">5</span>)
+    <span class="hljs-keyword">var</span> wg sync.WaitGroup
+
+    <span class="hljs-comment">// Producer</span>
+    wg.Add(<span class="hljs-number">1</span>)
+    <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+        <span class="hljs-keyword">defer</span> wg.Done()
+        <span class="hljs-keyword">defer</span> <span class="hljs-built_in">close</span>(ch)
+
+        <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">100</span>; i++ {
+            start := time.Now()
+
+            <span class="hljs-keyword">select</span> {
+            <span class="hljs-keyword">case</span> ch &lt;- i:
+                <span class="hljs-comment">// Non-blocking</span>
+                profiler.channelProfile.RecordChannelOp(<span class="hljs-string">"test_channel"</span>, <span class="hljs-string">"send"</span>, <span class="hljs-literal">false</span>, <span class="hljs-number">0</span>, <span class="hljs-number">5</span>)
+            <span class="hljs-keyword">default</span>:
+                <span class="hljs-comment">// Would block</span>
+                ch &lt;- i <span class="hljs-comment">// Actually send (will block)</span>
+                duration := time.Since(start)
+                profiler.channelProfile.RecordChannelOp(<span class="hljs-string">"test_channel"</span>, <span class="hljs-string">"send"</span>, <span class="hljs-literal">true</span>, duration, <span class="hljs-number">5</span>)
+            }
+
+            time.Sleep(time.Millisecond * <span class="hljs-number">2</span>)
+        }
+    }()
+
+    <span class="hljs-comment">// Consumer</span>
+    wg.Add(<span class="hljs-number">1</span>)
+    <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+        <span class="hljs-keyword">defer</span> wg.Done()
+
+        <span class="hljs-keyword">for</span> val := <span class="hljs-keyword">range</span> ch {
+            start := time.Now()
+            _ = val
+
+            <span class="hljs-comment">// Simulate processing time</span>
+            time.Sleep(time.Millisecond * <span class="hljs-number">5</span>)
+
+            duration := time.Since(start)
+            profiler.channelProfile.RecordChannelOp(<span class="hljs-string">"test_channel"</span>, <span class="hljs-string">"recv"</span>, <span class="hljs-literal">true</span>, duration, <span class="hljs-number">5</span>)
+        }
+    }()
+
+    wg.Wait()
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">simulateBlockingOperations</span><span class="hljs-params">(profiler *ConcurrencyProfiler)</span></span> {
+    fmt.Println(<span class="hljs-string">"Simulating blocking operations..."</span>)
+
+    <span class="hljs-keyword">var</span> wg sync.WaitGroup
+
+    <span class="hljs-comment">// Simulate different blocking scenarios</span>
+    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++ {
+        wg.Add(<span class="hljs-number">1</span>)
+        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(id <span class="hljs-type">int</span>)</span></span> {
+            <span class="hljs-keyword">defer</span> wg.Done()
+
+            <span class="hljs-keyword">for</span> j := <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">20</span>; j++ {
+                <span class="hljs-comment">// Simulate I/O operation</span>
+                start := time.Now()
+                time.Sleep(time.Millisecond * time.Duration(<span class="hljs-number">10</span>+id*<span class="hljs-number">2</span>))
+                duration := time.Since(start)
+
+                profiler.blockProfile.RecordBlock(<span class="hljs-string">"io_operation"</span>, duration)
+
+                <span class="hljs-comment">// Simulate network call</span>
+                start = time.Now()
+                time.Sleep(time.Millisecond * time.Duration(<span class="hljs-number">5</span>+id))
+                duration = time.Since(start)
+
+                profiler.blockProfile.RecordBlock(<span class="hljs-string">"network_call"</span>, duration)
+            }
+        }(i)
+    }
+
+    wg.Wait()
+}
+</code></pre>
+<h2 id="key-profiling-techniques">Key Profiling Techniques</h2>
+<h3 id="1-mutex-profiling">1. Mutex Profiling</h3>
+<ul>
+<li><strong>Purpose</strong>: Identify lock contention hotspots</li>
+<li><strong>Metrics</strong>: Contention time, frequency, wait times</li>
+<li><strong>Tools</strong>: <code>runtime.SetMutexProfileFraction()</code></li>
+</ul>
+<h3 id="2-block-profiling">2. Block Profiling</h3>
+<ul>
+<li><strong>Purpose</strong>: Find blocking synchronization operations</li>
+<li><strong>Metrics</strong>: Block time, frequency, operation types</li>
+<li><strong>Tools</strong>: <code>runtime.SetBlockProfileRate()</code></li>
+</ul>
+<h3 id="3-channel-analysis">3. Channel Analysis</h3>
+<ul>
+<li><strong>Purpose</strong>: Optimize channel usage patterns</li>
+<li><strong>Metrics</strong>: Send/receive rates, blocking frequency</li>
+<li><strong>Tools</strong>: Custom instrumentation</li>
+</ul>
+<h2 id="optimization-strategies">Optimization Strategies</h2>
+<h3 id="lock-free-alternatives">Lock-Free Alternatives</h3>
+<pre><code class="lang-go"><span class="hljs-comment">// Replace mutex with atomic operations where possible</span>
+<span class="hljs-keyword">var</span> counter <span class="hljs-type">int64</span>
+atomic.AddInt64(&amp;counter, <span class="hljs-number">1</span>) <span class="hljs-comment">// Instead of mutex-protected increment</span>
+</code></pre>
+<h3 id="channel-buffer-optimization">Channel Buffer Optimization</h3>
+<pre><code class="lang-go"><span class="hljs-comment">// Size buffers appropriately</span>
+ch := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> Work, runtime.NumCPU()) <span class="hljs-comment">// CPU-bound work</span>
+ch := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> Request, <span class="hljs-number">1000</span>)          <span class="hljs-comment">// High-throughput scenarios</span>
+</code></pre>
+<h3 id="reduced-lock-scope">Reduced Lock Scope</h3>
+<pre><code class="lang-go"><span class="hljs-comment">// Minimize time holding locks</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">optimizedFunction</span><span class="hljs-params">()</span></span> {
+    <span class="hljs-comment">// Prepare data outside lock</span>
+    data := prepareData()
+
+    mu.Lock()
+    <span class="hljs-comment">// Minimal work under lock</span>
+    updateSharedState(data)
+    mu.Unlock()
+}
+</code></pre>
+<h2 id="analysis-tools">Analysis Tools</h2>
+<h3 id="built-in-profiling">Built-in Profiling</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Enable mutex profiling</span>
+go tool pprof http://localhost:6060/debug/pprof/mutex
+
+<span class="hljs-comment"># Enable block profiling  </span>
+go tool pprof http://localhost:6060/debug/pprof/block
+</code></pre>
+<h3 id="custom-instrumentation">Custom Instrumentation</h3>
+<pre><code class="lang-go"><span class="hljs-comment">// Wrap mutexes with timing</span>
+<span class="hljs-keyword">type</span> TimedMutex <span class="hljs-keyword">struct</span> {
+    sync.Mutex
+    name <span class="hljs-type">string</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(tm *TimedMutex)</span></span> Lock() {
+    start := time.Now()
+    tm.Mutex.Lock()
+    recordContentionTime(tm.name, time.Since(start))
+}
+</code></pre>
+<h2 id="best-practices">Best Practices</h2>
+<ol>
+<li><strong>Profile Representative Workloads</strong> - Use realistic concurrency patterns</li>
+<li><strong>Focus on Hotspots</strong> - Optimize the highest contention points first  </li>
+<li><strong>Measure Before/After</strong> - Validate optimization effectiveness</li>
+<li><strong>Consider Lock-Free</strong> - Atomic operations for simple cases</li>
+<li><strong>Right-Size Buffers</strong> - Match channel buffers to usage patterns</li>
+</ol>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li>Study <a href="mutex-contention.html">Mutex Contention</a> analysis</li>
+<li>Learn <a href="block-profiling.html">Block Profiling</a> techniques  </li>
+<li>Explore <a href="channel-analysis.html">Channel Analysis</a> optimization</li>
+<li>Master <a href="../../optimization/concurrency/">Concurrency Optimization</a></li>
+</ul>
+<h2 id="summary">Summary</h2>
+<p>Concurrency profiling enables building efficient parallel Go applications by:</p>
+<ol>
+<li><strong>Identifying contention</strong> - Finding synchronization bottlenecks</li>
+<li><strong>Measuring overhead</strong> - Quantifying coordination costs</li>
+<li><strong>Guiding optimization</strong> - Focusing on impactful improvements</li>
+<li><strong>Validating changes</strong> - Confirming performance benefits</li>
+<li><strong>Scaling effectively</strong> - Building for concurrent workloads</li>
+</ol>
+<p>Use these techniques to optimize concurrent applications for maximum throughput and minimal contention.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../goroutine-profiling/goroutine-leaks.html" class="navigation navigation-prev " aria-label="Previous page: Goroutine Leaks">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="mutex-contention.html" class="navigation navigation-next " aria-label="Next page: Mutex Contention">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Mutex & Block Profiling","level":"2.5","depth":1,"next":{"title":"Mutex Contention","level":"2.5.1","depth":2,"path":"profiling-tools/concurrency-profiling/mutex-contention.md","ref":"profiling-tools/concurrency-profiling/mutex-contention.md","articles":[]},"previous":{"title":"Goroutine Leaks","level":"2.4.3","depth":2,"path":"profiling-tools/goroutine-profiling/goroutine-leaks.md","ref":"profiling-tools/goroutine-profiling/goroutine-leaks.md","articles":[]},"articles":[{"title":"Mutex Contention","level":"2.5.1","depth":2,"path":"profiling-tools/concurrency-profiling/mutex-contention.md","ref":"profiling-tools/concurrency-profiling/mutex-contention.md","articles":[]},{"title":"Block Profiling","level":"2.5.2","depth":2,"path":"profiling-tools/concurrency-profiling/block-profiling.md","ref":"profiling-tools/concurrency-profiling/block-profiling.md","articles":[]},{"title":"Channel Analysis","level":"2.5.3","depth":2,"path":"profiling-tools/concurrency-profiling/channel-analysis.md","ref":"profiling-tools/concurrency-profiling/channel-analysis.md","articles":[]}],"dir":"ltr"},"config":{"plugins":["fontsettings","theme-default","livereload"],"root":".","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Performance Engineering Team","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.0.0","go_version":"1.24+","repo_url":"https://github.com/psavelis/codechallenge"},"title":"Advanced Go Performance Engineering","language":"en","gitbook":">=3.0.0","description":"A Complete Guide to Profiling, Benchmarking, and Optimization Techniques in Go"},"file":{"path":"profiling-tools/concurrency-profiling/README.md","mtime":"2025-09-05T18:46:33.448Z","type":"markdown"},"gitbook":{"version":"6.0.3","time":"2025-09-09T16:55:21.356Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

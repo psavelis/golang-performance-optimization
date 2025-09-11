@@ -1,0 +1,7 @@
+{
+  "baseline_report": "BenchmarkX 10 100 ns/op 2 allocs/op\n",
+  "candidate_report": "BenchmarkX 10 110 ns/op 2 allocs/op\n",
+  "thresholds": {"ns_per_op_pct": 5, "allocs_per_op_pct": 10},
+  "hard_fail_pct": 12,
+  "min_sample": 5
+}

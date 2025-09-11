@@ -1,0 +1,3440 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Performance Regression · Advanced Go Performance Engineering</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.1.4">
+        <meta name="author" content="Performance Engineering Team">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/honkit-plugin-prism/prism.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/honkit-plugin-mermaid/mermaid.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="comparative-benchmarking.html" />
+    
+    
+    <link rel="prev" href="statistical-analysis.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Part I: Fundamentals</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../../getting-started/">
+            
+                <a href="../../getting-started/">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../../getting-started/environment-setup.html">
+            
+                <a href="../../getting-started/environment-setup.html">
+            
+                    
+                    Environment Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../../getting-started/first-profile.html">
+            
+                <a href="../../getting-started/first-profile.html">
+            
+                    
+                    Your First Profile
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../../getting-started/understanding-output.html">
+            
+                <a href="../../getting-started/understanding-output.html">
+            
+                    
+                    Understanding Output
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../../getting-started/architecture-overview.html">
+            
+                <a href="../../getting-started/architecture-overview.html">
+            
+                    
+                    Architecture Overview (Mermaid)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../../fundamentals/">
+            
+                <a href="../../fundamentals/">
+            
+                    
+                    Performance Fundamentals
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../../fundamentals/runtime-internals.html">
+            
+                <a href="../../fundamentals/runtime-internals.html">
+            
+                    
+                    Go Runtime Internals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../../fundamentals/memory-model.html">
+            
+                <a href="../../fundamentals/memory-model.html">
+            
+                    
+                    Memory Model
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../../fundamentals/goroutine-scheduler.html">
+            
+                <a href="../../fundamentals/goroutine-scheduler.html">
+            
+                    
+                    Goroutine Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../../fundamentals/garbage-collector.html">
+            
+                <a href="../../fundamentals/garbage-collector.html">
+            
+                    
+                    Garbage Collector
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part II: Profiling Tools & Techniques</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../../profiling-tools/">
+            
+                <a href="../../profiling-tools/">
+            
+                    
+                    Profiling Tools Overview
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../../profiling-tools/cpu-profiling/">
+            
+                <a href="../../profiling-tools/cpu-profiling/">
+            
+                    
+                    CPU Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.2.1" data-path="../../profiling-tools/cpu-profiling/basic-cpu-profiling.html">
+            
+                <a href="../../profiling-tools/cpu-profiling/basic-cpu-profiling.html">
+            
+                    
+                    Basic CPU Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.2" data-path="../../profiling-tools/cpu-profiling/advanced-techniques.html">
+            
+                <a href="../../profiling-tools/cpu-profiling/advanced-techniques.html">
+            
+                    
+                    Advanced Techniques
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="../../profiling-tools/cpu-profiling/flamegraph-analysis.html">
+            
+                <a href="../../profiling-tools/cpu-profiling/flamegraph-analysis.html">
+            
+                    
+                    Flamegraph Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../../profiling-tools/memory-profiling/">
+            
+                <a href="../../profiling-tools/memory-profiling/">
+            
+                    
+                    Memory Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.3.1" data-path="../../profiling-tools/memory-profiling/heap-profiling.html">
+            
+                <a href="../../profiling-tools/memory-profiling/heap-profiling.html">
+            
+                    
+                    Heap Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.2" data-path="../../profiling-tools/memory-profiling/allocation-profiling.html">
+            
+                <a href="../../profiling-tools/memory-profiling/allocation-profiling.html">
+            
+                    
+                    Allocation Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.3" data-path="../../profiling-tools/memory-profiling/leak-detection.html">
+            
+                <a href="../../profiling-tools/memory-profiling/leak-detection.html">
+            
+                    
+                    Memory Leaks Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../../profiling-tools/goroutine-profiling/">
+            
+                <a href="../../profiling-tools/goroutine-profiling/">
+            
+                    
+                    Goroutine Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.4.1" data-path="../../profiling-tools/goroutine-profiling/goroutine-analysis.html">
+            
+                <a href="../../profiling-tools/goroutine-profiling/goroutine-analysis.html">
+            
+                    
+                    Goroutine Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.2" data-path="../../profiling-tools/goroutine-profiling/deadlock-detection.html">
+            
+                <a href="../../profiling-tools/goroutine-profiling/deadlock-detection.html">
+            
+                    
+                    Deadlock Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.3" data-path="../../profiling-tools/goroutine-profiling/goroutine-leaks.html">
+            
+                <a href="../../profiling-tools/goroutine-profiling/goroutine-leaks.html">
+            
+                    
+                    Goroutine Leaks
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../../profiling-tools/concurrency-profiling/">
+            
+                <a href="../../profiling-tools/concurrency-profiling/">
+            
+                    
+                    Mutex & Block Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.5.1" data-path="../../profiling-tools/concurrency-profiling/mutex-contention.html">
+            
+                <a href="../../profiling-tools/concurrency-profiling/mutex-contention.html">
+            
+                    
+                    Mutex Contention
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5.2" data-path="../../profiling-tools/concurrency-profiling/block-profiling.html">
+            
+                <a href="../../profiling-tools/concurrency-profiling/block-profiling.html">
+            
+                    
+                    Block Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5.3" data-path="../../profiling-tools/concurrency-profiling/channel-analysis.html">
+            
+                <a href="../../profiling-tools/concurrency-profiling/channel-analysis.html">
+            
+                    
+                    Channel Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="../../profiling-tools/custom-profiling/">
+            
+                <a href="../../profiling-tools/custom-profiling/">
+            
+                    
+                    Custom Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.6.1" data-path="../../profiling-tools/custom-profiling/custom-profiles.html">
+            
+                <a href="../../profiling-tools/custom-profiling/custom-profiles.html">
+            
+                    
+                    Custom Profiles
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6.2" data-path="../../profiling-tools/custom-profiling/runtime-metrics.html">
+            
+                <a href="../../profiling-tools/custom-profiling/runtime-metrics.html">
+            
+                    
+                    Runtime Metrics
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6.3" data-path="../../profiling-tools/custom-profiling/execution-tracing.html">
+            
+                <a href="../../profiling-tools/custom-profiling/execution-tracing.html">
+            
+                    
+                    Execution Tracing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part III: Benchmarking Excellence</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Benchmarking Fundamentals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../writing-benchmarks/">
+            
+                <a href="../writing-benchmarks/">
+            
+                    
+                    Writing Effective Benchmarks
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="../writing-benchmarks/basic-benchmarks.html">
+            
+                <a href="../writing-benchmarks/basic-benchmarks.html">
+            
+                    
+                    Basic Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="../writing-benchmarks/sub-benchmarks.html">
+            
+                <a href="../writing-benchmarks/sub-benchmarks.html">
+            
+                    
+                    Sub-benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="../writing-benchmarks/parallel-benchmarks.html">
+            
+                <a href="../writing-benchmarks/parallel-benchmarks.html">
+            
+                    
+                    Parallel Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Benchmark Analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="statistical-analysis.html">
+            
+                <a href="statistical-analysis.html">
+            
+                    
+                    Statistical Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="3.3.2" data-path="performance-regression.html">
+            
+                <a href="performance-regression.html">
+            
+                    
+                    Performance Regression
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="comparative-benchmarking.html">
+            
+                <a href="comparative-benchmarking.html">
+            
+                    
+                    Comparative Benchmarking
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../advanced/">
+            
+                <a href="../advanced/">
+            
+                    
+                    Advanced Benchmarking
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.4.1" data-path="../advanced/micro-benchmarks.html">
+            
+                <a href="../advanced/micro-benchmarks.html">
+            
+                    
+                    Micro-benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.2" data-path="../advanced/e2e-benchmarks.html">
+            
+                <a href="../advanced/e2e-benchmarks.html">
+            
+                    
+                    End-to-End Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.3" data-path="../advanced/load-testing.html">
+            
+                <a href="../advanced/load-testing.html">
+            
+                    
+                    Load Testing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part IV: Optimization Techniques</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../../optimization/">
+            
+                <a href="../../optimization/">
+            
+                    
+                    Optimization Strategies
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../../optimization/algorithms/">
+            
+                <a href="../../optimization/algorithms/">
+            
+                    
+                    Algorithm Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="../../optimization/algorithms/time-complexity.html">
+            
+                <a href="../../optimization/algorithms/time-complexity.html">
+            
+                    
+                    Time Complexity Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="../../optimization/algorithms/space-complexity.html">
+            
+                <a href="../../optimization/algorithms/space-complexity.html">
+            
+                    
+                    Space Complexity Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="../../optimization/algorithms/data-structures.html">
+            
+                <a href="../../optimization/algorithms/data-structures.html">
+            
+                    
+                    Data Structure Selection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="../../optimization/memory/">
+            
+                <a href="../../optimization/memory/">
+            
+                    
+                    Memory Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="../../optimization/memory/memory-pools.html">
+            
+                <a href="../../optimization/memory/memory-pools.html">
+            
+                    
+                    Memory Pools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="../../optimization/memory/object-reuse.html">
+            
+                <a href="../../optimization/memory/object-reuse.html">
+            
+                    
+                    Object Reuse
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="../../optimization/memory/stack-vs-heap.html">
+            
+                <a href="../../optimization/memory/stack-vs-heap.html">
+            
+                    
+                    Stack vs Heap
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="../../optimization/memory/memory-layout.html">
+            
+                <a href="../../optimization/memory/memory-layout.html">
+            
+                    
+                    Memory Layout
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="../../optimization/concurrency/">
+            
+                <a href="../../optimization/concurrency/">
+            
+                    
+                    Concurrency Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.4.1" data-path="../../optimization/concurrency/goroutine-patterns.html">
+            
+                <a href="../../optimization/concurrency/goroutine-patterns.html">
+            
+                    
+                    Goroutine Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.2" data-path="../../optimization/concurrency/channel-optimization.html">
+            
+                <a href="../../optimization/concurrency/channel-optimization.html">
+            
+                    
+                    Channel Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.3" data-path="../../optimization/concurrency/worker-pools.html">
+            
+                <a href="../../optimization/concurrency/worker-pools.html">
+            
+                    
+                    Worker Pools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.4" data-path="../../optimization/concurrency/lock-free.html">
+            
+                <a href="../../optimization/concurrency/lock-free.html">
+            
+                    
+                    Lock-Free Programming
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="../../optimization/io/">
+            
+                <a href="../../optimization/io/">
+            
+                    
+                    I/O Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.5.1" data-path="../../optimization/io/buffer-management.html">
+            
+                <a href="../../optimization/io/buffer-management.html">
+            
+                    
+                    Buffer Management
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.2" data-path="../../optimization/io/streaming.html">
+            
+                <a href="../../optimization/io/streaming.html">
+            
+                    
+                    Streaming Processing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.3" data-path="../../optimization/io/network-optimization.html">
+            
+                <a href="../../optimization/io/network-optimization.html">
+            
+                    
+                    Network Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="../../optimization/compiler/">
+            
+                <a href="../../optimization/compiler/">
+            
+                    
+                    Compiler Optimizations
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.6.1" data-path="../../optimization/compiler/inlining.html">
+            
+                <a href="../../optimization/compiler/inlining.html">
+            
+                    
+                    Inlining
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.2" data-path="../../optimization/compiler/escape-analysis.html">
+            
+                <a href="../../optimization/compiler/escape-analysis.html">
+            
+                    
+                    Escape Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.3" data-path="../../optimization/compiler/build-optimization.html">
+            
+                <a href="../../optimization/compiler/build-optimization.html">
+            
+                    
+                    Build Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part V: Production Performance</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../../production/">
+            
+                <a href="../../production/">
+            
+                    
+                    Production Monitoring
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="../../production/continuous-profiling/">
+            
+                <a href="../../production/continuous-profiling/">
+            
+                    
+                    Continuous Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.2.1" data-path="../../production/continuous-profiling/setup.html">
+            
+                <a href="../../production/continuous-profiling/setup.html">
+            
+                    
+                    Production Profiling Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.2" data-path="../../production/continuous-profiling/pyroscope-examples.html">
+            
+                <a href="../../production/continuous-profiling/pyroscope-examples.html">
+            
+                    
+                    Pyroscope Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.3" data-path="../../production/continuous-profiling/automated-analysis.html">
+            
+                <a href="../../production/continuous-profiling/automated-analysis.html">
+            
+                    
+                    Automated Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.4" data-path="../../production/continuous-profiling/alerting.html">
+            
+                <a href="../../production/continuous-profiling/alerting.html">
+            
+                    
+                    Alert Systems
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="../../production/metrics/">
+            
+                <a href="../../production/metrics/">
+            
+                    
+                    Metrics with Prometheus
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.3.1" data-path="../../production/metrics/prometheus-examples.html">
+            
+                <a href="../../production/metrics/prometheus-examples.html">
+            
+                    
+                    Prometheus Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.2" data-path="../../production/metrics/unobtrusive-metrics.html">
+            
+                <a href="../../production/metrics/unobtrusive-metrics.html">
+            
+                    
+                    Unobtrusive Metrics (CLI Jobs)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="../../production/tracing/">
+            
+                <a href="../../production/tracing/">
+            
+                    
+                    Distributed Tracing with OpenTelemetry
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.4.1" data-path="../../production/tracing/local-setup.html">
+            
+                <a href="../../production/tracing/local-setup.html">
+            
+                    
+                    Local Setup (OTel Collector)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4.2" data-path="../../production/tracing/vendor-guides.html">
+            
+                <a href="../../production/tracing/vendor-guides.html">
+            
+                    
+                    Vendor Guides (Datadog, New Relic, Splunk)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4.3" data-path="../../production/tracing/dynatrace-integration.html">
+            
+                <a href="../../production/tracing/dynatrace-integration.html">
+            
+                    
+                    Dynatrace Integration (OTLP)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="../../production/logging/">
+            
+                <a href="../../production/logging/">
+            
+                    
+                    Centralized Logging
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.5.1" data-path="../../production/logging/fluentd-loki-examples.html">
+            
+                <a href="../../production/logging/fluentd-loki-examples.html">
+            
+                    
+                    Fluentd → Loki Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5.2" data-path="../../production/logging/elk-setup.html">
+            
+                <a href="../../production/logging/elk-setup.html">
+            
+                    
+                    Advanced ELK Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6" data-path="../../production/performance-testing/">
+            
+                <a href="../../production/performance-testing/">
+            
+                    
+                    Performance Testing
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.6.1" data-path="../../production/performance-testing/test-design.html">
+            
+                <a href="../../production/performance-testing/test-design.html">
+            
+                    
+                    Performance Test Design
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6.2" data-path="../../production/performance-testing/cicd-integration.html">
+            
+                <a href="../../production/performance-testing/cicd-integration.html">
+            
+                    
+                    CI/CD Integration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6.3" data-path="../../production/performance-testing/regression-detection.md">
+            
+                <span>
+            
+                    
+                    Regression Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7" data-path="../../production/scalability/README.md">
+            
+                <span>
+            
+                    
+                    Scalability Analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.7.1" data-path="../../production/scalability/horizontal-scaling.md">
+            
+                <span>
+            
+                    
+                    Horizontal Scaling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7.2" data-path="../../production/scalability/vertical-scaling.md">
+            
+                <span>
+            
+                    
+                    Vertical Scaling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7.3" data-path="../../production/scalability/bottleneck-analysis.md">
+            
+                <span>
+            
+                    
+                    Bottleneck Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VI: Case Studies & Best Practices</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../../case-studies/">
+            
+                <a href="../../case-studies/">
+            
+                    
+                    Real-World Case Studies
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.1.1" data-path="../../case-studies/web-service-optimization.html">
+            
+                <a href="../../case-studies/web-service-optimization.html">
+            
+                    
+                    Web Service Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.2" data-path="../../case-studies/microservices-optimization.html">
+            
+                <a href="../../case-studies/microservices-optimization.html">
+            
+                    
+                    Microservices Performance
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.3" data-path="../../case-studies/database-optimization.html">
+            
+                <a href="../../case-studies/database-optimization.html">
+            
+                    
+                    Database Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../../best-practices/">
+            
+                <a href="../../best-practices/">
+            
+                    
+                    Best Practices
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.2.1" data-path="../../best-practices/development-workflow.html">
+            
+                <a href="../../best-practices/development-workflow.html">
+            
+                    
+                    Development Workflow
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.2" data-path="../../best-practices/production-deployment.html">
+            
+                <a href="../../best-practices/production-deployment.html">
+            
+                    
+                    Production Deployment
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.3" data-path="../../best-practices/team-culture.html">
+            
+                <a href="../../best-practices/team-culture.html">
+            
+                    
+                    Team Culture
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VII: Tools & Resources</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="../../tools-resources/">
+            
+                <a href="../../tools-resources/">
+            
+                    
+                    Tools & Resources
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="7.1.1" data-path="../../tools-resources/essential-tools.html">
+            
+                <a href="../../tools-resources/essential-tools.html">
+            
+                    
+                    Essential Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.1.2" data-path="../../tools-resources/external-resources.html">
+            
+                <a href="../../tools-resources/external-resources.html">
+            
+                    
+                    External Resources
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.1.3" data-path="../../tools-resources/community.html">
+            
+                <a href="../../tools-resources/community.html">
+            
+                    
+                    Community Guide
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendices</li>
+        
+        
+    
+        <li class="chapter " data-level="8.1" data-path="../../appendices/runtime-flags.html">
+            
+                <a href="../../appendices/runtime-flags.html">
+            
+                    
+                    Appendix A: Go Runtime Flags
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.2" data-path="../../appendices/metrics-glossary.html">
+            
+                <a href="../../appendices/metrics-glossary.html">
+            
+                    
+                    Appendix B: Performance Metrics Glossary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.3" data-path="../../appendices/troubleshooting.html">
+            
+                <a href="../../appendices/troubleshooting.html">
+            
+                    
+                    Appendix C: Troubleshooting Guide
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.4" data-path="../../appendices/performance-patterns.html">
+            
+                <a href="../../appendices/performance-patterns.html">
+            
+                    
+                    Appendix D: Performance Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >Performance Regression</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <html><head></head><body><h1 id="performance-regression-analysis">Performance Regression Analysis</h1>
+<p>Comprehensive guide to detecting, analyzing, and preventing performance regressions in Go applications. This guide covers regression detection algorithms, statistical methods, automated monitoring, and remediation strategies for maintaining consistent application performance.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#regression-detection-framework">Regression Detection Framework</a></li>
+<li><a href="#statistical-methods">Statistical Methods</a></li>
+<li><a href="#automated-monitoring">Automated Monitoring</a></li>
+<li><a href="#trend-analysis">Trend Analysis</a></li>
+<li><a href="#alert-systems">Alert Systems</a></li>
+<li><a href="#root-cause-analysis">Root Cause Analysis</a></li>
+<li><a href="#remediation-strategies">Remediation Strategies</a></li>
+<li><a href="#prevention-techniques">Prevention Techniques</a></li>
+<li><a href="#best-practices">Best Practices</a></li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<p>Performance regression analysis is critical for maintaining application quality over time. This guide provides comprehensive strategies for detecting performance degradations early, analyzing their causes, and implementing effective prevention and remediation measures.</p>
+<h3 id="regression-detection-framework">Regression Detection Framework</h3>
+<pre class="language-"><code class="lang-go"><span class="token keyword">package</span> main
+
+<span class="token keyword">import</span> <span class="token punctuation">(</span>
+    <span class="token string">"context"</span>
+    <span class="token string">"fmt"</span>
+    <span class="token string">"math"</span>
+    <span class="token string">"sort"</span>
+    <span class="token string">"sync"</span>
+    <span class="token string">"time"</span>
+<span class="token punctuation">)</span>
+
+<span class="token comment">// RegressionAnalyzer detects and analyzes performance regressions</span>
+<span class="token keyword">type</span> RegressionAnalyzer <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    detectors      <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>RegressionDetector
+    baseline       <span class="token operator">*</span>PerformanceBaseline
+    history        <span class="token operator">*</span>PerformanceHistory
+    alertManager   <span class="token operator">*</span>RegressionAlertManager
+    rootCause      <span class="token operator">*</span>RootCauseAnalyzer
+    config         RegressionConfig
+    cache          <span class="token operator">*</span>RegressionCache
+    metrics        <span class="token operator">*</span>RegressionMetrics
+    mu             sync<span class="token punctuation">.</span>RWMutex
+<span class="token punctuation">}</span>
+
+<span class="token comment">// RegressionConfig contains regression analysis configuration</span>
+<span class="token keyword">type</span> RegressionConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    DetectionMethods    <span class="token punctuation">[</span><span class="token punctuation">]</span>DetectionMethod
+    SensitivityLevel    SensitivityLevel
+    BaselineWindow      time<span class="token punctuation">.</span>Duration
+    ComparisonWindow    time<span class="token punctuation">.</span>Duration
+    MinDataPoints       <span class="token builtin">int</span>
+    ConfidenceLevel     <span class="token builtin">float64</span>
+    SignificanceLevel   <span class="token builtin">float64</span>
+    ChangeThreshold     <span class="token builtin">float64</span>
+    EnableAutoBaseline  <span class="token builtin">bool</span>
+    EnableTrendAnalysis <span class="token builtin">bool</span>
+    EnableAlerts        <span class="token builtin">bool</span>
+    EnableRootCause     <span class="token builtin">bool</span>
+    MaxHistory          <span class="token builtin">int</span>
+    UpdateInterval      time<span class="token punctuation">.</span>Duration
+<span class="token punctuation">}</span>
+
+<span class="token comment">// DetectionMethod defines regression detection methods</span>
+<span class="token keyword">type</span> DetectionMethod <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    StatisticalDetection DetectionMethod <span class="token operator">=</span> <span class="token boolean">iota</span>
+    ThresholdDetection
+    TrendDetection
+    ChangePointDetection
+    MLDetection
+    EnsembleDetection
+<span class="token punctuation">)</span>
+
+<span class="token comment">// SensitivityLevel defines detection sensitivity</span>
+<span class="token keyword">type</span> SensitivityLevel <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LowSensitivity SensitivityLevel <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MediumSensitivity
+    HighSensitivity
+    UltraHighSensitivity
+<span class="token punctuation">)</span>
+
+<span class="token comment">// RegressionDetector performs regression detection</span>
+<span class="token keyword">type</span> RegressionDetector <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">DetectRegression</span><span class="token punctuation">(</span>current <span class="token operator">*</span>PerformanceData<span class="token punctuation">,</span> baseline <span class="token operator">*</span>PerformanceBaseline<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>RegressionResult<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span>
+    <span class="token function">GetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> DetectionMethod
+    <span class="token function">GetSensitivity</span><span class="token punctuation">(</span><span class="token punctuation">)</span> SensitivityLevel
+    <span class="token function">GetAccuracy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> DetectionAccuracy
+    <span class="token function">UpdateBaseline</span><span class="token punctuation">(</span>data <span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> <span class="token builtin">error</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// PerformanceData represents performance measurement data</span>
+<span class="token keyword">type</span> PerformanceData <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ID          <span class="token builtin">string</span>
+    Timestamp   time<span class="token punctuation">.</span>Time
+    Metrics     <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>MetricValue
+    Metadata    DataMetadata
+    Environment Environment
+    Build       BuildInfo
+    Commit      CommitInfo
+    Quality     DataQuality
+<span class="token punctuation">}</span>
+
+<span class="token comment">// MetricValue represents a performance metric value</span>
+<span class="token keyword">type</span> MetricValue <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Value      <span class="token builtin">float64</span>
+    Unit       <span class="token builtin">string</span>
+    Type       MetricType
+    Samples    <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">float64</span>
+    Statistics DescriptiveStats
+    Confidence ConfidenceInterval
+<span class="token punctuation">}</span>
+
+<span class="token comment">// MetricType defines performance metric types</span>
+<span class="token keyword">type</span> MetricType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LatencyMetric MetricType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    ThroughputMetric
+    MemoryMetric
+    CPUMetric
+    DiskIOMetric
+    NetworkIOMetric
+    CustomMetric
+<span class="token punctuation">)</span>
+
+<span class="token comment">// DataMetadata contains metadata about performance data</span>
+<span class="token keyword">type</span> DataMetadata <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Source       <span class="token builtin">string</span>
+    Test         <span class="token builtin">string</span>
+    Configuration <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Duration     time<span class="token punctuation">.</span>Duration
+    Iterations   <span class="token builtin">int</span>
+    Parallelism  <span class="token builtin">int</span>
+    Tags         <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Environment describes the execution environment</span>
+<span class="token keyword">type</span> Environment <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    OS           <span class="token builtin">string</span>
+    Architecture <span class="token builtin">string</span>
+    GoVersion    <span class="token builtin">string</span>
+    CPUModel     <span class="token builtin">string</span>
+    CPUCores     <span class="token builtin">int</span>
+    Memory       <span class="token builtin">int64</span>
+    Disk         <span class="token builtin">string</span>
+    Network      <span class="token builtin">string</span>
+    Load         SystemLoad
+    Temperature  <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SystemLoad represents system load information</span>
+<span class="token keyword">type</span> SystemLoad <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    CPU     <span class="token builtin">float64</span>
+    Memory  <span class="token builtin">float64</span>
+    Disk    <span class="token builtin">float64</span>
+    Network <span class="token builtin">float64</span>
+    Average LoadAverage
+<span class="token punctuation">}</span>
+
+<span class="token comment">// LoadAverage represents load averages</span>
+<span class="token keyword">type</span> LoadAverage <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    OneMin     <span class="token builtin">float64</span>
+    FiveMin    <span class="token builtin">float64</span>
+    FifteenMin <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// BuildInfo contains build information</span>
+<span class="token keyword">type</span> BuildInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Version    <span class="token builtin">string</span>
+    Commit     <span class="token builtin">string</span>
+    Branch     <span class="token builtin">string</span>
+    Tag        <span class="token builtin">string</span>
+    BuildTime  time<span class="token punctuation">.</span>Time
+    BuildFlags <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CommitInfo contains commit information</span>
+<span class="token keyword">type</span> CommitInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Hash      <span class="token builtin">string</span>
+    Author    <span class="token builtin">string</span>
+    Message   <span class="token builtin">string</span>
+    Timestamp time<span class="token punctuation">.</span>Time
+    Files     <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Stats     CommitStats
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CommitStats contains commit statistics</span>
+<span class="token keyword">type</span> CommitStats <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Additions <span class="token builtin">int</span>
+    Deletions <span class="token builtin">int</span>
+    Files     <span class="token builtin">int</span>
+    Changed   <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// DataQuality represents data quality metrics</span>
+<span class="token keyword">type</span> DataQuality <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Completeness <span class="token builtin">float64</span>
+    Stability    <span class="token builtin">float64</span>
+    Reliability  <span class="token builtin">float64</span>
+    Outliers     <span class="token builtin">int</span>
+    Noise        <span class="token builtin">float64</span>
+    OverallScore <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// DescriptiveStats contains descriptive statistics</span>
+<span class="token keyword">type</span> DescriptiveStats <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Count      <span class="token builtin">int</span>
+    Mean       <span class="token builtin">float64</span>
+    Median     <span class="token builtin">float64</span>
+    StdDev     <span class="token builtin">float64</span>
+    Min        <span class="token builtin">float64</span>
+    Max        <span class="token builtin">float64</span>
+    Percentiles <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span><span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ConfidenceInterval represents a confidence interval</span>
+<span class="token keyword">type</span> ConfidenceInterval <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Lower      <span class="token builtin">float64</span>
+    Upper      <span class="token builtin">float64</span>
+    Confidence <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// PerformanceBaseline represents performance baselines</span>
+<span class="token keyword">type</span> PerformanceBaseline <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ID          <span class="token builtin">string</span>
+    Metrics     <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>BaselineMetric
+    TimeRange   TimeRange
+    Environment Environment
+    Build       BuildInfo
+    Quality     BaselineQuality
+    CreatedAt   time<span class="token punctuation">.</span>Time
+    UpdatedAt   time<span class="token punctuation">.</span>Time
+    Version     <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// BaselineMetric contains baseline metric information</span>
+<span class="token keyword">type</span> BaselineMetric <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Name        <span class="token builtin">string</span>
+    Statistics  DescriptiveStats
+    Distribution Distribution
+    Percentiles <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span><span class="token builtin">float64</span>
+    Thresholds  Thresholds
+    Trend       TrendInfo
+    Seasonality SeasonalInfo
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Distribution represents statistical distribution</span>
+<span class="token keyword">type</span> Distribution <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type       DistributionType
+    Parameters <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">float64</span>
+    GoodnessOfFit <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// DistributionType defines distribution types</span>
+<span class="token keyword">type</span> DistributionType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    NormalDistribution DistributionType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    LogNormalDistribution
+    ExponentialDistribution
+    GammaDistribution
+    WeibullDistribution
+<span class="token punctuation">)</span>
+
+<span class="token comment">// Thresholds defines performance thresholds</span>
+<span class="token keyword">type</span> Thresholds <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Warning   <span class="token builtin">float64</span>
+    Critical  <span class="token builtin">float64</span>
+    Regression <span class="token builtin">float64</span>
+    Improvement <span class="token builtin">float64</span>
+    Adaptive   <span class="token builtin">bool</span>
+    Method     ThresholdMethod
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ThresholdMethod defines threshold calculation methods</span>
+<span class="token keyword">type</span> ThresholdMethod <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    StaticThreshold ThresholdMethod <span class="token operator">=</span> <span class="token boolean">iota</span>
+    PercentileThreshold
+    StatisticalThreshold
+    AdaptiveThreshold
+    MLThreshold
+<span class="token punctuation">)</span>
+
+<span class="token comment">// TrendInfo contains trend information</span>
+<span class="token keyword">type</span> TrendInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Direction  TrendDirection
+    Slope      <span class="token builtin">float64</span>
+    Strength   <span class="token builtin">float64</span>
+    Confidence <span class="token builtin">float64</span>
+    StartTime  time<span class="token punctuation">.</span>Time
+    EndTime    time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// TrendDirection defines trend directions</span>
+<span class="token keyword">type</span> TrendDirection <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    Stable TrendDirection <span class="token operator">=</span> <span class="token boolean">iota</span>
+    Improving
+    Degrading
+    Volatile
+<span class="token punctuation">)</span>
+
+<span class="token comment">// SeasonalInfo contains seasonality information</span>
+<span class="token keyword">type</span> SeasonalInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Present   <span class="token builtin">bool</span>
+    Period    time<span class="token punctuation">.</span>Duration
+    Amplitude <span class="token builtin">float64</span>
+    Phase     <span class="token builtin">float64</span>
+    Patterns  <span class="token punctuation">[</span><span class="token punctuation">]</span>SeasonalPattern
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SeasonalPattern represents seasonal patterns</span>
+<span class="token keyword">type</span> SeasonalPattern <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type      PatternType
+    Period    time<span class="token punctuation">.</span>Duration
+    Strength  <span class="token builtin">float64</span>
+    Confidence <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// PatternType defines pattern types</span>
+<span class="token keyword">type</span> PatternType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    DailyPattern PatternType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    WeeklyPattern
+    MonthlyPattern
+    CustomPattern
+<span class="token punctuation">)</span>
+
+<span class="token comment">// TimeRange represents a time range</span>
+<span class="token keyword">type</span> TimeRange <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Start time<span class="token punctuation">.</span>Time
+    End   time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// BaselineQuality represents baseline quality metrics</span>
+<span class="token keyword">type</span> BaselineQuality <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    DataPoints   <span class="token builtin">int</span>
+    Completeness <span class="token builtin">float64</span>
+    Stability    <span class="token builtin">float64</span>
+    Freshness    <span class="token builtin">float64</span>
+    Confidence   <span class="token builtin">float64</span>
+    OverallScore <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// RegressionResult contains regression detection results</span>
+<span class="token keyword">type</span> RegressionResult <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ID             <span class="token builtin">string</span>
+    Detected       <span class="token builtin">bool</span>
+    Severity       RegressionSeverity
+    Confidence     <span class="token builtin">float64</span>
+    AffectedMetrics <span class="token punctuation">[</span><span class="token punctuation">]</span>AffectedMetric
+    ChangePoints   <span class="token punctuation">[</span><span class="token punctuation">]</span>ChangePoint
+    Analysis       RegressionAnalysis
+    RootCause      <span class="token operator">*</span>RootCauseInfo
+    Recommendations <span class="token punctuation">[</span><span class="token punctuation">]</span>Recommendation
+    Timestamp      time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// RegressionSeverity defines regression severity levels</span>
+<span class="token keyword">type</span> RegressionSeverity <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    MinorRegression RegressionSeverity <span class="token operator">=</span> <span class="token boolean">iota</span>
+    ModerateRegression
+    MajorRegression
+    CriticalRegression
+<span class="token punctuation">)</span>
+
+<span class="token comment">// AffectedMetric represents an affected performance metric</span>
+<span class="token keyword">type</span> AffectedMetric <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Name           <span class="token builtin">string</span>
+    Type           MetricType
+    BaselineValue  <span class="token builtin">float64</span>
+    CurrentValue   <span class="token builtin">float64</span>
+    Change         Change
+    Significance   StatisticalSignificance
+    Impact         ImpactAssessment
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Change represents performance change information</span>
+<span class="token keyword">type</span> Change <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Absolute   <span class="token builtin">float64</span>
+    Relative   <span class="token builtin">float64</span>
+    Direction  ChangeDirection
+    Magnitude  ChangeMagnitude
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ChangeDirection defines change directions</span>
+<span class="token keyword">type</span> ChangeDirection <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    NoChange ChangeDirection <span class="token operator">=</span> <span class="token boolean">iota</span>
+    Improvement
+    Degradation
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ChangeMagnitude defines change magnitude levels</span>
+<span class="token keyword">type</span> ChangeMagnitude <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    Negligible ChangeMagnitude <span class="token operator">=</span> <span class="token boolean">iota</span>
+    Small
+    Medium
+    Large
+    Extreme
+<span class="token punctuation">)</span>
+
+<span class="token comment">// StatisticalSignificance contains statistical significance information</span>
+<span class="token keyword">type</span> StatisticalSignificance <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    PValue       <span class="token builtin">float64</span>
+    Significant  <span class="token builtin">bool</span>
+    TestStatistic <span class="token builtin">float64</span>
+    TestType     StatisticalTest
+    EffectSize   EffectSize
+<span class="token punctuation">}</span>
+
+<span class="token comment">// StatisticalTest defines statistical tests</span>
+<span class="token keyword">type</span> StatisticalTest <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    TTest StatisticalTest <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MannWhitneyTest
+    WilcoxonTest
+    KSTest
+    PermutationTest
+<span class="token punctuation">)</span>
+
+<span class="token comment">// EffectSize represents effect size measurements</span>
+<span class="token keyword">type</span> EffectSize <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    CohensD        <span class="token builtin">float64</span>
+    GlassD         <span class="token builtin">float64</span>
+    R2             <span class="token builtin">float64</span>
+    Interpretation EffectInterpretation
+<span class="token punctuation">}</span>
+
+<span class="token comment">// EffectInterpretation defines effect size interpretations</span>
+<span class="token keyword">type</span> EffectInterpretation <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    NegligibleEffect EffectInterpretation <span class="token operator">=</span> <span class="token boolean">iota</span>
+    SmallEffect
+    MediumEffect
+    LargeEffect
+    VeryLargeEffect
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ImpactAssessment represents impact assessment</span>
+<span class="token keyword">type</span> ImpactAssessment <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    BusinessImpact   BusinessImpact
+    TechnicalImpact  TechnicalImpact
+    UserImpact       UserImpact
+    OverallSeverity  ImpactSeverity
+<span class="token punctuation">}</span>
+
+<span class="token comment">// BusinessImpact represents business impact</span>
+<span class="token keyword">type</span> BusinessImpact <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Revenue      <span class="token builtin">float64</span>
+    Cost         <span class="token builtin">float64</span>
+    SLA          SLAImpact
+    Reputation   ReputationImpact
+    Competitive  CompetitiveImpact
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SLAImpact represents SLA impact</span>
+<span class="token keyword">type</span> SLAImpact <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Violated     <span class="token builtin">bool</span>
+    Metrics      <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">float64</span>
+    Penalties    <span class="token builtin">float64</span>
+    RiskLevel    RiskLevel
+<span class="token punctuation">}</span>
+
+<span class="token comment">// RiskLevel defines risk levels</span>
+<span class="token keyword">type</span> RiskLevel <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LowRisk RiskLevel <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MediumRisk
+    HighRisk
+    CriticalRisk
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ReputationImpact represents reputation impact</span>
+<span class="token keyword">type</span> ReputationImpact <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Score         <span class="token builtin">float64</span>
+    Sentiment     <span class="token builtin">float64</span>
+    Mentions      <span class="token builtin">int</span>
+    Escalations   <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CompetitiveImpact represents competitive impact</span>
+<span class="token keyword">type</span> CompetitiveImpact <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Advantage     <span class="token builtin">float64</span>
+    MarketShare   <span class="token builtin">float64</span>
+    Position      <span class="token builtin">int</span>
+    Differentiation <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// TechnicalImpact represents technical impact</span>
+<span class="token keyword">type</span> TechnicalImpact <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    SystemStability  <span class="token builtin">float64</span>
+    ResourceUsage    ResourceImpact
+    Scalability      ScalabilityImpact
+    Maintainability  <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ResourceImpact represents resource impact</span>
+<span class="token keyword">type</span> ResourceImpact <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    CPU        <span class="token builtin">float64</span>
+    Memory     <span class="token builtin">float64</span>
+    Disk       <span class="token builtin">float64</span>
+    Network    <span class="token builtin">float64</span>
+    Efficiency <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ScalabilityImpact represents scalability impact</span>
+<span class="token keyword">type</span> ScalabilityImpact <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Throughput   <span class="token builtin">float64</span>
+    Latency      <span class="token builtin">float64</span>
+    Concurrency  <span class="token builtin">float64</span>
+    Capacity     <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// UserImpact represents user impact</span>
+<span class="token keyword">type</span> UserImpact <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Experience    UserExperience
+    Satisfaction  <span class="token builtin">float64</span>
+    Retention     <span class="token builtin">float64</span>
+    Engagement    <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// UserExperience represents user experience metrics</span>
+<span class="token keyword">type</span> UserExperience <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ResponseTime  <span class="token builtin">float64</span>
+    Availability  <span class="token builtin">float64</span>
+    Reliability   <span class="token builtin">float64</span>
+    Usability     <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ImpactSeverity defines impact severity levels</span>
+<span class="token keyword">type</span> ImpactSeverity <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LowImpact ImpactSeverity <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MediumImpact
+    HighImpact
+    CriticalImpact
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ChangePoint represents a detected change point</span>
+<span class="token keyword">type</span> ChangePoint <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Timestamp   time<span class="token punctuation">.</span>Time
+    Metric      <span class="token builtin">string</span>
+    Type        ChangeType
+    Magnitude   <span class="token builtin">float64</span>
+    Confidence  <span class="token builtin">float64</span>
+    Method      ChangePointMethod
+    Context     ChangeContext
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ChangeType defines change point types</span>
+<span class="token keyword">type</span> ChangeType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LevelChange ChangeType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    TrendChange
+    VarianceChange
+    DistributionChange
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ChangePointMethod defines change point detection methods</span>
+<span class="token keyword">type</span> ChangePointMethod <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    CUSUM ChangePointMethod <span class="token operator">=</span> <span class="token boolean">iota</span>
+    PELT
+    BinSeg
+    EdDivisive
+    KernelCPD
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ChangeContext provides context for change points</span>
+<span class="token keyword">type</span> ChangeContext <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Build    BuildInfo
+    Commit   CommitInfo
+    Deploy   DeployInfo
+    Config   ConfigChange
+    External ExternalEvent
+<span class="token punctuation">}</span>
+
+<span class="token comment">// DeployInfo contains deployment information</span>
+<span class="token keyword">type</span> DeployInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ID        <span class="token builtin">string</span>
+    Version   <span class="token builtin">string</span>
+    Timestamp time<span class="token punctuation">.</span>Time
+    Changes   <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Rollback  <span class="token builtin">bool</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ConfigChange represents configuration changes</span>
+<span class="token keyword">type</span> ConfigChange <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Component <span class="token builtin">string</span>
+    Parameter <span class="token builtin">string</span>
+    OldValue  <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    NewValue  <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Timestamp time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ExternalEvent represents external events</span>
+<span class="token keyword">type</span> ExternalEvent <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type        EventType
+    Description <span class="token builtin">string</span>
+    Timestamp   time<span class="token punctuation">.</span>Time
+    Source      <span class="token builtin">string</span>
+    Impact      <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// EventType defines external event types</span>
+<span class="token keyword">type</span> EventType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    InfrastructureEvent EventType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    NetworkEvent
+    DatabaseEvent
+    ServiceEvent
+    EnvironmentEvent
+<span class="token punctuation">)</span>
+
+<span class="token comment">// RegressionAnalysis contains detailed regression analysis</span>
+<span class="token keyword">type</span> RegressionAnalysis <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Method       DetectionMethod
+    Algorithm    <span class="token builtin">string</span>
+    Parameters   <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Timeline     AnalysisTimeline
+    Comparison   ComparisonAnalysis
+    Trend        TrendAnalysis
+    Correlation  CorrelationAnalysis
+    Confidence   ConfidenceAnalysis
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AnalysisTimeline tracks analysis timeline</span>
+<span class="token keyword">type</span> AnalysisTimeline <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    DetectionTime time<span class="token punctuation">.</span>Time
+    AnalysisTime  time<span class="token punctuation">.</span>Time
+    Duration      time<span class="token punctuation">.</span>Duration
+    DataPoints    <span class="token builtin">int</span>
+    WindowSize    time<span class="token punctuation">.</span>Duration
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ComparisonAnalysis contains comparison analysis results</span>
+<span class="token keyword">type</span> ComparisonAnalysis <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    BaselinePeriod   TimeRange
+    ComparisonPeriod TimeRange
+    SampleSizes      SampleSizes
+    Statistical      StatisticalComparison
+    Practical        PracticalComparison
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SampleSizes contains sample size information</span>
+<span class="token keyword">type</span> SampleSizes <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Baseline   <span class="token builtin">int</span>
+    Comparison <span class="token builtin">int</span>
+    Adequate   <span class="token builtin">bool</span>
+    Power      <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// StatisticalComparison contains statistical comparison results</span>
+<span class="token keyword">type</span> StatisticalComparison <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Test         StatisticalTest
+    PValue       <span class="token builtin">float64</span>
+    Significant  <span class="token builtin">bool</span>
+    EffectSize   EffectSize
+    Confidence   ConfidenceInterval
+<span class="token punctuation">}</span>
+
+<span class="token comment">// PracticalComparison contains practical comparison results</span>
+<span class="token keyword">type</span> PracticalComparison <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Threshold   <span class="token builtin">float64</span>
+    Exceeded    <span class="token builtin">bool</span>
+    Magnitude   ChangeMagnitude
+    Business    BusinessSignificance
+<span class="token punctuation">}</span>
+
+<span class="token comment">// BusinessSignificance represents business significance</span>
+<span class="token keyword">type</span> BusinessSignificance <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Significant <span class="token builtin">bool</span>
+    Impact      <span class="token builtin">float64</span>
+    Cost        <span class="token builtin">float64</span>
+    Priority    BusinessPriority
+<span class="token punctuation">}</span>
+
+<span class="token comment">// BusinessPriority defines business priority levels</span>
+<span class="token keyword">type</span> BusinessPriority <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LowPriority BusinessPriority <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MediumPriority
+    HighPriority
+    CriticalPriority
+<span class="token punctuation">)</span>
+
+<span class="token comment">// TrendAnalysis contains trend analysis results</span>
+<span class="token keyword">type</span> TrendAnalysis <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    LongTerm  TrendInfo
+    ShortTerm TrendInfo
+    Forecast  ForecastInfo
+    Seasonal  SeasonalInfo
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ForecastInfo contains forecasting information</span>
+<span class="token keyword">type</span> ForecastInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Method      ForecastMethod
+    Horizon     time<span class="token punctuation">.</span>Duration
+    Values      <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">float64</span>
+    Confidence  <span class="token punctuation">[</span><span class="token punctuation">]</span>ConfidenceInterval
+    Accuracy    ForecastAccuracy
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ForecastMethod defines forecasting methods</span>
+<span class="token keyword">type</span> ForecastMethod <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LinearTrend ForecastMethod <span class="token operator">=</span> <span class="token boolean">iota</span>
+    ExponentialSmoothing
+    ARIMA
+    Prophet
+    MLForecast
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ForecastAccuracy contains forecast accuracy metrics</span>
+<span class="token keyword">type</span> ForecastAccuracy <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    MAE   <span class="token builtin">float64</span>
+    MAPE  <span class="token builtin">float64</span>
+    RMSE  <span class="token builtin">float64</span>
+    SMAPE <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CorrelationAnalysis contains correlation analysis results</span>
+<span class="token keyword">type</span> CorrelationAnalysis <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Metrics      <span class="token punctuation">[</span><span class="token punctuation">]</span>MetricCorrelation
+    External     <span class="token punctuation">[</span><span class="token punctuation">]</span>ExternalCorrelation
+    Lag          <span class="token punctuation">[</span><span class="token punctuation">]</span>LagCorrelation
+    Causality    <span class="token punctuation">[</span><span class="token punctuation">]</span>CausalityAnalysis
+<span class="token punctuation">}</span>
+
+<span class="token comment">// MetricCorrelation represents correlation between metrics</span>
+<span class="token keyword">type</span> MetricCorrelation <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Metric1     <span class="token builtin">string</span>
+    Metric2     <span class="token builtin">string</span>
+    Coefficient <span class="token builtin">float64</span>
+    Significance <span class="token builtin">float64</span>
+    Type        CorrelationType
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CorrelationType defines correlation types</span>
+<span class="token keyword">type</span> CorrelationType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    PearsonCorrelation CorrelationType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    SpearmanCorrelation
+    KendallCorrelation
+    PartialCorrelation
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ExternalCorrelation represents correlation with external factors</span>
+<span class="token keyword">type</span> ExternalCorrelation <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Factor      <span class="token builtin">string</span>
+    Coefficient <span class="token builtin">float64</span>
+    Significance <span class="token builtin">float64</span>
+    Lag         time<span class="token punctuation">.</span>Duration
+<span class="token punctuation">}</span>
+
+<span class="token comment">// LagCorrelation represents lagged correlations</span>
+<span class="token keyword">type</span> LagCorrelation <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Metric      <span class="token builtin">string</span>
+    Lag         time<span class="token punctuation">.</span>Duration
+    Coefficient <span class="token builtin">float64</span>
+    Significance <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CausalityAnalysis represents causality analysis results</span>
+<span class="token keyword">type</span> CausalityAnalysis <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Cause       <span class="token builtin">string</span>
+    Effect      <span class="token builtin">string</span>
+    Strength    <span class="token builtin">float64</span>
+    Confidence  <span class="token builtin">float64</span>
+    Method      CausalityMethod
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CausalityMethod defines causality analysis methods</span>
+<span class="token keyword">type</span> CausalityMethod <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    GrangerCausality CausalityMethod <span class="token operator">=</span> <span class="token boolean">iota</span>
+    TransferEntropy
+    PearsonCausality
+    CCM
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ConfidenceAnalysis contains confidence analysis results</span>
+<span class="token keyword">type</span> ConfidenceAnalysis <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Overall     <span class="token builtin">float64</span>
+    Statistical <span class="token builtin">float64</span>
+    Practical   <span class="token builtin">float64</span>
+    Temporal    <span class="token builtin">float64</span>
+    Contextual  <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// RootCauseInfo contains root cause analysis information</span>
+<span class="token keyword">type</span> RootCauseInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Identified   <span class="token builtin">bool</span>
+    Causes       <span class="token punctuation">[</span><span class="token punctuation">]</span>PotentialCause
+    Primary      <span class="token operator">*</span>PotentialCause
+    Investigation InvestigationInfo
+    Evidence     <span class="token punctuation">[</span><span class="token punctuation">]</span>Evidence
+<span class="token punctuation">}</span>
+
+<span class="token comment">// PotentialCause represents a potential root cause</span>
+<span class="token keyword">type</span> PotentialCause <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type        CauseType
+    Description <span class="token builtin">string</span>
+    Probability <span class="token builtin">float64</span>
+    Impact      <span class="token builtin">float64</span>
+    Evidence    <span class="token punctuation">[</span><span class="token punctuation">]</span>Evidence
+    Timeline    CauseTimeline
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CauseType defines root cause types</span>
+<span class="token keyword">type</span> CauseType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    CodeChange CauseType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    ConfigurationChange
+    InfrastructureChange
+    DataChange
+    ExternalDependency
+    ResourceContention
+    EnvironmentalFactor
+<span class="token punctuation">)</span>
+
+<span class="token comment">// CauseTimeline tracks cause timeline</span>
+<span class="token keyword">type</span> CauseTimeline <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Introduced time<span class="token punctuation">.</span>Time
+    Detected   time<span class="token punctuation">.</span>Time
+    Confirmed  time<span class="token punctuation">.</span>Time
+    Resolved   <span class="token operator">*</span>time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// InvestigationInfo contains investigation information</span>
+<span class="token keyword">type</span> InvestigationInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Status      InvestigationStatus
+    Assignee    <span class="token builtin">string</span>
+    StartedAt   time<span class="token punctuation">.</span>Time
+    UpdatedAt   time<span class="token punctuation">.</span>Time
+    Notes       <span class="token punctuation">[</span><span class="token punctuation">]</span>InvestigationNote
+    Actions     <span class="token punctuation">[</span><span class="token punctuation">]</span>InvestigationAction
+<span class="token punctuation">}</span>
+
+<span class="token comment">// InvestigationStatus defines investigation status</span>
+<span class="token keyword">type</span> InvestigationStatus <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    NotStarted InvestigationStatus <span class="token operator">=</span> <span class="token boolean">iota</span>
+    InProgress
+    Completed
+    Blocked
+    Cancelled
+<span class="token punctuation">)</span>
+
+<span class="token comment">// InvestigationNote represents investigation notes</span>
+<span class="token keyword">type</span> InvestigationNote <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Author    <span class="token builtin">string</span>
+    Content   <span class="token builtin">string</span>
+    Timestamp time<span class="token punctuation">.</span>Time
+    Tags      <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// InvestigationAction represents investigation actions</span>
+<span class="token keyword">type</span> InvestigationAction <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type        ActionType
+    Description <span class="token builtin">string</span>
+    Assignee    <span class="token builtin">string</span>
+    Status      ActionStatus
+    DueDate     time<span class="token punctuation">.</span>Time
+    CompletedAt <span class="token operator">*</span>time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ActionType defines investigation action types</span>
+<span class="token keyword">type</span> ActionType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    DataCollection ActionType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    Analysis
+    Testing
+    Verification
+    Remediation
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ActionStatus defines action status</span>
+<span class="token keyword">type</span> ActionStatus <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    Pending ActionStatus <span class="token operator">=</span> <span class="token boolean">iota</span>
+    InProgress
+    Completed
+    Failed
+    Cancelled
+<span class="token punctuation">)</span>
+
+<span class="token comment">// Evidence represents evidence for root causes</span>
+<span class="token keyword">type</span> Evidence <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type        EvidenceType
+    Source      <span class="token builtin">string</span>
+    Description <span class="token builtin">string</span>
+    Strength    <span class="token builtin">float64</span>
+    Timestamp   time<span class="token punctuation">.</span>Time
+    Data        <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// EvidenceType defines evidence types</span>
+<span class="token keyword">type</span> EvidenceType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    MetricEvidence EvidenceType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    LogEvidence
+    TraceEvidence
+    ProfileEvidence
+    CodeEvidence
+    ConfigEvidence
+<span class="token punctuation">)</span>
+
+<span class="token comment">// Recommendation represents analysis recommendations</span>
+<span class="token keyword">type</span> Recommendation <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type        RecommendationType
+    Priority    RecommendationPriority
+    Description <span class="token builtin">string</span>
+    Actions     <span class="token punctuation">[</span><span class="token punctuation">]</span>RecommendedAction
+    Impact      ExpectedImpact
+    Effort      EffortEstimate
+<span class="token punctuation">}</span>
+
+<span class="token comment">// RecommendationType defines recommendation types</span>
+<span class="token keyword">type</span> RecommendationType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    ImmediateAction RecommendationType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    Investigation
+    Monitoring
+    Prevention
+    Optimization
+<span class="token punctuation">)</span>
+
+<span class="token comment">// RecommendationPriority defines recommendation priority</span>
+<span class="token keyword">type</span> RecommendationPriority <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LowPriority RecommendationPriority <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MediumPriority
+    HighPriority
+    UrgentPriority
+<span class="token punctuation">)</span>
+
+<span class="token comment">// RecommendedAction represents recommended actions</span>
+<span class="token keyword">type</span> RecommendedAction <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Description <span class="token builtin">string</span>
+    Type        ActionType
+    Urgency     ActionUrgency
+    Owner       <span class="token builtin">string</span>
+    Deadline    time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ActionUrgency defines action urgency levels</span>
+<span class="token keyword">type</span> ActionUrgency <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LowUrgency ActionUrgency <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MediumUrgency
+    HighUrgency
+    CriticalUrgency
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ExpectedImpact represents expected impact of recommendations</span>
+<span class="token keyword">type</span> ExpectedImpact <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Performance   <span class="token builtin">float64</span>
+    Reliability   <span class="token builtin">float64</span>
+    Scalability   <span class="token builtin">float64</span>
+    Maintainability <span class="token builtin">float64</span>
+    Cost          <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// EffortEstimate represents effort estimation</span>
+<span class="token keyword">type</span> EffortEstimate <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Hours       <span class="token builtin">float64</span>
+    Complexity  ComplexityLevel
+    Resources   <span class="token punctuation">[</span><span class="token punctuation">]</span>RequiredResource
+    Timeline    time<span class="token punctuation">.</span>Duration
+    Risk        RiskAssessment
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ComplexityLevel defines complexity levels</span>
+<span class="token keyword">type</span> ComplexityLevel <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LowComplexity ComplexityLevel <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MediumComplexity
+    HighComplexity
+    VeryHighComplexity
+<span class="token punctuation">)</span>
+
+<span class="token comment">// RequiredResource represents required resources</span>
+<span class="token keyword">type</span> RequiredResource <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type        ResourceType
+    Amount      <span class="token builtin">float64</span>
+    Skills      <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Availability <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ResourceType defines resource types</span>
+<span class="token keyword">type</span> ResourceType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    DeveloperResource ResourceType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    DevOpsResource
+    QAResource
+    ArchitectResource
+    InfrastructureResource
+<span class="token punctuation">)</span>
+
+<span class="token comment">// RiskAssessment represents risk assessment</span>
+<span class="token keyword">type</span> RiskAssessment <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Level       RiskLevel
+    Factors     <span class="token punctuation">[</span><span class="token punctuation">]</span>RiskFactor
+    Mitigation  <span class="token punctuation">[</span><span class="token punctuation">]</span>MitigationStrategy
+    Probability <span class="token builtin">float64</span>
+    Impact      <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// RiskFactor represents risk factors</span>
+<span class="token keyword">type</span> RiskFactor <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Description <span class="token builtin">string</span>
+    Probability <span class="token builtin">float64</span>
+    Impact      <span class="token builtin">float64</span>
+    Mitigation  <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// MitigationStrategy represents mitigation strategies</span>
+<span class="token keyword">type</span> MitigationStrategy <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Description   <span class="token builtin">string</span>
+    Effectiveness <span class="token builtin">float64</span>
+    Cost          <span class="token builtin">float64</span>
+    Timeline      time<span class="token punctuation">.</span>Duration
+<span class="token punctuation">}</span>
+
+<span class="token comment">// PerformanceHistory manages performance history data</span>
+<span class="token keyword">type</span> PerformanceHistory <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    data    <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>PerformanceData
+    indices <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">*</span>TimeIndex
+    config  HistoryConfig
+    storage HistoryStorage
+    cache   <span class="token operator">*</span>HistoryCache
+    mu      sync<span class="token punctuation">.</span>RWMutex
+<span class="token punctuation">}</span>
+
+<span class="token comment">// HistoryConfig contains history configuration</span>
+<span class="token keyword">type</span> HistoryConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    MaxEntries      <span class="token builtin">int</span>
+    RetentionPeriod time<span class="token punctuation">.</span>Duration
+    CompressionEnabled <span class="token builtin">bool</span>
+    IndexingEnabled    <span class="token builtin">bool</span>
+    CacheSize          <span class="token builtin">int</span>
+    CacheTTL           time<span class="token punctuation">.</span>Duration
+<span class="token punctuation">}</span>
+
+<span class="token comment">// TimeIndex provides time-based indexing</span>
+<span class="token keyword">type</span> TimeIndex <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    entries <span class="token punctuation">[</span><span class="token punctuation">]</span>TimeEntry
+    sorted  <span class="token builtin">bool</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// TimeEntry represents time index entries</span>
+<span class="token keyword">type</span> TimeEntry <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Timestamp time<span class="token punctuation">.</span>Time
+    Index     <span class="token builtin">int</span>
+    ID        <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// HistoryStorage manages persistent history storage</span>
+<span class="token keyword">type</span> HistoryStorage <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">Store</span><span class="token punctuation">(</span>data <span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> <span class="token builtin">error</span>
+    <span class="token function">Retrieve</span><span class="token punctuation">(</span>query HistoryQuery<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>PerformanceData<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span>
+    <span class="token function">Delete</span><span class="token punctuation">(</span>criteria DeletionCriteria<span class="token punctuation">)</span> <span class="token builtin">error</span>
+    <span class="token function">Compact</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">error</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// HistoryQuery represents history queries</span>
+<span class="token keyword">type</span> HistoryQuery <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    TimeRange   TimeRange
+    Metrics     <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Filters     <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Limit       <span class="token builtin">int</span>
+    Aggregation AggregationSpec
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AggregationSpec specifies data aggregation</span>
+<span class="token keyword">type</span> AggregationSpec <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Function AggregationFunction
+    Interval time<span class="token punctuation">.</span>Duration
+    GroupBy  <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AggregationFunction defines aggregation functions</span>
+<span class="token keyword">type</span> AggregationFunction <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    MeanAggregation AggregationFunction <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MedianAggregation
+    MaxAggregation
+    MinAggregation
+    SumAggregation
+    CountAggregation
+<span class="token punctuation">)</span>
+
+<span class="token comment">// DeletionCriteria specifies deletion criteria</span>
+<span class="token keyword">type</span> DeletionCriteria <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    OlderThan time<span class="token punctuation">.</span>Time
+    Filters   <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    KeepLast  <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// DetectionAccuracy contains detection accuracy metrics</span>
+<span class="token keyword">type</span> DetectionAccuracy <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Precision    <span class="token builtin">float64</span>
+    Recall       <span class="token builtin">float64</span>
+    F1Score      <span class="token builtin">float64</span>
+    Specificity  <span class="token builtin">float64</span>
+    Accuracy     <span class="token builtin">float64</span>
+    FalsePositiveRate <span class="token builtin">float64</span>
+    FalseNegativeRate <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// NewRegressionAnalyzer creates a new regression analyzer</span>
+<span class="token keyword">func</span> <span class="token function">NewRegressionAnalyzer</span><span class="token punctuation">(</span>config RegressionConfig<span class="token punctuation">)</span> <span class="token operator">*</span>RegressionAnalyzer <span class="token punctuation">{</span>
+    analyzer <span class="token operator">:=</span> <span class="token operator">&amp;</span>RegressionAnalyzer<span class="token punctuation">{</span>
+        detectors<span class="token punctuation">:</span>    <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>RegressionDetector<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        baseline<span class="token punctuation">:</span>     <span class="token function">NewPerformanceBaseline</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        history<span class="token punctuation">:</span>      <span class="token function">NewPerformanceHistory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        alertManager<span class="token punctuation">:</span> <span class="token function">NewRegressionAlertManager</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        rootCause<span class="token punctuation">:</span>    <span class="token function">NewRootCauseAnalyzer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        config<span class="token punctuation">:</span>       config<span class="token punctuation">,</span>
+        cache<span class="token punctuation">:</span>        <span class="token function">NewRegressionCache</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        metrics<span class="token punctuation">:</span>      <span class="token operator">&amp;</span>RegressionMetrics<span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Initialize detectors based on configuration</span>
+    <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> method <span class="token operator">:=</span> <span class="token keyword">range</span> config<span class="token punctuation">.</span>DetectionMethods <span class="token punctuation">{</span>
+        detector <span class="token operator">:=</span> <span class="token function">createDetector</span><span class="token punctuation">(</span>method<span class="token punctuation">,</span> config<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> detector <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+            analyzer<span class="token punctuation">.</span>detectors<span class="token punctuation">[</span>detector<span class="token punctuation">.</span><span class="token function">GetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">String</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token operator">=</span> detector
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> analyzer
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AnalyzeRegression performs comprehensive regression analysis</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">AnalyzeRegression</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">,</span> data <span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>RegressionResult<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    ra<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">defer</span> ra<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// Validate input data</span>
+    <span class="token keyword">if</span> err <span class="token operator">:=</span> ra<span class="token punctuation">.</span><span class="token function">validateData</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"data validation failed: %w"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Check cache first</span>
+    <span class="token keyword">if</span> cached <span class="token operator">:=</span> ra<span class="token punctuation">.</span>cache<span class="token punctuation">.</span><span class="token function">Get</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>ID<span class="token punctuation">)</span><span class="token punctuation">;</span> cached <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> cached<span class="token punctuation">,</span> <span class="token boolean">nil</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Get or create baseline</span>
+    baseline <span class="token operator">:=</span> ra<span class="token punctuation">.</span><span class="token function">getOrCreateBaseline</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> baseline <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"failed to establish baseline"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Perform regression detection using multiple methods</span>
+    results <span class="token operator">:=</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>RegressionResult<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token function">len</span><span class="token punctuation">(</span>ra<span class="token punctuation">.</span>detectors<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> detector <span class="token operator">:=</span> <span class="token keyword">range</span> ra<span class="token punctuation">.</span>detectors <span class="token punctuation">{</span>
+        result<span class="token punctuation">,</span> err <span class="token operator">:=</span> detector<span class="token punctuation">.</span><span class="token function">DetectRegression</span><span class="token punctuation">(</span>data<span class="token punctuation">,</span> baseline<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+            <span class="token comment">// Log error but continue with other detectors</span>
+            <span class="token keyword">continue</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> result<span class="token punctuation">.</span>Detected <span class="token punctuation">{</span>
+            results <span class="token operator">=</span> <span class="token function">append</span><span class="token punctuation">(</span>results<span class="token punctuation">,</span> result<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Combine results using ensemble method</span>
+    finalResult <span class="token operator">:=</span> ra<span class="token punctuation">.</span><span class="token function">combineResults</span><span class="token punctuation">(</span>results<span class="token punctuation">,</span> data<span class="token punctuation">)</span>
+
+    <span class="token comment">// Perform root cause analysis if regression detected</span>
+    <span class="token keyword">if</span> finalResult<span class="token punctuation">.</span>Detected <span class="token operator">&amp;&amp;</span> ra<span class="token punctuation">.</span>config<span class="token punctuation">.</span>EnableRootCause <span class="token punctuation">{</span>
+        rootCause<span class="token punctuation">,</span> err <span class="token operator">:=</span> ra<span class="token punctuation">.</span>rootCause<span class="token punctuation">.</span><span class="token function">Analyze</span><span class="token punctuation">(</span>ctx<span class="token punctuation">,</span> data<span class="token punctuation">,</span> baseline<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> err <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+            finalResult<span class="token punctuation">.</span>RootCause <span class="token operator">=</span> rootCause
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Generate recommendations</span>
+    finalResult<span class="token punctuation">.</span>Recommendations <span class="token operator">=</span> ra<span class="token punctuation">.</span><span class="token function">generateRecommendations</span><span class="token punctuation">(</span>finalResult<span class="token punctuation">)</span>
+
+    <span class="token comment">// Store in history</span>
+    ra<span class="token punctuation">.</span>history<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span>
+
+    <span class="token comment">// Cache result</span>
+    ra<span class="token punctuation">.</span>cache<span class="token punctuation">.</span><span class="token function">Set</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>ID<span class="token punctuation">,</span> finalResult<span class="token punctuation">)</span>
+
+    <span class="token comment">// Send alerts if enabled</span>
+    <span class="token keyword">if</span> ra<span class="token punctuation">.</span>config<span class="token punctuation">.</span>EnableAlerts <span class="token operator">&amp;&amp;</span> finalResult<span class="token punctuation">.</span>Detected <span class="token punctuation">{</span>
+        ra<span class="token punctuation">.</span>alertManager<span class="token punctuation">.</span><span class="token function">SendAlert</span><span class="token punctuation">(</span>finalResult<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Update metrics</span>
+    ra<span class="token punctuation">.</span><span class="token function">updateMetrics</span><span class="token punctuation">(</span>finalResult<span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> finalResult<span class="token punctuation">,</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CompareWithBaseline compares current performance with baseline</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">CompareWithBaseline</span><span class="token punctuation">(</span>current <span class="token operator">*</span>PerformanceData<span class="token punctuation">,</span> baseline <span class="token operator">*</span>PerformanceBaseline<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>ComparisonResult<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    comparison <span class="token operator">:=</span> <span class="token operator">&amp;</span>ComparisonResult<span class="token punctuation">{</span>
+        Current<span class="token punctuation">:</span>   current<span class="token punctuation">,</span>
+        Baseline<span class="token punctuation">:</span>  baseline<span class="token punctuation">,</span>
+        Timestamp<span class="token punctuation">:</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Compare each metric</span>
+    <span class="token keyword">for</span> metricName<span class="token punctuation">,</span> currentMetric <span class="token operator">:=</span> <span class="token keyword">range</span> current<span class="token punctuation">.</span>Metrics <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> baselineMetric<span class="token punctuation">,</span> exists <span class="token operator">:=</span> baseline<span class="token punctuation">.</span>Metrics<span class="token punctuation">[</span>metricName<span class="token punctuation">]</span><span class="token punctuation">;</span> exists <span class="token punctuation">{</span>
+            metricComparison <span class="token operator">:=</span> ra<span class="token punctuation">.</span><span class="token function">compareMetric</span><span class="token punctuation">(</span>currentMetric<span class="token punctuation">,</span> baselineMetric<span class="token punctuation">)</span>
+            comparison<span class="token punctuation">.</span>Metrics <span class="token operator">=</span> <span class="token function">append</span><span class="token punctuation">(</span>comparison<span class="token punctuation">.</span>Metrics<span class="token punctuation">,</span> metricComparison<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Calculate overall comparison</span>
+    comparison<span class="token punctuation">.</span>Overall <span class="token operator">=</span> ra<span class="token punctuation">.</span><span class="token function">calculateOverallComparison</span><span class="token punctuation">(</span>comparison<span class="token punctuation">.</span>Metrics<span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> comparison<span class="token punctuation">,</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// UpdateBaseline updates the performance baseline</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">UpdateBaseline</span><span class="token punctuation">(</span>data <span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span>
+    ra<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">defer</span> ra<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> ra<span class="token punctuation">.</span>config<span class="token punctuation">.</span>EnableAutoBaseline <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> ra<span class="token punctuation">.</span>baseline<span class="token punctuation">.</span><span class="token function">Update</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// GetPerformanceTrends analyzes performance trends</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">GetPerformanceTrends</span><span class="token punctuation">(</span>timeRange TimeRange<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>TrendAnalysisResult<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Retrieve historical data</span>
+    query <span class="token operator">:=</span> HistoryQuery<span class="token punctuation">{</span>
+        TimeRange<span class="token punctuation">:</span> timeRange<span class="token punctuation">,</span>
+        Limit<span class="token punctuation">:</span>     <span class="token number">1000</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+
+    historicalData<span class="token punctuation">,</span> err <span class="token operator">:=</span> ra<span class="token punctuation">.</span>history<span class="token punctuation">.</span><span class="token function">Query</span><span class="token punctuation">(</span>query<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"failed to retrieve historical data: %w"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token function">len</span><span class="token punctuation">(</span>historicalData<span class="token punctuation">)</span> <span class="token operator">&lt;</span> ra<span class="token punctuation">.</span>config<span class="token punctuation">.</span>MinDataPoints <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"insufficient data points for trend analysis"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Perform trend analysis</span>
+    trendResult <span class="token operator">:=</span> <span class="token operator">&amp;</span>TrendAnalysisResult<span class="token punctuation">{</span>
+        TimeRange<span class="token punctuation">:</span> timeRange<span class="token punctuation">,</span>
+        DataPoints<span class="token punctuation">:</span> <span class="token function">len</span><span class="token punctuation">(</span>historicalData<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        Timestamp<span class="token punctuation">:</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Analyze trends for each metric</span>
+    <span class="token keyword">for</span> metricName <span class="token operator">:=</span> <span class="token keyword">range</span> historicalData<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>Metrics <span class="token punctuation">{</span>
+        trend <span class="token operator">:=</span> ra<span class="token punctuation">.</span><span class="token function">analyzeTrendForMetric</span><span class="token punctuation">(</span>metricName<span class="token punctuation">,</span> historicalData<span class="token punctuation">)</span>
+        trendResult<span class="token punctuation">.</span>Trends<span class="token punctuation">[</span>metricName<span class="token punctuation">]</span> <span class="token operator">=</span> trend
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> trendResult<span class="token punctuation">,</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// validateData validates performance data</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">validateData</span><span class="token punctuation">(</span>data <span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> data <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"data cannot be nil"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> data<span class="token punctuation">.</span>ID <span class="token operator">==</span> <span class="token string">""</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"data ID is required"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token function">len</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>Metrics<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"at least one metric is required"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> data<span class="token punctuation">.</span>Timestamp<span class="token punctuation">.</span><span class="token function">IsZero</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"timestamp is required"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Validate each metric</span>
+    <span class="token keyword">for</span> name<span class="token punctuation">,</span> metric <span class="token operator">:=</span> <span class="token keyword">range</span> data<span class="token punctuation">.</span>Metrics <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> err <span class="token operator">:=</span> ra<span class="token punctuation">.</span><span class="token function">validateMetric</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> metric<span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"invalid metric %s: %w"</span><span class="token punctuation">,</span> name<span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// validateMetric validates a performance metric</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">validateMetric</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">,</span> metric MetricValue<span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> math<span class="token punctuation">.</span><span class="token function">IsNaN</span><span class="token punctuation">(</span>metric<span class="token punctuation">.</span>Value<span class="token punctuation">)</span> <span class="token operator">||</span> math<span class="token punctuation">.</span><span class="token function">IsInf</span><span class="token punctuation">(</span>metric<span class="token punctuation">.</span>Value<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"invalid metric value"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token function">len</span><span class="token punctuation">(</span>metric<span class="token punctuation">.</span>Samples<span class="token punctuation">)</span> <span class="token operator">&gt;</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+        <span class="token keyword">for</span> i<span class="token punctuation">,</span> sample <span class="token operator">:=</span> <span class="token keyword">range</span> metric<span class="token punctuation">.</span>Samples <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> math<span class="token punctuation">.</span><span class="token function">IsNaN</span><span class="token punctuation">(</span>sample<span class="token punctuation">)</span> <span class="token operator">||</span> math<span class="token punctuation">.</span><span class="token function">IsInf</span><span class="token punctuation">(</span>sample<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"invalid sample at index %d"</span><span class="token punctuation">,</span> i<span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Helper methods and types</span>
+<span class="token keyword">type</span> RegressionMetrics <span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">type</span> RegressionCache <span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">type</span> RegressionAlertManager <span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">type</span> RootCauseAnalyzer <span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">type</span> HistoryCache <span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">type</span> ComparisonResult <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Current   <span class="token operator">*</span>PerformanceData
+    Baseline  <span class="token operator">*</span>PerformanceBaseline
+    Metrics   <span class="token punctuation">[</span><span class="token punctuation">]</span>MetricComparison
+    Overall   OverallComparison
+    Timestamp time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token keyword">type</span> MetricComparison <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Name         <span class="token builtin">string</span>
+    Current      <span class="token builtin">float64</span>
+    Baseline     <span class="token builtin">float64</span>
+    Change       Change
+    Significance StatisticalSignificance
+<span class="token punctuation">}</span>
+
+<span class="token keyword">type</span> OverallComparison <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Score      <span class="token builtin">float64</span>
+    Regression <span class="token builtin">bool</span>
+    Severity   RegressionSeverity
+    Summary    <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">type</span> TrendAnalysisResult <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    TimeRange  TimeRange
+    DataPoints <span class="token builtin">int</span>
+    Trends     <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>TrendInfo
+    Timestamp  time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Constructor functions</span>
+<span class="token keyword">func</span> <span class="token function">NewPerformanceBaseline</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>PerformanceBaseline <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token operator">&amp;</span>PerformanceBaseline<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewPerformanceHistory</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>PerformanceHistory <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token operator">&amp;</span>PerformanceHistory<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewRegressionAlertManager</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>RegressionAlertManager <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token operator">&amp;</span>RegressionAlertManager<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewRootCauseAnalyzer</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>RootCauseAnalyzer <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token operator">&amp;</span>RootCauseAnalyzer<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewRegressionCache</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>RegressionCache <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token operator">&amp;</span>RegressionCache<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+
+<span class="token comment">// Method implementations</span>
+<span class="token keyword">func</span> <span class="token function">createDetector</span><span class="token punctuation">(</span>method DetectionMethod<span class="token punctuation">,</span> config RegressionConfig<span class="token punctuation">)</span> RegressionDetector <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">getOrCreateBaseline</span><span class="token punctuation">(</span>data <span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> <span class="token operator">*</span>PerformanceBaseline <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">combineResults</span><span class="token punctuation">(</span>results <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>RegressionResult<span class="token punctuation">,</span> data <span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> <span class="token operator">*</span>RegressionResult <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">generateRecommendations</span><span class="token punctuation">(</span>result <span class="token operator">*</span>RegressionResult<span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>Recommendation <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">updateMetrics</span><span class="token punctuation">(</span>result <span class="token operator">*</span>RegressionResult<span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">compareMetric</span><span class="token punctuation">(</span>current MetricValue<span class="token punctuation">,</span> baseline BaselineMetric<span class="token punctuation">)</span> MetricComparison <span class="token punctuation">{</span> <span class="token keyword">return</span> MetricComparison<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">calculateOverallComparison</span><span class="token punctuation">(</span>metrics <span class="token punctuation">[</span><span class="token punctuation">]</span>MetricComparison<span class="token punctuation">)</span> OverallComparison <span class="token punctuation">{</span> <span class="token keyword">return</span> OverallComparison<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ra <span class="token operator">*</span>RegressionAnalyzer<span class="token punctuation">)</span> <span class="token function">analyzeTrendForMetric</span><span class="token punctuation">(</span>metricName <span class="token builtin">string</span><span class="token punctuation">,</span> data <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> TrendInfo <span class="token punctuation">{</span> <span class="token keyword">return</span> TrendInfo<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>pb <span class="token operator">*</span>PerformanceBaseline<span class="token punctuation">)</span> <span class="token function">Update</span><span class="token punctuation">(</span>data <span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ph <span class="token operator">*</span>PerformanceHistory<span class="token punctuation">)</span> <span class="token function">Add</span><span class="token punctuation">(</span>data <span class="token operator">*</span>PerformanceData<span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ph <span class="token operator">*</span>PerformanceHistory<span class="token punctuation">)</span> <span class="token function">Query</span><span class="token punctuation">(</span>query HistoryQuery<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>PerformanceData<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>rc <span class="token operator">*</span>RegressionCache<span class="token punctuation">)</span> <span class="token function">Get</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">*</span>RegressionResult <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>rc <span class="token operator">*</span>RegressionCache<span class="token punctuation">)</span> <span class="token function">Set</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> result <span class="token operator">*</span>RegressionResult<span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ram <span class="token operator">*</span>RegressionAlertManager<span class="token punctuation">)</span> <span class="token function">SendAlert</span><span class="token punctuation">(</span>result <span class="token operator">*</span>RegressionResult<span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>rca <span class="token operator">*</span>RootCauseAnalyzer<span class="token punctuation">)</span> <span class="token function">Analyze</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">,</span> data <span class="token operator">*</span>PerformanceData<span class="token punctuation">,</span> baseline <span class="token operator">*</span>PerformanceBaseline<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>RootCauseInfo<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+
+<span class="token comment">// String methods for enums</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>dm DetectionMethod<span class="token punctuation">)</span> <span class="token function">String</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+    <span class="token keyword">switch</span> dm <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> StatisticalDetection<span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"statistical"</span>
+    <span class="token keyword">case</span> ThresholdDetection<span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"threshold"</span>
+    <span class="token keyword">case</span> TrendDetection<span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"trend"</span>
+    <span class="token keyword">case</span> ChangePointDetection<span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"changepoint"</span>
+    <span class="token keyword">case</span> MLDetection<span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"ml"</span>
+    <span class="token keyword">case</span> EnsembleDetection<span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"ensemble"</span>
+    <span class="token keyword">default</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"unknown"</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Example usage</span>
+<span class="token keyword">func</span> <span class="token function">ExampleRegressionAnalysis</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Create analyzer configuration</span>
+    config <span class="token operator">:=</span> RegressionConfig<span class="token punctuation">{</span>
+        DetectionMethods<span class="token punctuation">:</span>    <span class="token punctuation">[</span><span class="token punctuation">]</span>DetectionMethod<span class="token punctuation">{</span>StatisticalDetection<span class="token punctuation">,</span> TrendDetection<span class="token punctuation">,</span> ChangePointDetection<span class="token punctuation">}</span><span class="token punctuation">,</span>
+        SensitivityLevel<span class="token punctuation">:</span>    MediumSensitivity<span class="token punctuation">,</span>
+        BaselineWindow<span class="token punctuation">:</span>      <span class="token number">7</span> <span class="token operator">*</span> <span class="token number">24</span> <span class="token operator">*</span> time<span class="token punctuation">.</span>Hour<span class="token punctuation">,</span> <span class="token comment">// 7 days</span>
+        ComparisonWindow<span class="token punctuation">:</span>    time<span class="token punctuation">.</span>Hour<span class="token punctuation">,</span>
+        MinDataPoints<span class="token punctuation">:</span>       <span class="token number">10</span><span class="token punctuation">,</span>
+        ConfidenceLevel<span class="token punctuation">:</span>     <span class="token number">0.95</span><span class="token punctuation">,</span>
+        SignificanceLevel<span class="token punctuation">:</span>   <span class="token number">0.05</span><span class="token punctuation">,</span>
+        ChangeThreshold<span class="token punctuation">:</span>     <span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token comment">// 10% change threshold</span>
+        EnableAutoBaseline<span class="token punctuation">:</span>  <span class="token boolean">true</span><span class="token punctuation">,</span>
+        EnableTrendAnalysis<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        EnableAlerts<span class="token punctuation">:</span>        <span class="token boolean">true</span><span class="token punctuation">,</span>
+        EnableRootCause<span class="token punctuation">:</span>     <span class="token boolean">true</span><span class="token punctuation">,</span>
+        MaxHistory<span class="token punctuation">:</span>          <span class="token number">10000</span><span class="token punctuation">,</span>
+        UpdateInterval<span class="token punctuation">:</span>      time<span class="token punctuation">.</span>Minute<span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Create analyzer</span>
+    analyzer <span class="token operator">:=</span> <span class="token function">NewRegressionAnalyzer</span><span class="token punctuation">(</span>config<span class="token punctuation">)</span>
+
+    <span class="token comment">// Create sample performance data</span>
+    data <span class="token operator">:=</span> <span class="token operator">&amp;</span>PerformanceData<span class="token punctuation">{</span>
+        ID<span class="token punctuation">:</span>        <span class="token string">"perf-001"</span><span class="token punctuation">,</span>
+        Timestamp<span class="token punctuation">:</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        Metrics<span class="token punctuation">:</span> <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>MetricValue<span class="token punctuation">{</span>
+            <span class="token string">"response_time"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+                Value<span class="token punctuation">:</span>   <span class="token number">150.5</span><span class="token punctuation">,</span>
+                Unit<span class="token punctuation">:</span>    <span class="token string">"ms"</span><span class="token punctuation">,</span>
+                Type<span class="token punctuation">:</span>    LatencyMetric<span class="token punctuation">,</span>
+                Samples<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">float64</span><span class="token punctuation">{</span><span class="token number">145.2</span><span class="token punctuation">,</span> <span class="token number">148.7</span><span class="token punctuation">,</span> <span class="token number">152.1</span><span class="token punctuation">,</span> <span class="token number">149.8</span><span class="token punctuation">,</span> <span class="token number">154.2</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+                Statistics<span class="token punctuation">:</span> DescriptiveStats<span class="token punctuation">{</span>
+                    Count<span class="token punctuation">:</span>  <span class="token number">5</span><span class="token punctuation">,</span>
+                    Mean<span class="token punctuation">:</span>   <span class="token number">150.0</span><span class="token punctuation">,</span>
+                    Median<span class="token punctuation">:</span> <span class="token number">149.8</span><span class="token punctuation">,</span>
+                    StdDev<span class="token punctuation">:</span> <span class="token number">3.2</span><span class="token punctuation">,</span>
+                    Min<span class="token punctuation">:</span>    <span class="token number">145.2</span><span class="token punctuation">,</span>
+                    Max<span class="token punctuation">:</span>    <span class="token number">154.2</span><span class="token punctuation">,</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token string">"throughput"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+                Value<span class="token punctuation">:</span>   <span class="token number">950.2</span><span class="token punctuation">,</span>
+                Unit<span class="token punctuation">:</span>    <span class="token string">"req/s"</span><span class="token punctuation">,</span>
+                Type<span class="token punctuation">:</span>    ThroughputMetric<span class="token punctuation">,</span>
+                Samples<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">float64</span><span class="token punctuation">{</span><span class="token number">945.1</span><span class="token punctuation">,</span> <span class="token number">952.3</span><span class="token punctuation">,</span> <span class="token number">948.7</span><span class="token punctuation">,</span> <span class="token number">951.8</span><span class="token punctuation">,</span> <span class="token number">953.2</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+                Statistics<span class="token punctuation">:</span> DescriptiveStats<span class="token punctuation">{</span>
+                    Count<span class="token punctuation">:</span>  <span class="token number">5</span><span class="token punctuation">,</span>
+                    Mean<span class="token punctuation">:</span>   <span class="token number">950.2</span><span class="token punctuation">,</span>
+                    Median<span class="token punctuation">:</span> <span class="token number">951.8</span><span class="token punctuation">,</span>
+                    StdDev<span class="token punctuation">:</span> <span class="token number">3.1</span><span class="token punctuation">,</span>
+                    Min<span class="token punctuation">:</span>    <span class="token number">945.1</span><span class="token punctuation">,</span>
+                    Max<span class="token punctuation">:</span>    <span class="token number">953.2</span><span class="token punctuation">,</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        Build<span class="token punctuation">:</span> BuildInfo<span class="token punctuation">{</span>
+            Version<span class="token punctuation">:</span> <span class="token string">"v1.2.3"</span><span class="token punctuation">,</span>
+            Commit<span class="token punctuation">:</span>  <span class="token string">"abc123def456"</span><span class="token punctuation">,</span>
+            Branch<span class="token punctuation">:</span>  <span class="token string">"main"</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        Environment<span class="token punctuation">:</span> Environment<span class="token punctuation">{</span>
+            OS<span class="token punctuation">:</span>           <span class="token string">"linux"</span><span class="token punctuation">,</span>
+            Architecture<span class="token punctuation">:</span> <span class="token string">"amd64"</span><span class="token punctuation">,</span>
+            GoVersion<span class="token punctuation">:</span>    <span class="token string">"1.21.0"</span><span class="token punctuation">,</span>
+            CPUCores<span class="token punctuation">:</span>     <span class="token number">8</span><span class="token punctuation">,</span>
+            Memory<span class="token punctuation">:</span>       <span class="token number">16</span> <span class="token operator">*</span> <span class="token number">1024</span> <span class="token operator">*</span> <span class="token number">1024</span> <span class="token operator">*</span> <span class="token number">1024</span><span class="token punctuation">,</span> <span class="token comment">// 16GB</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        Quality<span class="token punctuation">:</span> DataQuality<span class="token punctuation">{</span>
+            Completeness<span class="token punctuation">:</span> <span class="token number">1.0</span><span class="token punctuation">,</span>
+            Stability<span class="token punctuation">:</span>    <span class="token number">0.95</span><span class="token punctuation">,</span>
+            Reliability<span class="token punctuation">:</span>  <span class="token number">0.98</span><span class="token punctuation">,</span>
+            OverallScore<span class="token punctuation">:</span> <span class="token number">0.97</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Analyze for regressions</span>
+    ctx <span class="token operator">:=</span> context<span class="token punctuation">.</span><span class="token function">Background</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    result<span class="token punctuation">,</span> err <span class="token operator">:=</span> analyzer<span class="token punctuation">.</span><span class="token function">AnalyzeRegression</span><span class="token punctuation">(</span>ctx<span class="token punctuation">,</span> data<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Regression analysis failed: %v\n"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">}</span>
+
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"Regression Analysis Results:"</span><span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Regression detected: %t\n"</span><span class="token punctuation">,</span> result<span class="token punctuation">.</span>Detected<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> result<span class="token punctuation">.</span>Detected <span class="token punctuation">{</span>
+        fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Severity: %v\n"</span><span class="token punctuation">,</span> result<span class="token punctuation">.</span>Severity<span class="token punctuation">)</span>
+        fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Confidence: %.2f\n"</span><span class="token punctuation">,</span> result<span class="token punctuation">.</span>Confidence<span class="token punctuation">)</span>
+        fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Affected metrics: %d\n"</span><span class="token punctuation">,</span> <span class="token function">len</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>AffectedMetrics<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> metric <span class="token operator">:=</span> <span class="token keyword">range</span> result<span class="token punctuation">.</span>AffectedMetrics <span class="token punctuation">{</span>
+            fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"  - %s: %.2f -&gt; %.2f (%.2f%% change)\n"</span><span class="token punctuation">,</span>
+                metric<span class="token punctuation">.</span>Name<span class="token punctuation">,</span>
+                metric<span class="token punctuation">.</span>BaselineValue<span class="token punctuation">,</span>
+                metric<span class="token punctuation">.</span>CurrentValue<span class="token punctuation">,</span>
+                metric<span class="token punctuation">.</span>Change<span class="token punctuation">.</span>Relative<span class="token operator">*</span><span class="token number">100</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token keyword">if</span> <span class="token function">len</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>Recommendations<span class="token punctuation">)</span> <span class="token operator">&gt;</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+            fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"Recommendations:"</span><span class="token punctuation">)</span>
+            <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> rec <span class="token operator">:=</span> <span class="token keyword">range</span> result<span class="token punctuation">.</span>Recommendations <span class="token punctuation">{</span>
+                fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"  - %s: %s\n"</span><span class="token punctuation">,</span> rec<span class="token punctuation">.</span>Type<span class="token punctuation">,</span> rec<span class="token punctuation">.</span>Description<span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Analysis completed at: %v\n"</span><span class="token punctuation">,</span> result<span class="token punctuation">.</span>Timestamp<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="statistical-methods">Statistical Methods</h2>
+<p>Advanced statistical techniques for robust regression detection.</p>
+<h3 id="hypothesis-testing">Hypothesis Testing</h3>
+<p>Statistical hypothesis testing for performance comparisons.</p>
+<h3 id="change-point-detection">Change Point Detection</h3>
+<p>Algorithms for detecting significant changes in performance metrics.</p>
+<h3 id="time-series-analysis">Time Series Analysis</h3>
+<p>Time series methods for trend analysis and forecasting.</p>
+<h2 id="automated-monitoring">Automated Monitoring</h2>
+<p>Continuous monitoring systems for real-time regression detection.</p>
+<h3 id="real-time-detection">Real-time Detection</h3>
+<p>Streaming analysis for immediate regression identification.</p>
+<h3 id="baseline-management">Baseline Management</h3>
+<p>Automated baseline establishment and maintenance.</p>
+<h3 id="alert-integration">Alert Integration</h3>
+<p>Integration with alerting systems for timely notifications.</p>
+<h2 id="best-practices">Best Practices</h2>
+<ol>
+<li><strong>Baseline Quality</strong>: Maintain high-quality baselines with sufficient data</li>
+<li><strong>Multiple Methods</strong>: Use multiple detection methods for robust analysis</li>
+<li><strong>Statistical Rigor</strong>: Apply proper statistical methods with appropriate thresholds</li>
+<li><strong>Context Awareness</strong>: Consider environmental and deployment context</li>
+<li><strong>Root Cause Analysis</strong>: Implement comprehensive root cause identification</li>
+<li><strong>Automated Response</strong>: Automate common remediation actions</li>
+<li><strong>Continuous Learning</strong>: Continuously improve detection algorithms</li>
+<li><strong>Documentation</strong>: Maintain detailed documentation of regression events</li>
+</ol>
+<h2 id="summary">Summary</h2>
+<p>Performance regression analysis provides critical capabilities for maintaining application quality:</p>
+<ol>
+<li><strong>Early Detection</strong>: Identify performance regressions as soon as they occur</li>
+<li><strong>Statistical Rigor</strong>: Apply robust statistical methods for reliable detection</li>
+<li><strong>Root Cause Analysis</strong>: Automatically identify likely causes of regressions</li>
+<li><strong>Impact Assessment</strong>: Quantify the business and technical impact</li>
+<li><strong>Automated Response</strong>: Implement automated remediation for common issues</li>
+<li><strong>Continuous Improvement</strong>: Learn from historical data to improve detection</li>
+</ol>
+<p>These techniques enable organizations to maintain consistent application performance and quickly address issues before they impact users.</p>
+</body></html>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="statistical-analysis.html" class="navigation navigation-prev " aria-label="Previous page: Statistical Analysis">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="comparative-benchmarking.html" class="navigation navigation-next " aria-label="Next page: Comparative Benchmarking">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Performance Regression","level":"3.3.2","depth":2,"next":{"title":"Comparative Benchmarking","level":"3.3.3","depth":2,"path":"benchmarking/analysis/comparative-benchmarking.md","ref":"benchmarking/analysis/comparative-benchmarking.md","articles":[]},"previous":{"title":"Statistical Analysis","level":"3.3.1","depth":2,"path":"benchmarking/analysis/statistical-analysis.md","ref":"benchmarking/analysis/statistical-analysis.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-highlight","prism","mermaid"],"root":".","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"mermaid":{"theme":"default"},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Performance Engineering Team","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.0.0","go_version":"1.24+","repo_url":"https://github.com/psavelis/codechallenge"},"title":"Advanced Go Performance Engineering","language":"en","gitbook":">=3.0.0","description":"A Complete Guide to Profiling, Benchmarking, and Optimization Techniques in Go"},"file":{"path":"benchmarking/analysis/performance-regression.md","mtime":"2025-09-08T15:20:54.112Z","type":"markdown"},"gitbook":{"version":"6.1.4","time":"2025-09-08T17:50:06.395Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/honkit-plugin-mermaid/mermaid-load.js"></script>
+        
+    
+        
+        <script src="../../gitbook/honkit-plugin-mermaid/mermaid.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

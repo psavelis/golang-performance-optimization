@@ -1,0 +1,3407 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Custom Profiling · Advanced Go Performance Engineering</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.1.4">
+        <meta name="author" content="Performance Engineering Team">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/honkit-plugin-prism/prism.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/honkit-plugin-mermaid/mermaid.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="custom-profiles.html" />
+    
+    
+    <link rel="prev" href="../concurrency-profiling/channel-analysis.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Part I: Fundamentals</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../../getting-started/">
+            
+                <a href="../../getting-started/">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../../getting-started/environment-setup.html">
+            
+                <a href="../../getting-started/environment-setup.html">
+            
+                    
+                    Environment Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../../getting-started/first-profile.html">
+            
+                <a href="../../getting-started/first-profile.html">
+            
+                    
+                    Your First Profile
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../../getting-started/understanding-output.html">
+            
+                <a href="../../getting-started/understanding-output.html">
+            
+                    
+                    Understanding Output
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../../getting-started/architecture-overview.html">
+            
+                <a href="../../getting-started/architecture-overview.html">
+            
+                    
+                    Architecture Overview (Mermaid)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../../fundamentals/">
+            
+                <a href="../../fundamentals/">
+            
+                    
+                    Performance Fundamentals
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../../fundamentals/runtime-internals.html">
+            
+                <a href="../../fundamentals/runtime-internals.html">
+            
+                    
+                    Go Runtime Internals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../../fundamentals/memory-model.html">
+            
+                <a href="../../fundamentals/memory-model.html">
+            
+                    
+                    Memory Model
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../../fundamentals/goroutine-scheduler.html">
+            
+                <a href="../../fundamentals/goroutine-scheduler.html">
+            
+                    
+                    Goroutine Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../../fundamentals/garbage-collector.html">
+            
+                <a href="../../fundamentals/garbage-collector.html">
+            
+                    
+                    Garbage Collector
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part II: Profiling Tools & Techniques</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Profiling Tools Overview
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../cpu-profiling/">
+            
+                <a href="../cpu-profiling/">
+            
+                    
+                    CPU Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.2.1" data-path="../cpu-profiling/basic-cpu-profiling.html">
+            
+                <a href="../cpu-profiling/basic-cpu-profiling.html">
+            
+                    
+                    Basic CPU Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.2" data-path="../cpu-profiling/advanced-techniques.html">
+            
+                <a href="../cpu-profiling/advanced-techniques.html">
+            
+                    
+                    Advanced Techniques
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="../cpu-profiling/flamegraph-analysis.html">
+            
+                <a href="../cpu-profiling/flamegraph-analysis.html">
+            
+                    
+                    Flamegraph Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../memory-profiling/">
+            
+                <a href="../memory-profiling/">
+            
+                    
+                    Memory Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.3.1" data-path="../memory-profiling/heap-profiling.html">
+            
+                <a href="../memory-profiling/heap-profiling.html">
+            
+                    
+                    Heap Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.2" data-path="../memory-profiling/allocation-profiling.html">
+            
+                <a href="../memory-profiling/allocation-profiling.html">
+            
+                    
+                    Allocation Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.3" data-path="../memory-profiling/leak-detection.html">
+            
+                <a href="../memory-profiling/leak-detection.html">
+            
+                    
+                    Memory Leaks Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../goroutine-profiling/">
+            
+                <a href="../goroutine-profiling/">
+            
+                    
+                    Goroutine Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.4.1" data-path="../goroutine-profiling/goroutine-analysis.html">
+            
+                <a href="../goroutine-profiling/goroutine-analysis.html">
+            
+                    
+                    Goroutine Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.2" data-path="../goroutine-profiling/deadlock-detection.html">
+            
+                <a href="../goroutine-profiling/deadlock-detection.html">
+            
+                    
+                    Deadlock Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.3" data-path="../goroutine-profiling/goroutine-leaks.html">
+            
+                <a href="../goroutine-profiling/goroutine-leaks.html">
+            
+                    
+                    Goroutine Leaks
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../concurrency-profiling/">
+            
+                <a href="../concurrency-profiling/">
+            
+                    
+                    Mutex & Block Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.5.1" data-path="../concurrency-profiling/mutex-contention.html">
+            
+                <a href="../concurrency-profiling/mutex-contention.html">
+            
+                    
+                    Mutex Contention
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5.2" data-path="../concurrency-profiling/block-profiling.html">
+            
+                <a href="../concurrency-profiling/block-profiling.html">
+            
+                    
+                    Block Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5.3" data-path="../concurrency-profiling/channel-analysis.html">
+            
+                <a href="../concurrency-profiling/channel-analysis.html">
+            
+                    
+                    Channel Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.6" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Custom Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.6.1" data-path="custom-profiles.html">
+            
+                <a href="custom-profiles.html">
+            
+                    
+                    Custom Profiles
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6.2" data-path="runtime-metrics.html">
+            
+                <a href="runtime-metrics.html">
+            
+                    
+                    Runtime Metrics
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6.3" data-path="execution-tracing.html">
+            
+                <a href="execution-tracing.html">
+            
+                    
+                    Execution Tracing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part III: Benchmarking Excellence</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../../benchmarking/">
+            
+                <a href="../../benchmarking/">
+            
+                    
+                    Benchmarking Fundamentals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../../benchmarking/writing-benchmarks/">
+            
+                <a href="../../benchmarking/writing-benchmarks/">
+            
+                    
+                    Writing Effective Benchmarks
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="../../benchmarking/writing-benchmarks/basic-benchmarks.html">
+            
+                <a href="../../benchmarking/writing-benchmarks/basic-benchmarks.html">
+            
+                    
+                    Basic Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="../../benchmarking/writing-benchmarks/sub-benchmarks.html">
+            
+                <a href="../../benchmarking/writing-benchmarks/sub-benchmarks.html">
+            
+                    
+                    Sub-benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="../../benchmarking/writing-benchmarks/parallel-benchmarks.html">
+            
+                <a href="../../benchmarking/writing-benchmarks/parallel-benchmarks.html">
+            
+                    
+                    Parallel Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="../../benchmarking/analysis/">
+            
+                <a href="../../benchmarking/analysis/">
+            
+                    
+                    Benchmark Analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="../../benchmarking/analysis/statistical-analysis.html">
+            
+                <a href="../../benchmarking/analysis/statistical-analysis.html">
+            
+                    
+                    Statistical Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="../../benchmarking/analysis/performance-regression.html">
+            
+                <a href="../../benchmarking/analysis/performance-regression.html">
+            
+                    
+                    Performance Regression
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="../../benchmarking/analysis/comparative-benchmarking.html">
+            
+                <a href="../../benchmarking/analysis/comparative-benchmarking.html">
+            
+                    
+                    Comparative Benchmarking
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../../benchmarking/advanced/">
+            
+                <a href="../../benchmarking/advanced/">
+            
+                    
+                    Advanced Benchmarking
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.4.1" data-path="../../benchmarking/advanced/micro-benchmarks.html">
+            
+                <a href="../../benchmarking/advanced/micro-benchmarks.html">
+            
+                    
+                    Micro-benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.2" data-path="../../benchmarking/advanced/e2e-benchmarks.html">
+            
+                <a href="../../benchmarking/advanced/e2e-benchmarks.html">
+            
+                    
+                    End-to-End Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.3" data-path="../../benchmarking/advanced/load-testing.html">
+            
+                <a href="../../benchmarking/advanced/load-testing.html">
+            
+                    
+                    Load Testing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part IV: Optimization Techniques</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../../optimization/">
+            
+                <a href="../../optimization/">
+            
+                    
+                    Optimization Strategies
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../../optimization/algorithms/">
+            
+                <a href="../../optimization/algorithms/">
+            
+                    
+                    Algorithm Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="../../optimization/algorithms/time-complexity.html">
+            
+                <a href="../../optimization/algorithms/time-complexity.html">
+            
+                    
+                    Time Complexity Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="../../optimization/algorithms/space-complexity.html">
+            
+                <a href="../../optimization/algorithms/space-complexity.html">
+            
+                    
+                    Space Complexity Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="../../optimization/algorithms/data-structures.html">
+            
+                <a href="../../optimization/algorithms/data-structures.html">
+            
+                    
+                    Data Structure Selection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="../../optimization/memory/">
+            
+                <a href="../../optimization/memory/">
+            
+                    
+                    Memory Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="../../optimization/memory/memory-pools.html">
+            
+                <a href="../../optimization/memory/memory-pools.html">
+            
+                    
+                    Memory Pools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="../../optimization/memory/object-reuse.html">
+            
+                <a href="../../optimization/memory/object-reuse.html">
+            
+                    
+                    Object Reuse
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="../../optimization/memory/stack-vs-heap.html">
+            
+                <a href="../../optimization/memory/stack-vs-heap.html">
+            
+                    
+                    Stack vs Heap
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="../../optimization/memory/memory-layout.html">
+            
+                <a href="../../optimization/memory/memory-layout.html">
+            
+                    
+                    Memory Layout
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="../../optimization/concurrency/">
+            
+                <a href="../../optimization/concurrency/">
+            
+                    
+                    Concurrency Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.4.1" data-path="../../optimization/concurrency/goroutine-patterns.html">
+            
+                <a href="../../optimization/concurrency/goroutine-patterns.html">
+            
+                    
+                    Goroutine Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.2" data-path="../../optimization/concurrency/channel-optimization.html">
+            
+                <a href="../../optimization/concurrency/channel-optimization.html">
+            
+                    
+                    Channel Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.3" data-path="../../optimization/concurrency/worker-pools.html">
+            
+                <a href="../../optimization/concurrency/worker-pools.html">
+            
+                    
+                    Worker Pools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.4" data-path="../../optimization/concurrency/lock-free.html">
+            
+                <a href="../../optimization/concurrency/lock-free.html">
+            
+                    
+                    Lock-Free Programming
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="../../optimization/io/">
+            
+                <a href="../../optimization/io/">
+            
+                    
+                    I/O Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.5.1" data-path="../../optimization/io/buffer-management.html">
+            
+                <a href="../../optimization/io/buffer-management.html">
+            
+                    
+                    Buffer Management
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.2" data-path="../../optimization/io/streaming.html">
+            
+                <a href="../../optimization/io/streaming.html">
+            
+                    
+                    Streaming Processing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.3" data-path="../../optimization/io/network-optimization.html">
+            
+                <a href="../../optimization/io/network-optimization.html">
+            
+                    
+                    Network Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="../../optimization/compiler/">
+            
+                <a href="../../optimization/compiler/">
+            
+                    
+                    Compiler Optimizations
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.6.1" data-path="../../optimization/compiler/inlining.html">
+            
+                <a href="../../optimization/compiler/inlining.html">
+            
+                    
+                    Inlining
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.2" data-path="../../optimization/compiler/escape-analysis.html">
+            
+                <a href="../../optimization/compiler/escape-analysis.html">
+            
+                    
+                    Escape Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.3" data-path="../../optimization/compiler/build-optimization.html">
+            
+                <a href="../../optimization/compiler/build-optimization.html">
+            
+                    
+                    Build Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part V: Production Performance</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../../production/">
+            
+                <a href="../../production/">
+            
+                    
+                    Production Monitoring
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="../../production/continuous-profiling/">
+            
+                <a href="../../production/continuous-profiling/">
+            
+                    
+                    Continuous Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.2.1" data-path="../../production/continuous-profiling/setup.html">
+            
+                <a href="../../production/continuous-profiling/setup.html">
+            
+                    
+                    Production Profiling Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.2" data-path="../../production/continuous-profiling/pyroscope-examples.html">
+            
+                <a href="../../production/continuous-profiling/pyroscope-examples.html">
+            
+                    
+                    Pyroscope Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.3" data-path="../../production/continuous-profiling/automated-analysis.html">
+            
+                <a href="../../production/continuous-profiling/automated-analysis.html">
+            
+                    
+                    Automated Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.4" data-path="../../production/continuous-profiling/alerting.html">
+            
+                <a href="../../production/continuous-profiling/alerting.html">
+            
+                    
+                    Alert Systems
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="../../production/metrics/">
+            
+                <a href="../../production/metrics/">
+            
+                    
+                    Metrics with Prometheus
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.3.1" data-path="../../production/metrics/prometheus-examples.html">
+            
+                <a href="../../production/metrics/prometheus-examples.html">
+            
+                    
+                    Prometheus Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.2" data-path="../../production/metrics/unobtrusive-metrics.html">
+            
+                <a href="../../production/metrics/unobtrusive-metrics.html">
+            
+                    
+                    Unobtrusive Metrics (CLI Jobs)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="../../production/tracing/">
+            
+                <a href="../../production/tracing/">
+            
+                    
+                    Distributed Tracing with OpenTelemetry
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.4.1" data-path="../../production/tracing/local-setup.html">
+            
+                <a href="../../production/tracing/local-setup.html">
+            
+                    
+                    Local Setup (OTel Collector)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4.2" data-path="../../production/tracing/vendor-guides.html">
+            
+                <a href="../../production/tracing/vendor-guides.html">
+            
+                    
+                    Vendor Guides (Datadog, New Relic, Splunk)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4.3" data-path="../../production/tracing/dynatrace-integration.html">
+            
+                <a href="../../production/tracing/dynatrace-integration.html">
+            
+                    
+                    Dynatrace Integration (OTLP)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="../../production/logging/">
+            
+                <a href="../../production/logging/">
+            
+                    
+                    Centralized Logging
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.5.1" data-path="../../production/logging/fluentd-loki-examples.html">
+            
+                <a href="../../production/logging/fluentd-loki-examples.html">
+            
+                    
+                    Fluentd → Loki Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5.2" data-path="../../production/logging/elk-setup.html">
+            
+                <a href="../../production/logging/elk-setup.html">
+            
+                    
+                    Advanced ELK Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6" data-path="../../production/performance-testing/">
+            
+                <a href="../../production/performance-testing/">
+            
+                    
+                    Performance Testing
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.6.1" data-path="../../production/performance-testing/test-design.html">
+            
+                <a href="../../production/performance-testing/test-design.html">
+            
+                    
+                    Performance Test Design
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6.2" data-path="../../production/performance-testing/cicd-integration.html">
+            
+                <a href="../../production/performance-testing/cicd-integration.html">
+            
+                    
+                    CI/CD Integration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6.3" data-path="../../production/performance-testing/regression-detection.md">
+            
+                <span>
+            
+                    
+                    Regression Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7" data-path="../../production/scalability/README.md">
+            
+                <span>
+            
+                    
+                    Scalability Analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.7.1" data-path="../../production/scalability/horizontal-scaling.md">
+            
+                <span>
+            
+                    
+                    Horizontal Scaling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7.2" data-path="../../production/scalability/vertical-scaling.md">
+            
+                <span>
+            
+                    
+                    Vertical Scaling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7.3" data-path="../../production/scalability/bottleneck-analysis.md">
+            
+                <span>
+            
+                    
+                    Bottleneck Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VI: Case Studies & Best Practices</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../../case-studies/">
+            
+                <a href="../../case-studies/">
+            
+                    
+                    Real-World Case Studies
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.1.1" data-path="../../case-studies/web-service-optimization.html">
+            
+                <a href="../../case-studies/web-service-optimization.html">
+            
+                    
+                    Web Service Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.2" data-path="../../case-studies/microservices-optimization.html">
+            
+                <a href="../../case-studies/microservices-optimization.html">
+            
+                    
+                    Microservices Performance
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.3" data-path="../../case-studies/database-optimization.html">
+            
+                <a href="../../case-studies/database-optimization.html">
+            
+                    
+                    Database Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../../best-practices/">
+            
+                <a href="../../best-practices/">
+            
+                    
+                    Best Practices
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.2.1" data-path="../../best-practices/development-workflow.html">
+            
+                <a href="../../best-practices/development-workflow.html">
+            
+                    
+                    Development Workflow
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.2" data-path="../../best-practices/production-deployment.html">
+            
+                <a href="../../best-practices/production-deployment.html">
+            
+                    
+                    Production Deployment
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.3" data-path="../../best-practices/team-culture.html">
+            
+                <a href="../../best-practices/team-culture.html">
+            
+                    
+                    Team Culture
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VII: Tools & Resources</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="../../tools-resources/">
+            
+                <a href="../../tools-resources/">
+            
+                    
+                    Tools & Resources
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="7.1.1" data-path="../../tools-resources/essential-tools.html">
+            
+                <a href="../../tools-resources/essential-tools.html">
+            
+                    
+                    Essential Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.1.2" data-path="../../tools-resources/external-resources.html">
+            
+                <a href="../../tools-resources/external-resources.html">
+            
+                    
+                    External Resources
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.1.3" data-path="../../tools-resources/community.html">
+            
+                <a href="../../tools-resources/community.html">
+            
+                    
+                    Community Guide
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendices</li>
+        
+        
+    
+        <li class="chapter " data-level="8.1" data-path="../../appendices/runtime-flags.html">
+            
+                <a href="../../appendices/runtime-flags.html">
+            
+                    
+                    Appendix A: Go Runtime Flags
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.2" data-path="../../appendices/metrics-glossary.html">
+            
+                <a href="../../appendices/metrics-glossary.html">
+            
+                    
+                    Appendix B: Performance Metrics Glossary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.3" data-path="../../appendices/troubleshooting.html">
+            
+                <a href="../../appendices/troubleshooting.html">
+            
+                    
+                    Appendix C: Troubleshooting Guide
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.4" data-path="../../appendices/performance-patterns.html">
+            
+                <a href="../../appendices/performance-patterns.html">
+            
+                    
+                    Appendix D: Performance Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >Custom Profiling</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <html><head></head><body><h1 id="custom-profiling">Custom Profiling</h1>
+<p>Comprehensive guide to building custom profiling solutions for Go applications. This guide covers custom profiler development, specialized profiling techniques, advanced instrumentation, and integration with existing profiling ecosystems.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#custom-profiler-architecture">Custom Profiler Architecture</a></li>
+<li><a href="#profile-data-collection">Profile Data Collection</a></li>
+<li><a href="#sampling-strategies">Sampling Strategies</a></li>
+<li><a href="#data-processing">Data Processing</a></li>
+<li><a href="#visualization">Visualization</a></li>
+<li><a href="#integration">Integration</a></li>
+<li><a href="#performance-considerations">Performance Considerations</a></li>
+<li><a href="#best-practices">Best Practices</a></li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<p>Custom profiling enables specialized performance analysis tailored to specific application needs. This guide provides comprehensive strategies for building custom profilers that capture unique performance characteristics and provide insights not available through standard profiling tools.</p>
+<h3 id="custom-profiler-architecture">Custom Profiler Architecture</h3>
+<pre class="language-"><code class="lang-go"><span class="token keyword">package</span> main
+
+<span class="token keyword">import</span> <span class="token punctuation">(</span>
+    <span class="token string">"context"</span>
+    <span class="token string">"fmt"</span>
+    <span class="token string">"runtime"</span>
+    <span class="token string">"sync"</span>
+    <span class="token string">"sync/atomic"</span>
+    <span class="token string">"time"</span>
+    <span class="token string">"unsafe"</span>
+<span class="token punctuation">)</span>
+
+<span class="token comment">// CustomProfiler provides a framework for building custom profilers</span>
+<span class="token keyword">type</span> CustomProfiler <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    config        ProfilerConfig
+    collectors    <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>ProfileCollector
+    samplers      <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Sampler
+    processors    <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>ProfileProcessor
+    storage       ProfileStorage
+    exporter      ProfileExporter
+    scheduler     <span class="token operator">*</span>ProfileScheduler
+    aggregator    <span class="token operator">*</span>ProfileAggregator
+    filter        <span class="token operator">*</span>ProfileFilter
+    metrics       <span class="token operator">*</span>ProfilerMetrics
+    state         <span class="token operator">*</span>ProfilerState
+    mu            sync<span class="token punctuation">.</span>RWMutex
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfilerConfig contains profiler configuration</span>
+<span class="token keyword">type</span> ProfilerConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Name                <span class="token builtin">string</span>
+    Version             <span class="token builtin">string</span>
+    EnabledCollectors   <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    SamplingRate        <span class="token builtin">float64</span>
+    MaxMemoryUsage      <span class="token builtin">int64</span>
+    MaxCPUUsage         <span class="token builtin">float64</span>
+    FlushInterval       time<span class="token punctuation">.</span>Duration
+    RetentionPeriod     time<span class="token punctuation">.</span>Duration
+    CompressionEnabled  <span class="token builtin">bool</span>
+    EncryptionEnabled   <span class="token builtin">bool</span>
+    MetricsEnabled      <span class="token builtin">bool</span>
+    DebugMode          <span class="token builtin">bool</span>
+    OutputFormat       OutputFormat
+    OutputDestination  <span class="token builtin">string</span>
+    BufferSize         <span class="token builtin">int</span>
+    WorkerCount        <span class="token builtin">int</span>
+    BatchSize          <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// OutputFormat defines output formats</span>
+<span class="token keyword">type</span> OutputFormat <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    JSONFormat OutputFormat <span class="token operator">=</span> <span class="token boolean">iota</span>
+    BinaryFormat
+    ProtobufFormat
+    FlameGraphFormat
+    PProfFormat
+    CustomFormat
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ProfileCollector collects specific types of profile data</span>
+<span class="token keyword">type</span> ProfileCollector <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">Start</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">)</span> <span class="token builtin">error</span>
+    <span class="token function">Stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">error</span>
+    <span class="token function">Collect</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>ProfileData<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span>
+    <span class="token function">GetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> CollectorType
+    <span class="token function">GetConfig</span><span class="token punctuation">(</span><span class="token punctuation">)</span> CollectorConfig
+    <span class="token function">GetMetrics</span><span class="token punctuation">(</span><span class="token punctuation">)</span> CollectorMetrics
+    <span class="token function">IsRunning</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">bool</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CollectorType defines collector types</span>
+<span class="token keyword">type</span> CollectorType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    CPUCollector CollectorType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    MemoryCollector
+    GoroutineCollector
+    BlockCollector
+    MutexCollector
+    NetworkCollector
+    DiskIOCollector
+    CustomCollector
+    TraceCollector
+    HeapCollector
+    AllocCollector
+    GCCollector
+<span class="token punctuation">)</span>
+
+<span class="token comment">// CollectorConfig contains collector configuration</span>
+<span class="token keyword">type</span> CollectorConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Enabled        <span class="token builtin">bool</span>
+    SamplingRate   <span class="token builtin">float64</span>
+    BufferSize     <span class="token builtin">int</span>
+    FlushInterval  time<span class="token punctuation">.</span>Duration
+    Filters        <span class="token punctuation">[</span><span class="token punctuation">]</span>CollectorFilter
+    Aggregation    AggregationConfig
+    OutputOptions  OutputOptions
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CollectorFilter filters collected data</span>
+<span class="token keyword">type</span> CollectorFilter <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type      FilterType
+    Pattern   <span class="token builtin">string</span>
+    Include   <span class="token builtin">bool</span>
+    Priority  <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// FilterType defines filter types</span>
+<span class="token keyword">type</span> FilterType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    FunctionFilter FilterType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    PackageFilter
+    FileFilter
+    GoroutineFilter
+    TagFilter
+    ValueFilter
+    RegexFilter
+<span class="token punctuation">)</span>
+
+<span class="token comment">// AggregationConfig contains aggregation configuration</span>
+<span class="token keyword">type</span> AggregationConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Enabled    <span class="token builtin">bool</span>
+    Window     time<span class="token punctuation">.</span>Duration
+    Function   AggregationFunction
+    GroupBy    <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Threshold  <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AggregationFunction defines aggregation functions</span>
+<span class="token keyword">type</span> AggregationFunction <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    SumAggregation AggregationFunction <span class="token operator">=</span> <span class="token boolean">iota</span>
+    AvgAggregation
+    MaxAggregation
+    MinAggregation
+    CountAggregation
+    P50Aggregation
+    P95Aggregation
+    P99Aggregation
+<span class="token punctuation">)</span>
+
+<span class="token comment">// OutputOptions contains output options</span>
+<span class="token keyword">type</span> OutputOptions <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Format      OutputFormat
+    Compression <span class="token builtin">bool</span>
+    Encryption  <span class="token builtin">bool</span>
+    Destination <span class="token builtin">string</span>
+    Headers     <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CollectorMetrics contains collector metrics</span>
+<span class="token keyword">type</span> CollectorMetrics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    SamplesCollected   <span class="token builtin">int64</span>
+    SamplesDropped     <span class="token builtin">int64</span>
+    BytesCollected     <span class="token builtin">int64</span>
+    CollectionTime     time<span class="token punctuation">.</span>Duration
+    ErrorCount         <span class="token builtin">int64</span>
+    LastCollectionTime time<span class="token punctuation">.</span>Time
+    CollectionRate     <span class="token builtin">float64</span>
+    BufferUtilization  <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileData represents collected profile data</span>
+<span class="token keyword">type</span> ProfileData <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ID           <span class="token builtin">string</span>
+    Type         CollectorType
+    Timestamp    time<span class="token punctuation">.</span>Time
+    Duration     time<span class="token punctuation">.</span>Duration
+    Samples      <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>ProfileSample
+    Metadata     ProfileMetadata
+    Statistics   ProfileStatistics
+    Tags         <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Annotations  <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Quality      DataQuality
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileSample represents a single profile sample</span>
+<span class="token keyword">type</span> ProfileSample <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ID          <span class="token builtin">string</span>
+    Timestamp   time<span class="token punctuation">.</span>Time
+    Value       <span class="token builtin">int64</span>
+    Weight      <span class="token builtin">float64</span>
+    Stack       <span class="token punctuation">[</span><span class="token punctuation">]</span>StackFrame
+    Labels      <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Attributes  <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Context     SampleContext
+<span class="token punctuation">}</span>
+
+<span class="token comment">// StackFrame represents a stack frame</span>
+<span class="token keyword">type</span> StackFrame <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Function <span class="token builtin">string</span>
+    File     <span class="token builtin">string</span>
+    Line     <span class="token builtin">int</span>
+    Column   <span class="token builtin">int</span>
+    Package  <span class="token builtin">string</span>
+    Module   <span class="token builtin">string</span>
+    PC       <span class="token builtin">uintptr</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SampleContext provides context for samples</span>
+<span class="token keyword">type</span> SampleContext <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    GoroutineID   <span class="token builtin">int64</span>
+    ThreadID      <span class="token builtin">int64</span>
+    ProcessID     <span class="token builtin">int32</span>
+    UserID        <span class="token builtin">string</span>
+    SessionID     <span class="token builtin">string</span>
+    RequestID     <span class="token builtin">string</span>
+    TraceID       <span class="token builtin">string</span>
+    SpanID        <span class="token builtin">string</span>
+    Environment   <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileMetadata contains profile metadata</span>
+<span class="token keyword">type</span> ProfileMetadata <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ProfilerVersion <span class="token builtin">string</span>
+    Runtime         RuntimeInfo
+    Application     ApplicationInfo
+    Environment     EnvironmentInfo
+    BuildInfo       BuildInfo
+    StartTime       time<span class="token punctuation">.</span>Time
+    EndTime         time<span class="token punctuation">.</span>Time
+    SampleCount     <span class="token builtin">int</span>
+    SampleRate      <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// RuntimeInfo contains runtime information</span>
+<span class="token keyword">type</span> RuntimeInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    GoVersion     <span class="token builtin">string</span>
+    GOOS          <span class="token builtin">string</span>
+    GOARCH        <span class="token builtin">string</span>
+    NumCPU        <span class="token builtin">int</span>
+    NumGoroutine  <span class="token builtin">int</span>
+    MemStats      runtime<span class="token punctuation">.</span>MemStats
+    GCStats       runtime<span class="token punctuation">.</span>GCStats
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ApplicationInfo contains application information</span>
+<span class="token keyword">type</span> ApplicationInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Name         <span class="token builtin">string</span>
+    Version      <span class="token builtin">string</span>
+    Description  <span class="token builtin">string</span>
+    Team         <span class="token builtin">string</span>
+    Owner        <span class="token builtin">string</span>
+    Repository   <span class="token builtin">string</span>
+    Environment  <span class="token builtin">string</span>
+    Deployment   <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// EnvironmentInfo contains environment information</span>
+<span class="token keyword">type</span> EnvironmentInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Hostname     <span class="token builtin">string</span>
+    Platform     <span class="token builtin">string</span>
+    Container    <span class="token builtin">string</span>
+    Cluster      <span class="token builtin">string</span>
+    Namespace    <span class="token builtin">string</span>
+    Region       <span class="token builtin">string</span>
+    Zone         <span class="token builtin">string</span>
+    Instance     <span class="token builtin">string</span>
+    Tags         <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// BuildInfo contains build information</span>
+<span class="token keyword">type</span> BuildInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Version    <span class="token builtin">string</span>
+    Commit     <span class="token builtin">string</span>
+    Branch     <span class="token builtin">string</span>
+    Tag        <span class="token builtin">string</span>
+    BuildTime  time<span class="token punctuation">.</span>Time
+    BuildHost  <span class="token builtin">string</span>
+    BuildUser  <span class="token builtin">string</span>
+    BuildFlags <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileStatistics contains profile statistics</span>
+<span class="token keyword">type</span> ProfileStatistics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    TotalSamples     <span class="token builtin">int64</span>
+    UniqueFunctions  <span class="token builtin">int</span>
+    UniquePackages   <span class="token builtin">int</span>
+    StackDepth       StackDepthStats
+    SampleValues     ValueStats
+    TimeCoverage     <span class="token builtin">float64</span>
+    SpatialCoverage  <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// StackDepthStats contains stack depth statistics</span>
+<span class="token keyword">type</span> StackDepthStats <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Min    <span class="token builtin">int</span>
+    Max    <span class="token builtin">int</span>
+    Mean   <span class="token builtin">float64</span>
+    Median <span class="token builtin">float64</span>
+    P95    <span class="token builtin">float64</span>
+    P99    <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ValueStats contains value statistics</span>
+<span class="token keyword">type</span> ValueStats <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Min      <span class="token builtin">int64</span>
+    Max      <span class="token builtin">int64</span>
+    Sum      <span class="token builtin">int64</span>
+    Mean     <span class="token builtin">float64</span>
+    StdDev   <span class="token builtin">float64</span>
+    Histogram <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">int64</span><span class="token punctuation">]</span><span class="token builtin">int64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// DataQuality represents data quality metrics</span>
+<span class="token keyword">type</span> DataQuality <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Completeness <span class="token builtin">float64</span>
+    Accuracy     <span class="token builtin">float64</span>
+    Consistency  <span class="token builtin">float64</span>
+    Timeliness   <span class="token builtin">float64</span>
+    Validity     <span class="token builtin">float64</span>
+    Reliability  <span class="token builtin">float64</span>
+    OverallScore <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Sampler controls sampling behavior</span>
+<span class="token keyword">type</span> Sampler <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">ShouldSample</span><span class="token punctuation">(</span>context SamplingContext<span class="token punctuation">)</span> <span class="token builtin">bool</span>
+    <span class="token function">GetRate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">float64</span>
+    <span class="token function">GetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> SamplerType
+    <span class="token function">UpdateRate</span><span class="token punctuation">(</span>rate <span class="token builtin">float64</span><span class="token punctuation">)</span>
+    <span class="token function">GetStatistics</span><span class="token punctuation">(</span><span class="token punctuation">)</span> SamplerStatistics
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SamplerType defines sampler types</span>
+<span class="token keyword">type</span> SamplerType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    FixedRateSampler SamplerType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    AdaptiveSampler
+    ProbabilitySampler
+    ThresholdSampler
+    BurstSampler
+    SmartSampler
+<span class="token punctuation">)</span>
+
+<span class="token comment">// SamplingContext provides context for sampling decisions</span>
+<span class="token keyword">type</span> SamplingContext <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Timestamp     time<span class="token punctuation">.</span>Time
+    GoroutineID   <span class="token builtin">int64</span>
+    Function      <span class="token builtin">string</span>
+    Package       <span class="token builtin">string</span>
+    File          <span class="token builtin">string</span>
+    Line          <span class="token builtin">int</span>
+    Value         <span class="token builtin">int64</span>
+    Tags          <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    SystemLoad    SystemLoad
+    MemoryPressure <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SystemLoad represents system load information</span>
+<span class="token keyword">type</span> SystemLoad <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    CPU     <span class="token builtin">float64</span>
+    Memory  <span class="token builtin">float64</span>
+    Disk    <span class="token builtin">float64</span>
+    Network <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SamplerStatistics contains sampler statistics</span>
+<span class="token keyword">type</span> SamplerStatistics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    TotalSamples    <span class="token builtin">int64</span>
+    AcceptedSamples <span class="token builtin">int64</span>
+    RejectedSamples <span class="token builtin">int64</span>
+    SamplingRate    <span class="token builtin">float64</span>
+    LastSampleTime  time<span class="token punctuation">.</span>Time
+    AdaptationCount <span class="token builtin">int64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileProcessor processes profile data</span>
+<span class="token keyword">type</span> ProfileProcessor <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">Process</span><span class="token punctuation">(</span>data <span class="token operator">*</span>ProfileData<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>ProcessedData<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span>
+    <span class="token function">GetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProcessorType
+    <span class="token function">GetConfig</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProcessorConfig
+    <span class="token function">GetMetrics</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProcessorMetrics
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProcessorType defines processor types</span>
+<span class="token keyword">type</span> ProcessorType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    AggregationProcessor ProcessorType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    FilterProcessor
+    TransformProcessor
+    EnrichmentProcessor
+    CompressionProcessor
+    AnalysisProcessor
+    ValidationProcessor
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ProcessorConfig contains processor configuration</span>
+<span class="token keyword">type</span> ProcessorConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Enabled     <span class="token builtin">bool</span>
+    Priority    <span class="token builtin">int</span>
+    Parallel    <span class="token builtin">bool</span>
+    BufferSize  <span class="token builtin">int</span>
+    Timeout     time<span class="token punctuation">.</span>Duration
+    RetryCount  <span class="token builtin">int</span>
+    Parameters  <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProcessorMetrics contains processor metrics</span>
+<span class="token keyword">type</span> ProcessorMetrics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ProcessedSamples <span class="token builtin">int64</span>
+    ProcessingTime   time<span class="token punctuation">.</span>Duration
+    ErrorCount       <span class="token builtin">int64</span>
+    ThroughputRate   <span class="token builtin">float64</span>
+    LastProcessTime  time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProcessedData represents processed profile data</span>
+<span class="token keyword">type</span> ProcessedData <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Original   <span class="token operator">*</span>ProfileData
+    Processed  <span class="token operator">*</span>ProfileData
+    Transform  TransformInfo
+    Metadata   ProcessingMetadata
+    Timestamp  time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// TransformInfo contains transformation information</span>
+<span class="token keyword">type</span> TransformInfo <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type        TransformType
+    Parameters  <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Applied     <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Skipped     <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Errors      <span class="token punctuation">[</span><span class="token punctuation">]</span>TransformError
+<span class="token punctuation">}</span>
+
+<span class="token comment">// TransformType defines transformation types</span>
+<span class="token keyword">type</span> TransformType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    FilterTransform TransformType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    AggregateTransform
+    NormalizeTransform
+    EnrichTransform
+    CompressTransform
+    EncryptTransform
+<span class="token punctuation">)</span>
+
+<span class="token comment">// TransformError represents transformation errors</span>
+<span class="token keyword">type</span> TransformError <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type        <span class="token builtin">string</span>
+    Message     <span class="token builtin">string</span>
+    SampleID    <span class="token builtin">string</span>
+    Timestamp   time<span class="token punctuation">.</span>Time
+    Recoverable <span class="token builtin">bool</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProcessingMetadata contains processing metadata</span>
+<span class="token keyword">type</span> ProcessingMetadata <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ProcessorChain <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    ProcessingTime time<span class="token punctuation">.</span>Duration
+    MemoryUsage    <span class="token builtin">int64</span>
+    CPUUsage       <span class="token builtin">float64</span>
+    CacheHits      <span class="token builtin">int64</span>
+    CacheMisses    <span class="token builtin">int64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileStorage manages profile data storage</span>
+<span class="token keyword">type</span> ProfileStorage <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">Store</span><span class="token punctuation">(</span>data <span class="token operator">*</span>ProfileData<span class="token punctuation">)</span> <span class="token builtin">error</span>
+    <span class="token function">Retrieve</span><span class="token punctuation">(</span>query StorageQuery<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>ProfileData<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span>
+    <span class="token function">Delete</span><span class="token punctuation">(</span>criteria DeletionCriteria<span class="token punctuation">)</span> <span class="token builtin">error</span>
+    <span class="token function">Compact</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">error</span>
+    <span class="token function">GetStatistics</span><span class="token punctuation">(</span><span class="token punctuation">)</span> StorageStatistics
+<span class="token punctuation">}</span>
+
+<span class="token comment">// StorageQuery represents storage queries</span>
+<span class="token keyword">type</span> StorageQuery <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    TimeRange   TimeRange
+    Types       <span class="token punctuation">[</span><span class="token punctuation">]</span>CollectorType
+    Filters     <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Aggregation AggregationQuery
+    Limit       <span class="token builtin">int</span>
+    Offset      <span class="token builtin">int</span>
+    OrderBy     <span class="token punctuation">[</span><span class="token punctuation">]</span>OrderBy
+<span class="token punctuation">}</span>
+
+<span class="token comment">// TimeRange represents time ranges</span>
+<span class="token keyword">type</span> TimeRange <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Start time<span class="token punctuation">.</span>Time
+    End   time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AggregationQuery represents aggregation queries</span>
+<span class="token keyword">type</span> AggregationQuery <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Function AggregationFunction
+    GroupBy  <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Window   time<span class="token punctuation">.</span>Duration
+    Filters  <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// OrderBy represents ordering criteria</span>
+<span class="token keyword">type</span> OrderBy <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Field     <span class="token builtin">string</span>
+    Direction SortDirection
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SortDirection defines sort directions</span>
+<span class="token keyword">type</span> SortDirection <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    Ascending SortDirection <span class="token operator">=</span> <span class="token boolean">iota</span>
+    Descending
+<span class="token punctuation">)</span>
+
+<span class="token comment">// DeletionCriteria represents deletion criteria</span>
+<span class="token keyword">type</span> DeletionCriteria <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    OlderThan time<span class="token punctuation">.</span>Time
+    Types     <span class="token punctuation">[</span><span class="token punctuation">]</span>CollectorType
+    Filters   <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    KeepLast  <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// StorageStatistics contains storage statistics</span>
+<span class="token keyword">type</span> StorageStatistics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    TotalProfiles   <span class="token builtin">int64</span>
+    TotalSize       <span class="token builtin">int64</span>
+    OldestProfile   time<span class="token punctuation">.</span>Time
+    NewestProfile   time<span class="token punctuation">.</span>Time
+    CompressionRatio <span class="token builtin">float64</span>
+    ReadLatency     time<span class="token punctuation">.</span>Duration
+    WriteLatency    time<span class="token punctuation">.</span>Duration
+    ErrorRate       <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileExporter exports profile data</span>
+<span class="token keyword">type</span> ProfileExporter <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">Export</span><span class="token punctuation">(</span>data <span class="token operator">*</span>ProfileData<span class="token punctuation">,</span> format OutputFormat<span class="token punctuation">)</span> <span class="token builtin">error</span>
+    <span class="token function">GetSupportedFormats</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>OutputFormat
+    <span class="token function">GetConfig</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ExporterConfig
+    <span class="token function">GetMetrics</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ExporterMetrics
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ExporterConfig contains exporter configuration</span>
+<span class="token keyword">type</span> ExporterConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Enabled       <span class="token builtin">bool</span>
+    Formats       <span class="token punctuation">[</span><span class="token punctuation">]</span>OutputFormat
+    Destinations  <span class="token punctuation">[</span><span class="token punctuation">]</span>ExportDestination
+    Compression   <span class="token builtin">bool</span>
+    Encryption    <span class="token builtin">bool</span>
+    BatchSize     <span class="token builtin">int</span>
+    FlushInterval time<span class="token punctuation">.</span>Duration
+    RetryPolicy   RetryPolicy
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ExportDestination represents export destinations</span>
+<span class="token keyword">type</span> ExportDestination <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type       DestinationType
+    URL        <span class="token builtin">string</span>
+    Headers    <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Credentials <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Options    <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// DestinationType defines destination types</span>
+<span class="token keyword">type</span> DestinationType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    FileDestination DestinationType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    HTTPDestination
+    GRPCDestination
+    KafkaDestination
+    S3Destination
+    GCSDestination
+    DatabaseDestination
+<span class="token punctuation">)</span>
+
+<span class="token comment">// RetryPolicy defines retry behavior</span>
+<span class="token keyword">type</span> RetryPolicy <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Enabled     <span class="token builtin">bool</span>
+    MaxRetries  <span class="token builtin">int</span>
+    BackoffType BackoffType
+    InitialDelay time<span class="token punctuation">.</span>Duration
+    MaxDelay    time<span class="token punctuation">.</span>Duration
+    Multiplier  <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// BackoffType defines backoff types</span>
+<span class="token keyword">type</span> BackoffType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    FixedBackoff BackoffType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    LinearBackoff
+    ExponentialBackoff
+    JitteredBackoff
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ExporterMetrics contains exporter metrics</span>
+<span class="token keyword">type</span> ExporterMetrics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ExportedProfiles <span class="token builtin">int64</span>
+    ExportedBytes    <span class="token builtin">int64</span>
+    ExportTime       time<span class="token punctuation">.</span>Duration
+    ErrorCount       <span class="token builtin">int64</span>
+    RetryCount       <span class="token builtin">int64</span>
+    LastExportTime   time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileScheduler manages profiling scheduling</span>
+<span class="token keyword">type</span> ProfileScheduler <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    config    SchedulerConfig
+    jobs      <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">*</span>ScheduledJob
+    executor  <span class="token operator">*</span>JobExecutor
+    metrics   <span class="token operator">*</span>SchedulerMetrics
+    mu        sync<span class="token punctuation">.</span>RWMutex
+<span class="token punctuation">}</span>
+
+<span class="token comment">// SchedulerConfig contains scheduler configuration</span>
+<span class="token keyword">type</span> SchedulerConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Enabled          <span class="token builtin">bool</span>
+    DefaultInterval  time<span class="token punctuation">.</span>Duration
+    MaxConcurrentJobs <span class="token builtin">int</span>
+    JobTimeout       time<span class="token punctuation">.</span>Duration
+    RetryPolicy      RetryPolicy
+    QueueSize        <span class="token builtin">int</span>
+    WorkerCount      <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ScheduledJob represents a scheduled profiling job</span>
+<span class="token keyword">type</span> ScheduledJob <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ID           <span class="token builtin">string</span>
+    Name         <span class="token builtin">string</span>
+    Type         JobType
+    Schedule     Schedule
+    Config       JobConfig
+    State        JobState
+    LastRun      <span class="token operator">*</span>JobRun
+    NextRun      time<span class="token punctuation">.</span>Time
+    Statistics   JobStatistics
+    CreatedAt    time<span class="token punctuation">.</span>Time
+    UpdatedAt    time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// JobType defines job types</span>
+<span class="token keyword">type</span> JobType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    ContinuousJob JobType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    PeriodicJob
+    TriggeredJob
+    ConditionalJob
+    AdaptiveJob
+<span class="token punctuation">)</span>
+
+<span class="token comment">// Schedule defines job schedules</span>
+<span class="token keyword">type</span> Schedule <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type       ScheduleType
+    Interval   time<span class="token punctuation">.</span>Duration
+    CronExpr   <span class="token builtin">string</span>
+    Triggers   <span class="token punctuation">[</span><span class="token punctuation">]</span>Trigger
+    Conditions <span class="token punctuation">[</span><span class="token punctuation">]</span>Condition
+    TimeZone   <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ScheduleType defines schedule types</span>
+<span class="token keyword">type</span> ScheduleType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    IntervalSchedule ScheduleType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    CronSchedule
+    TriggerSchedule
+    ConditionalSchedule
+    AdaptiveSchedule
+<span class="token punctuation">)</span>
+
+<span class="token comment">// Trigger defines job triggers</span>
+<span class="token keyword">type</span> Trigger <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type       TriggerType
+    Source     <span class="token builtin">string</span>
+    Condition  <span class="token builtin">string</span>
+    Threshold  <span class="token builtin">float64</span>
+    Cooldown   time<span class="token punctuation">.</span>Duration
+    Enabled    <span class="token builtin">bool</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// TriggerType defines trigger types</span>
+<span class="token keyword">type</span> TriggerType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    MetricTrigger TriggerType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    EventTrigger
+    ThresholdTrigger
+    ManualTrigger
+    APItrigger
+<span class="token punctuation">)</span>
+
+<span class="token comment">// Condition defines job conditions</span>
+<span class="token keyword">type</span> Condition <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type      ConditionType
+    Metric    <span class="token builtin">string</span>
+    Operator  ComparisonOperator
+    Value     <span class="token builtin">float64</span>
+    Duration  time<span class="token punctuation">.</span>Duration
+    Enabled   <span class="token builtin">bool</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ConditionType defines condition types</span>
+<span class="token keyword">type</span> ConditionType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    MetricCondition ConditionType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    SystemCondition
+    ResourceCondition
+    CustomCondition
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ComparisonOperator defines comparison operators</span>
+<span class="token keyword">type</span> ComparisonOperator <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    GreaterThan ComparisonOperator <span class="token operator">=</span> <span class="token boolean">iota</span>
+    LessThan
+    Equal
+    NotEqual
+    GreaterThanOrEqual
+    LessThanOrEqual
+<span class="token punctuation">)</span>
+
+<span class="token comment">// JobConfig contains job configuration</span>
+<span class="token keyword">type</span> JobConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Collectors <span class="token punctuation">[</span><span class="token punctuation">]</span>CollectorConfig
+    Processors <span class="token punctuation">[</span><span class="token punctuation">]</span>ProcessorConfig
+    Exporters  <span class="token punctuation">[</span><span class="token punctuation">]</span>ExporterConfig
+    Duration   time<span class="token punctuation">.</span>Duration
+    Priority   JobPriority
+    Resources  ResourceLimits
+    Retry      RetryPolicy
+<span class="token punctuation">}</span>
+
+<span class="token comment">// JobPriority defines job priority levels</span>
+<span class="token keyword">type</span> JobPriority <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    LowPriority JobPriority <span class="token operator">=</span> <span class="token boolean">iota</span>
+    NormalPriority
+    HighPriority
+    CriticalPriority
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ResourceLimits defines resource limits</span>
+<span class="token keyword">type</span> ResourceLimits <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    MaxMemory <span class="token builtin">int64</span>
+    MaxCPU    <span class="token builtin">float64</span>
+    MaxDisk   <span class="token builtin">int64</span>
+    MaxTime   time<span class="token punctuation">.</span>Duration
+<span class="token punctuation">}</span>
+
+<span class="token comment">// JobState defines job states</span>
+<span class="token keyword">type</span> JobState <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    ScheduledState JobState <span class="token operator">=</span> <span class="token boolean">iota</span>
+    RunningState
+    CompletedState
+    FailedState
+    CancelledState
+    PausedState
+<span class="token punctuation">)</span>
+
+<span class="token comment">// JobRun represents a job execution</span>
+<span class="token keyword">type</span> JobRun <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ID          <span class="token builtin">string</span>
+    JobID       <span class="token builtin">string</span>
+    StartTime   time<span class="token punctuation">.</span>Time
+    EndTime     <span class="token operator">*</span>time<span class="token punctuation">.</span>Time
+    Duration    time<span class="token punctuation">.</span>Duration
+    State       JobRunState
+    Result      <span class="token operator">*</span>JobResult
+    Error       <span class="token operator">*</span>JobError
+    Metrics     JobRunMetrics
+    Logs        <span class="token punctuation">[</span><span class="token punctuation">]</span>JobLog
+<span class="token punctuation">}</span>
+
+<span class="token comment">// JobRunState defines job run states</span>
+<span class="token keyword">type</span> JobRunState <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    StartingState JobRunState <span class="token operator">=</span> <span class="token boolean">iota</span>
+    RunningState
+    FinishingState
+    SucceededState
+    FailedState
+    CancelledState
+<span class="token punctuation">)</span>
+
+<span class="token comment">// JobResult contains job execution results</span>
+<span class="token keyword">type</span> JobResult <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Success      <span class="token builtin">bool</span>
+    ProfileCount <span class="token builtin">int</span>
+    DataSize     <span class="token builtin">int64</span>
+    Warnings     <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Metadata     <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// JobError contains job error information</span>
+<span class="token keyword">type</span> JobError <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Type        ErrorType
+    Message     <span class="token builtin">string</span>
+    Cause       <span class="token builtin">string</span>
+    Recoverable <span class="token builtin">bool</span>
+    RetryCount  <span class="token builtin">int</span>
+    Timestamp   time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ErrorType defines error types</span>
+<span class="token keyword">type</span> ErrorType <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    ConfigurationError ErrorType <span class="token operator">=</span> <span class="token boolean">iota</span>
+    ResourceError
+    NetworkError
+    StorageError
+    ProcessingError
+    TimeoutError
+    InternalError
+<span class="token punctuation">)</span>
+
+<span class="token comment">// JobRunMetrics contains job run metrics</span>
+<span class="token keyword">type</span> JobRunMetrics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    CPUUsage     <span class="token builtin">float64</span>
+    MemoryUsage  <span class="token builtin">int64</span>
+    DiskUsage    <span class="token builtin">int64</span>
+    NetworkUsage <span class="token builtin">int64</span>
+    SamplesCount <span class="token builtin">int64</span>
+    ErrorCount   <span class="token builtin">int64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// JobLog represents job logs</span>
+<span class="token keyword">type</span> JobLog <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Level     LogLevel
+    Message   <span class="token builtin">string</span>
+    Timestamp time<span class="token punctuation">.</span>Time
+    Source    <span class="token builtin">string</span>
+    Context   <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// LogLevel defines log levels</span>
+<span class="token keyword">type</span> LogLevel <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    DebugLevel LogLevel <span class="token operator">=</span> <span class="token boolean">iota</span>
+    InfoLevel
+    WarnLevel
+    ErrorLevel
+    FatalLevel
+<span class="token punctuation">)</span>
+
+<span class="token comment">// JobStatistics contains job statistics</span>
+<span class="token keyword">type</span> JobStatistics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    TotalRuns       <span class="token builtin">int64</span>
+    SuccessfulRuns  <span class="token builtin">int64</span>
+    FailedRuns      <span class="token builtin">int64</span>
+    AverageRunTime  time<span class="token punctuation">.</span>Duration
+    LastSuccessTime time<span class="token punctuation">.</span>Time
+    LastFailureTime time<span class="token punctuation">.</span>Time
+    SuccessRate     <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// JobExecutor executes scheduled jobs</span>
+<span class="token keyword">type</span> JobExecutor <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    config    ExecutorConfig
+    workers   <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>Worker
+    queue     <span class="token keyword">chan</span> <span class="token operator">*</span>ScheduledJob
+    metrics   <span class="token operator">*</span>ExecutorMetrics
+    mu        sync<span class="token punctuation">.</span>RWMutex
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ExecutorConfig contains executor configuration</span>
+<span class="token keyword">type</span> ExecutorConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    WorkerCount    <span class="token builtin">int</span>
+    QueueSize      <span class="token builtin">int</span>
+    WorkerTimeout  time<span class="token punctuation">.</span>Duration
+    IdleTimeout    time<span class="token punctuation">.</span>Duration
+    GracefulShutdown time<span class="token punctuation">.</span>Duration
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Worker represents a job worker</span>
+<span class="token keyword">type</span> Worker <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    ID        <span class="token builtin">string</span>
+    State     WorkerState
+    CurrentJob <span class="token operator">*</span>ScheduledJob
+    StartTime time<span class="token punctuation">.</span>Time
+    Statistics WorkerStatistics
+<span class="token punctuation">}</span>
+
+<span class="token comment">// WorkerState defines worker states</span>
+<span class="token keyword">type</span> WorkerState <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    IdleWorker WorkerState <span class="token operator">=</span> <span class="token boolean">iota</span>
+    BusyWorker
+    StoppedWorker
+    ErrorWorker
+<span class="token punctuation">)</span>
+
+<span class="token comment">// WorkerStatistics contains worker statistics</span>
+<span class="token keyword">type</span> WorkerStatistics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    JobsProcessed  <span class="token builtin">int64</span>
+    ProcessingTime time<span class="token punctuation">.</span>Duration
+    ErrorCount     <span class="token builtin">int64</span>
+    IdleTime       time<span class="token punctuation">.</span>Duration
+    LastJobTime    time<span class="token punctuation">.</span>Time
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ExecutorMetrics contains executor metrics</span>
+<span class="token keyword">type</span> ExecutorMetrics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    QueueSize       <span class="token builtin">int</span>
+    ActiveWorkers   <span class="token builtin">int</span>
+    CompletedJobs   <span class="token builtin">int64</span>
+    FailedJobs      <span class="token builtin">int64</span>
+    AverageWaitTime time<span class="token punctuation">.</span>Duration
+    ThroughputRate  <span class="token builtin">float64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileAggregator aggregates profile data</span>
+<span class="token keyword">type</span> ProfileAggregator <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    config     AggregatorConfig
+    buffers    <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">*</span>AggregationBuffer
+    functions  <span class="token keyword">map</span><span class="token punctuation">[</span>AggregationFunction<span class="token punctuation">]</span>AggregatorFunc
+    metrics    <span class="token operator">*</span>AggregatorMetrics
+    mu         sync<span class="token punctuation">.</span>RWMutex
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AggregatorConfig contains aggregator configuration</span>
+<span class="token keyword">type</span> AggregatorConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Enabled       <span class="token builtin">bool</span>
+    BufferSize    <span class="token builtin">int</span>
+    FlushInterval time<span class="token punctuation">.</span>Duration
+    Functions     <span class="token punctuation">[</span><span class="token punctuation">]</span>AggregationFunction
+    GroupBy       <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Filters       <span class="token punctuation">[</span><span class="token punctuation">]</span>AggregationFilter
+    OutputFormat  OutputFormat
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AggregationBuffer buffers data for aggregation</span>
+<span class="token keyword">type</span> AggregationBuffer <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Key       <span class="token builtin">string</span>
+    Samples   <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>ProfileSample
+    StartTime time<span class="token punctuation">.</span>Time
+    LastUpdate time<span class="token punctuation">.</span>Time
+    Size      <span class="token builtin">int</span>
+    Full      <span class="token builtin">bool</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AggregationFilter filters data for aggregation</span>
+<span class="token keyword">type</span> AggregationFilter <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Field    <span class="token builtin">string</span>
+    Operator ComparisonOperator
+    Value    <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Enabled  <span class="token builtin">bool</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AggregatorFunc defines aggregator functions</span>
+<span class="token keyword">type</span> AggregatorFunc <span class="token keyword">func</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>ProfileSample<span class="token punctuation">)</span> <span class="token operator">*</span>AggregatedSample
+
+<span class="token comment">// AggregatedSample represents aggregated sample data</span>
+<span class="token keyword">type</span> AggregatedSample <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Key         <span class="token builtin">string</span>
+    Count       <span class="token builtin">int64</span>
+    Sum         <span class="token builtin">int64</span>
+    Min         <span class="token builtin">int64</span>
+    Max         <span class="token builtin">int64</span>
+    Mean        <span class="token builtin">float64</span>
+    Percentiles <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span><span class="token builtin">int64</span>
+    Timestamp   time<span class="token punctuation">.</span>Time
+    TimeRange   TimeRange
+<span class="token punctuation">}</span>
+
+<span class="token comment">// AggregatorMetrics contains aggregator metrics</span>
+<span class="token keyword">type</span> AggregatorMetrics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    BuffersActive    <span class="token builtin">int</span>
+    SamplesAggregated <span class="token builtin">int64</span>
+    FlushCount       <span class="token builtin">int64</span>
+    ProcessingTime   time<span class="token punctuation">.</span>Duration
+    MemoryUsage      <span class="token builtin">int64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfileFilter filters profile data</span>
+<span class="token keyword">type</span> ProfileFilter <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    config  FilterConfig
+    filters <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Filter
+    metrics <span class="token operator">*</span>FilterMetrics
+    mu      sync<span class="token punctuation">.</span>RWMutex
+<span class="token punctuation">}</span>
+
+<span class="token comment">// FilterConfig contains filter configuration</span>
+<span class="token keyword">type</span> FilterConfig <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Enabled    <span class="token builtin">bool</span>
+    Filters    <span class="token punctuation">[</span><span class="token punctuation">]</span>FilterRule
+    DefaultAction FilterAction
+    CaseSensitive <span class="token builtin">bool</span>
+    RegexCache    <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// FilterRule defines filtering rules</span>
+<span class="token keyword">type</span> FilterRule <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Name      <span class="token builtin">string</span>
+    Type      FilterType
+    Pattern   <span class="token builtin">string</span>
+    Action    FilterAction
+    Priority  <span class="token builtin">int</span>
+    Enabled   <span class="token builtin">bool</span>
+    Compiled  <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// FilterAction defines filter actions</span>
+<span class="token keyword">type</span> FilterAction <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    AllowAction FilterAction <span class="token operator">=</span> <span class="token boolean">iota</span>
+    DenyAction
+    TransformAction
+    TagAction
+<span class="token punctuation">)</span>
+
+<span class="token comment">// Filter performs data filtering</span>
+<span class="token keyword">type</span> Filter <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">Apply</span><span class="token punctuation">(</span>sample <span class="token operator">*</span>ProfileSample<span class="token punctuation">)</span> FilterResult
+    <span class="token function">GetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> FilterType
+    <span class="token function">GetMetrics</span><span class="token punctuation">(</span><span class="token punctuation">)</span> FilterMetrics
+<span class="token punctuation">}</span>
+
+<span class="token comment">// FilterResult contains filter results</span>
+<span class="token keyword">type</span> FilterResult <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Action     FilterAction
+    Matched    <span class="token builtin">bool</span>
+    Transform  <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    Tags       <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    Reason     <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// FilterMetrics contains filter metrics</span>
+<span class="token keyword">type</span> FilterMetrics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    SamplesProcessed <span class="token builtin">int64</span>
+    SamplesFiltered  <span class="token builtin">int64</span>
+    ProcessingTime   time<span class="token punctuation">.</span>Duration
+    CacheHits        <span class="token builtin">int64</span>
+    CacheMisses      <span class="token builtin">int64</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfilerMetrics contains overall profiler metrics</span>
+<span class="token keyword">type</span> ProfilerMetrics <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    StartTime        time<span class="token punctuation">.</span>Time
+    UptimeSeconds    <span class="token builtin">int64</span>
+    SamplesCollected <span class="token builtin">int64</span>
+    SamplesProcessed <span class="token builtin">int64</span>
+    SamplesExported  <span class="token builtin">int64</span>
+    BytesProcessed   <span class="token builtin">int64</span>
+    ErrorCount       <span class="token builtin">int64</span>
+    MemoryUsage      <span class="token builtin">int64</span>
+    CPUUsage         <span class="token builtin">float64</span>
+    GoroutineCount   <span class="token builtin">int</span>
+    CollectorMetrics <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>CollectorMetrics
+    ProcessorMetrics <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>ProcessorMetrics
+    ExporterMetrics  <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>ExporterMetrics
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfilerState contains profiler state</span>
+<span class="token keyword">type</span> ProfilerState <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Status      ProfilerStatus
+    StartTime   time<span class="token punctuation">.</span>Time
+    LastSample  time<span class="token punctuation">.</span>Time
+    LastExport  time<span class="token punctuation">.</span>Time
+    ErrorState  <span class="token operator">*</span>ErrorState
+    Version     <span class="token builtin">string</span>
+    ConfigHash  <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ProfilerStatus defines profiler status</span>
+<span class="token keyword">type</span> ProfilerStatus <span class="token builtin">int</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">(</span>
+    StoppedStatus ProfilerStatus <span class="token operator">=</span> <span class="token boolean">iota</span>
+    StartingStatus
+    RunningStatus
+    StoppingStatus
+    ErrorStatus
+    PausedStatus
+<span class="token punctuation">)</span>
+
+<span class="token comment">// ErrorState contains error state information</span>
+<span class="token keyword">type</span> ErrorState <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    LastError     <span class="token builtin">error</span>
+    ErrorCount    <span class="token builtin">int64</span>
+    FirstError    time<span class="token punctuation">.</span>Time
+    LastErrorTime time<span class="token punctuation">.</span>Time
+    Recoverable   <span class="token builtin">bool</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// NewCustomProfiler creates a new custom profiler</span>
+<span class="token keyword">func</span> <span class="token function">NewCustomProfiler</span><span class="token punctuation">(</span>config ProfilerConfig<span class="token punctuation">)</span> <span class="token operator">*</span>CustomProfiler <span class="token punctuation">{</span>
+    profiler <span class="token operator">:=</span> <span class="token operator">&amp;</span>CustomProfiler<span class="token punctuation">{</span>
+        config<span class="token punctuation">:</span>     config<span class="token punctuation">,</span>
+        collectors<span class="token punctuation">:</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>ProfileCollector<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        samplers<span class="token punctuation">:</span>   <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Sampler<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        processors<span class="token punctuation">:</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>ProfileProcessor<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        metrics<span class="token punctuation">:</span>    <span class="token operator">&amp;</span>ProfilerMetrics<span class="token punctuation">{</span>StartTime<span class="token punctuation">:</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+        state<span class="token punctuation">:</span>      <span class="token operator">&amp;</span>ProfilerState<span class="token punctuation">{</span>Status<span class="token punctuation">:</span> StoppedStatus<span class="token punctuation">,</span> Version<span class="token punctuation">:</span> <span class="token string">"1.0.0"</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Initialize components</span>
+    profiler<span class="token punctuation">.</span>scheduler <span class="token operator">=</span> <span class="token function">NewProfileScheduler</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    profiler<span class="token punctuation">.</span>aggregator <span class="token operator">=</span> <span class="token function">NewProfileAggregator</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    profiler<span class="token punctuation">.</span>filter <span class="token operator">=</span> <span class="token function">NewProfileFilter</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// Register default collectors</span>
+    profiler<span class="token punctuation">.</span><span class="token function">registerDefaultCollectors</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// Register default processors</span>
+    profiler<span class="token punctuation">.</span><span class="token function">registerDefaultProcessors</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> profiler
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Start starts the custom profiler</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">Start</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span>
+    cp<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">defer</span> cp<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>Status <span class="token operator">==</span> RunningStatus <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"profiler is already running"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>Status <span class="token operator">=</span> StartingStatus
+    cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>StartTime <span class="token operator">=</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// Start enabled collectors</span>
+    <span class="token keyword">for</span> name<span class="token punctuation">,</span> collector <span class="token operator">:=</span> <span class="token keyword">range</span> cp<span class="token punctuation">.</span>collectors <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> cp<span class="token punctuation">.</span><span class="token function">isCollectorEnabled</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> err <span class="token operator">:=</span> collector<span class="token punctuation">.</span><span class="token function">Start</span><span class="token punctuation">(</span>ctx<span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"failed to start collector %s: %w"</span><span class="token punctuation">,</span> name<span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Start scheduler</span>
+    <span class="token keyword">if</span> err <span class="token operator">:=</span> cp<span class="token punctuation">.</span>scheduler<span class="token punctuation">.</span><span class="token function">Start</span><span class="token punctuation">(</span>ctx<span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"failed to start scheduler: %w"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Start processing loop</span>
+    <span class="token keyword">go</span> cp<span class="token punctuation">.</span><span class="token function">processingLoop</span><span class="token punctuation">(</span>ctx<span class="token punctuation">)</span>
+
+    cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>Status <span class="token operator">=</span> RunningStatus
+
+    <span class="token keyword">return</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Stop stops the custom profiler</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">Stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span>
+    cp<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">defer</span> cp<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>Status <span class="token operator">!=</span> RunningStatus <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"profiler is not running"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>Status <span class="token operator">=</span> StoppingStatus
+
+    <span class="token comment">// Stop all collectors</span>
+    <span class="token keyword">for</span> name<span class="token punctuation">,</span> collector <span class="token operator">:=</span> <span class="token keyword">range</span> cp<span class="token punctuation">.</span>collectors <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> err <span class="token operator">:=</span> collector<span class="token punctuation">.</span><span class="token function">Stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+            <span class="token comment">// Log error but continue stopping other components</span>
+            fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Error stopping collector %s: %v\n"</span><span class="token punctuation">,</span> name<span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Stop scheduler</span>
+    <span class="token keyword">if</span> err <span class="token operator">:=</span> cp<span class="token punctuation">.</span>scheduler<span class="token punctuation">.</span><span class="token function">Stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Error stopping scheduler: %v\n"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>Status <span class="token operator">=</span> StoppedStatus
+
+    <span class="token keyword">return</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// CollectProfile collects a profile using specified collectors</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">CollectProfile</span><span class="token punctuation">(</span>collectorTypes <span class="token punctuation">[</span><span class="token punctuation">]</span>CollectorType<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>ProfileData<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    cp<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">RLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">defer</span> cp<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">RUnlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>Status <span class="token operator">!=</span> RunningStatus <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"profiler is not running"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Create combined profile data</span>
+    combined <span class="token operator">:=</span> <span class="token operator">&amp;</span>ProfileData<span class="token punctuation">{</span>
+        ID<span class="token punctuation">:</span>        <span class="token function">generateID</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        Timestamp<span class="token punctuation">:</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        Samples<span class="token punctuation">:</span>   <span class="token function">make</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>ProfileSample<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        Metadata<span class="token punctuation">:</span>  cp<span class="token punctuation">.</span><span class="token function">buildMetadata</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        Tags<span class="token punctuation">:</span>      <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Collect from specified collectors</span>
+    <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> collectorType <span class="token operator">:=</span> <span class="token keyword">range</span> collectorTypes <span class="token punctuation">{</span>
+        collector <span class="token operator">:=</span> cp<span class="token punctuation">.</span><span class="token function">getCollectorByType</span><span class="token punctuation">(</span>collectorType<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> collector <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+            <span class="token keyword">continue</span>
+        <span class="token punctuation">}</span>
+
+        data<span class="token punctuation">,</span> err <span class="token operator">:=</span> collector<span class="token punctuation">.</span><span class="token function">Collect</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+            <span class="token keyword">continue</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// Merge data</span>
+        combined<span class="token punctuation">.</span>Samples <span class="token operator">=</span> <span class="token function">append</span><span class="token punctuation">(</span>combined<span class="token punctuation">.</span>Samples<span class="token punctuation">,</span> data<span class="token punctuation">.</span>Samples<span class="token operator">...</span><span class="token punctuation">)</span>
+        <span class="token function">mergeMaps</span><span class="token punctuation">(</span>combined<span class="token punctuation">.</span>Tags<span class="token punctuation">,</span> data<span class="token punctuation">.</span>Tags<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Process collected data</span>
+    processed<span class="token punctuation">,</span> err <span class="token operator">:=</span> cp<span class="token punctuation">.</span><span class="token function">processData</span><span class="token punctuation">(</span>combined<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"failed to process data: %w"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Update metrics</span>
+    atomic<span class="token punctuation">.</span><span class="token function">AddInt64</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>cp<span class="token punctuation">.</span>metrics<span class="token punctuation">.</span>SamplesCollected<span class="token punctuation">,</span> <span class="token function">int64</span><span class="token punctuation">(</span><span class="token function">len</span><span class="token punctuation">(</span>combined<span class="token punctuation">.</span>Samples<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>LastSample <span class="token operator">=</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> processed<span class="token punctuation">,</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// ExportProfile exports profile data in specified format</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">ExportProfile</span><span class="token punctuation">(</span>data <span class="token operator">*</span>ProfileData<span class="token punctuation">,</span> format OutputFormat<span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> cp<span class="token punctuation">.</span>exporter <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"no exporter configured"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> err <span class="token operator">:=</span> cp<span class="token punctuation">.</span>exporter<span class="token punctuation">.</span><span class="token function">Export</span><span class="token punctuation">(</span>data<span class="token punctuation">,</span> format<span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Errorf</span><span class="token punctuation">(</span><span class="token string">"export failed: %w"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    atomic<span class="token punctuation">.</span><span class="token function">AddInt64</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>cp<span class="token punctuation">.</span>metrics<span class="token punctuation">.</span>SamplesExported<span class="token punctuation">,</span> <span class="token function">int64</span><span class="token punctuation">(</span><span class="token function">len</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>Samples<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>LastExport <span class="token operator">=</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// GetMetrics returns profiler metrics</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">GetMetrics</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>ProfilerMetrics <span class="token punctuation">{</span>
+    cp<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">RLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">defer</span> cp<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">RUnlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    metrics <span class="token operator">:=</span> <span class="token operator">*</span>cp<span class="token punctuation">.</span>metrics
+    metrics<span class="token punctuation">.</span>UptimeSeconds <span class="token operator">=</span> <span class="token function">int64</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span><span class="token function">Since</span><span class="token punctuation">(</span>cp<span class="token punctuation">.</span>metrics<span class="token punctuation">.</span>StartTime<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Seconds</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    metrics<span class="token punctuation">.</span>MemoryUsage <span class="token operator">=</span> <span class="token function">getMemoryUsage</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    metrics<span class="token punctuation">.</span>CPUUsage <span class="token operator">=</span> <span class="token function">getCPUUsage</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    metrics<span class="token punctuation">.</span>GoroutineCount <span class="token operator">=</span> runtime<span class="token punctuation">.</span><span class="token function">NumGoroutine</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> <span class="token operator">&amp;</span>metrics
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Helper methods and implementations</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">registerDefaultCollectors</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Register built-in collectors</span>
+    cp<span class="token punctuation">.</span>collectors<span class="token punctuation">[</span><span class="token string">"cpu"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">NewCPUCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    cp<span class="token punctuation">.</span>collectors<span class="token punctuation">[</span><span class="token string">"memory"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">NewMemoryCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    cp<span class="token punctuation">.</span>collectors<span class="token punctuation">[</span><span class="token string">"goroutine"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">NewGoroutineCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    cp<span class="token punctuation">.</span>collectors<span class="token punctuation">[</span><span class="token string">"block"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">NewBlockCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    cp<span class="token punctuation">.</span>collectors<span class="token punctuation">[</span><span class="token string">"mutex"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">NewMutexCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">registerDefaultProcessors</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Register built-in processors</span>
+    cp<span class="token punctuation">.</span>processors<span class="token punctuation">[</span><span class="token string">"aggregation"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">NewAggregationProcessor</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    cp<span class="token punctuation">.</span>processors<span class="token punctuation">[</span><span class="token string">"filter"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">NewFilterProcessor</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    cp<span class="token punctuation">.</span>processors<span class="token punctuation">[</span><span class="token string">"transform"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">NewTransformProcessor</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">processingLoop</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    ticker <span class="token operator">:=</span> time<span class="token punctuation">.</span><span class="token function">NewTicker</span><span class="token punctuation">(</span>cp<span class="token punctuation">.</span>config<span class="token punctuation">.</span>FlushInterval<span class="token punctuation">)</span>
+    <span class="token keyword">defer</span> ticker<span class="token punctuation">.</span><span class="token function">Stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">for</span> <span class="token punctuation">{</span>
+        <span class="token keyword">select</span> <span class="token punctuation">{</span>
+        <span class="token keyword">case</span> <span class="token operator">&lt;-</span>ctx<span class="token punctuation">.</span><span class="token function">Done</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            <span class="token keyword">return</span>
+        <span class="token keyword">case</span> <span class="token operator">&lt;-</span>ticker<span class="token punctuation">.</span>C<span class="token punctuation">:</span>
+            cp<span class="token punctuation">.</span><span class="token function">flushBuffers</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">isCollectorEnabled</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span> <span class="token punctuation">{</span>
+    <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> enabled <span class="token operator">:=</span> <span class="token keyword">range</span> cp<span class="token punctuation">.</span>config<span class="token punctuation">.</span>EnabledCollectors <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> enabled <span class="token operator">==</span> name <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> <span class="token boolean">false</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">getCollectorByType</span><span class="token punctuation">(</span>collectorType CollectorType<span class="token punctuation">)</span> ProfileCollector <span class="token punctuation">{</span>
+    <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> collector <span class="token operator">:=</span> <span class="token keyword">range</span> cp<span class="token punctuation">.</span>collectors <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> collector<span class="token punctuation">.</span><span class="token function">GetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> collectorType <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> collector
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">buildMetadata</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProfileMetadata <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> m runtime<span class="token punctuation">.</span>MemStats
+    runtime<span class="token punctuation">.</span><span class="token function">ReadMemStats</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>m<span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> ProfileMetadata<span class="token punctuation">{</span>
+        ProfilerVersion<span class="token punctuation">:</span> cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>Version<span class="token punctuation">,</span>
+        Runtime<span class="token punctuation">:</span> RuntimeInfo<span class="token punctuation">{</span>
+            GoVersion<span class="token punctuation">:</span>    runtime<span class="token punctuation">.</span><span class="token function">Version</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            GOOS<span class="token punctuation">:</span>         runtime<span class="token punctuation">.</span>GOOS<span class="token punctuation">,</span>
+            GOARCH<span class="token punctuation">:</span>       runtime<span class="token punctuation">.</span>GOARCH<span class="token punctuation">,</span>
+            NumCPU<span class="token punctuation">:</span>       runtime<span class="token punctuation">.</span><span class="token function">NumCPU</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            NumGoroutine<span class="token punctuation">:</span> runtime<span class="token punctuation">.</span><span class="token function">NumGoroutine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            MemStats<span class="token punctuation">:</span>     m<span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        StartTime<span class="token punctuation">:</span>   cp<span class="token punctuation">.</span>state<span class="token punctuation">.</span>StartTime<span class="token punctuation">,</span>
+        SampleRate<span class="token punctuation">:</span>  cp<span class="token punctuation">.</span>config<span class="token punctuation">.</span>SamplingRate<span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">processData</span><span class="token punctuation">(</span>data <span class="token operator">*</span>ProfileData<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>ProfileData<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    processed <span class="token operator">:=</span> data
+
+    <span class="token comment">// Apply filters</span>
+    <span class="token keyword">if</span> cp<span class="token punctuation">.</span>filter <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        filtered <span class="token operator">:=</span> <span class="token operator">&amp;</span>ProfileData<span class="token punctuation">{</span>
+            ID<span class="token punctuation">:</span>        data<span class="token punctuation">.</span>ID<span class="token punctuation">,</span>
+            Type<span class="token punctuation">:</span>      data<span class="token punctuation">.</span>Type<span class="token punctuation">,</span>
+            Timestamp<span class="token punctuation">:</span> data<span class="token punctuation">.</span>Timestamp<span class="token punctuation">,</span>
+            Duration<span class="token punctuation">:</span>  data<span class="token punctuation">.</span>Duration<span class="token punctuation">,</span>
+            Samples<span class="token punctuation">:</span>   <span class="token function">make</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>ProfileSample<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            Metadata<span class="token punctuation">:</span>  data<span class="token punctuation">.</span>Metadata<span class="token punctuation">,</span>
+            Tags<span class="token punctuation">:</span>      data<span class="token punctuation">.</span>Tags<span class="token punctuation">,</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> sample <span class="token operator">:=</span> <span class="token keyword">range</span> data<span class="token punctuation">.</span>Samples <span class="token punctuation">{</span>
+            result <span class="token operator">:=</span> cp<span class="token punctuation">.</span>filter<span class="token punctuation">.</span><span class="token function">Apply</span><span class="token punctuation">(</span>sample<span class="token punctuation">)</span>
+            <span class="token keyword">if</span> result<span class="token punctuation">.</span>Action <span class="token operator">==</span> AllowAction <span class="token punctuation">{</span>
+                filtered<span class="token punctuation">.</span>Samples <span class="token operator">=</span> <span class="token function">append</span><span class="token punctuation">(</span>filtered<span class="token punctuation">.</span>Samples<span class="token punctuation">,</span> sample<span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+
+        processed <span class="token operator">=</span> filtered
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Apply processors</span>
+    <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> processor <span class="token operator">:=</span> <span class="token keyword">range</span> cp<span class="token punctuation">.</span>processors <span class="token punctuation">{</span>
+        processedData<span class="token punctuation">,</span> err <span class="token operator">:=</span> processor<span class="token punctuation">.</span><span class="token function">Process</span><span class="token punctuation">(</span>processed<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+            <span class="token keyword">continue</span> <span class="token comment">// Skip failed processors</span>
+        <span class="token punctuation">}</span>
+        processed <span class="token operator">=</span> processedData<span class="token punctuation">.</span>Processed
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> processed<span class="token punctuation">,</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>cp <span class="token operator">*</span>CustomProfiler<span class="token punctuation">)</span> <span class="token function">flushBuffers</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Flush aggregator buffers</span>
+    <span class="token keyword">if</span> cp<span class="token punctuation">.</span>aggregator <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        cp<span class="token punctuation">.</span>aggregator<span class="token punctuation">.</span><span class="token function">Flush</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Flush other component buffers</span>
+    <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> collector <span class="token operator">:=</span> <span class="token keyword">range</span> cp<span class="token punctuation">.</span>collectors <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> flusher<span class="token punctuation">,</span> ok <span class="token operator">:=</span> collector<span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token keyword">interface</span><span class="token punctuation">{</span> <span class="token function">Flush</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span> ok <span class="token punctuation">{</span>
+            flusher<span class="token punctuation">.</span><span class="token function">Flush</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Utility functions</span>
+<span class="token keyword">func</span> <span class="token function">generateID</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> fmt<span class="token punctuation">.</span><span class="token function">Sprintf</span><span class="token punctuation">(</span><span class="token string">"%d"</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">UnixNano</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">mergeMaps</span><span class="token punctuation">(</span>dest<span class="token punctuation">,</span> src <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">for</span> k<span class="token punctuation">,</span> v <span class="token operator">:=</span> <span class="token keyword">range</span> src <span class="token punctuation">{</span>
+        dest<span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">=</span> v
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">getMemoryUsage</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">int64</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> m runtime<span class="token punctuation">.</span>MemStats
+    runtime<span class="token punctuation">.</span><span class="token function">ReadMemStats</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>m<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token function">int64</span><span class="token punctuation">(</span>m<span class="token punctuation">.</span>Alloc<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">getCPUUsage</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">float64</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Simplified CPU usage calculation</span>
+    <span class="token comment">// In a real implementation, this would use more sophisticated methods</span>
+    <span class="token keyword">return</span> <span class="token number">0.0</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Component constructors (simplified)</span>
+<span class="token keyword">func</span> <span class="token function">NewProfileScheduler</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>ProfileScheduler <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token operator">&amp;</span>ProfileScheduler<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewProfileAggregator</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>ProfileAggregator <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token operator">&amp;</span>ProfileAggregator<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewProfileFilter</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>ProfileFilter <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token operator">&amp;</span>ProfileFilter<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewCPUCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProfileCollector <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewMemoryCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProfileCollector <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewGoroutineCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProfileCollector <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewBlockCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProfileCollector <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewMutexCollector</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProfileCollector <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewAggregationProcessor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProfileProcessor <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewFilterProcessor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProfileProcessor <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">NewTransformProcessor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ProfileProcessor <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ps <span class="token operator">*</span>ProfileScheduler<span class="token punctuation">)</span> <span class="token function">Start</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>ps <span class="token operator">*</span>ProfileScheduler<span class="token punctuation">)</span> <span class="token function">Stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">nil</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>pf <span class="token operator">*</span>ProfileFilter<span class="token punctuation">)</span> <span class="token function">Apply</span><span class="token punctuation">(</span>sample <span class="token operator">*</span>ProfileSample<span class="token punctuation">)</span> FilterResult <span class="token punctuation">{</span> <span class="token keyword">return</span> FilterResult<span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>pa <span class="token operator">*</span>ProfileAggregator<span class="token punctuation">)</span> <span class="token function">Flush</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+<span class="token comment">// Example usage</span>
+<span class="token keyword">func</span> <span class="token function">ExampleCustomProfiler</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Create profiler configuration</span>
+    config <span class="token operator">:=</span> ProfilerConfig<span class="token punctuation">{</span>
+        Name<span class="token punctuation">:</span>               <span class="token string">"MyCustomProfiler"</span><span class="token punctuation">,</span>
+        Version<span class="token punctuation">:</span>            <span class="token string">"1.0.0"</span><span class="token punctuation">,</span>
+        EnabledCollectors<span class="token punctuation">:</span>  <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">{</span><span class="token string">"cpu"</span><span class="token punctuation">,</span> <span class="token string">"memory"</span><span class="token punctuation">,</span> <span class="token string">"goroutine"</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+        SamplingRate<span class="token punctuation">:</span>       <span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token comment">// 10% sampling</span>
+        MaxMemoryUsage<span class="token punctuation">:</span>     <span class="token number">100</span> <span class="token operator">*</span> <span class="token number">1024</span> <span class="token operator">*</span> <span class="token number">1024</span><span class="token punctuation">,</span> <span class="token comment">// 100MB</span>
+        MaxCPUUsage<span class="token punctuation">:</span>        <span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token comment">// 10% CPU</span>
+        FlushInterval<span class="token punctuation">:</span>      time<span class="token punctuation">.</span>Minute<span class="token punctuation">,</span>
+        RetentionPeriod<span class="token punctuation">:</span>    <span class="token number">24</span> <span class="token operator">*</span> time<span class="token punctuation">.</span>Hour<span class="token punctuation">,</span>
+        CompressionEnabled<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        MetricsEnabled<span class="token punctuation">:</span>     <span class="token boolean">true</span><span class="token punctuation">,</span>
+        OutputFormat<span class="token punctuation">:</span>       JSONFormat<span class="token punctuation">,</span>
+        OutputDestination<span class="token punctuation">:</span>  <span class="token string">"./profiles"</span><span class="token punctuation">,</span>
+        BufferSize<span class="token punctuation">:</span>         <span class="token number">1000</span><span class="token punctuation">,</span>
+        WorkerCount<span class="token punctuation">:</span>        <span class="token number">4</span><span class="token punctuation">,</span>
+        BatchSize<span class="token punctuation">:</span>          <span class="token number">100</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Create custom profiler</span>
+    profiler <span class="token operator">:=</span> <span class="token function">NewCustomProfiler</span><span class="token punctuation">(</span>config<span class="token punctuation">)</span>
+
+    <span class="token comment">// Start profiling</span>
+    ctx <span class="token operator">:=</span> context<span class="token punctuation">.</span><span class="token function">Background</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> err <span class="token operator">:=</span> profiler<span class="token punctuation">.</span><span class="token function">Start</span><span class="token punctuation">(</span>ctx<span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Failed to start profiler: %v\n"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">defer</span> profiler<span class="token punctuation">.</span><span class="token function">Stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// Collect a profile</span>
+    profile<span class="token punctuation">,</span> err <span class="token operator">:=</span> profiler<span class="token punctuation">.</span><span class="token function">CollectProfile</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span>CollectorType<span class="token punctuation">{</span>CPUCollector<span class="token punctuation">,</span> MemoryCollector<span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Failed to collect profile: %v\n"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Export profile</span>
+    <span class="token keyword">if</span> err <span class="token operator">:=</span> profiler<span class="token punctuation">.</span><span class="token function">ExportProfile</span><span class="token punctuation">(</span>profile<span class="token punctuation">,</span> JSONFormat<span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Failed to export profile: %v\n"</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Get metrics</span>
+    metrics <span class="token operator">:=</span> profiler<span class="token punctuation">.</span><span class="token function">GetMetrics</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"Custom Profiler Example:"</span><span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Profiler: %s v%s\n"</span><span class="token punctuation">,</span> config<span class="token punctuation">.</span>Name<span class="token punctuation">,</span> config<span class="token punctuation">.</span>Version<span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Samples collected: %d\n"</span><span class="token punctuation">,</span> metrics<span class="token punctuation">.</span>SamplesCollected<span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Samples exported: %d\n"</span><span class="token punctuation">,</span> metrics<span class="token punctuation">.</span>SamplesExported<span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Memory usage: %d bytes\n"</span><span class="token punctuation">,</span> metrics<span class="token punctuation">.</span>MemoryUsage<span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Uptime: %d seconds\n"</span><span class="token punctuation">,</span> metrics<span class="token punctuation">.</span>UptimeSeconds<span class="token punctuation">)</span>
+
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Profile ID: %s\n"</span><span class="token punctuation">,</span> profile<span class="token punctuation">.</span>ID<span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Sample count: %d\n"</span><span class="token punctuation">,</span> <span class="token function">len</span><span class="token punctuation">(</span>profile<span class="token punctuation">.</span>Samples<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"Collection time: %v\n"</span><span class="token punctuation">,</span> profile<span class="token punctuation">.</span>Timestamp<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="profile-data-collection">Profile Data Collection</h2>
+<p>Advanced techniques for collecting custom profile data from Go applications.</p>
+<h3 id="custom-collectors">Custom Collectors</h3>
+<p>Building specialized collectors for unique performance metrics.</p>
+<h3 id="sampling-strategies">Sampling Strategies</h3>
+<p>Implementing intelligent sampling to balance overhead and accuracy.</p>
+<h3 id="data-enrichment">Data Enrichment</h3>
+<p>Enriching profile data with additional context and metadata.</p>
+<h2 id="data-processing">Data Processing</h2>
+<p>Processing and transforming profile data for analysis and visualization.</p>
+<h3 id="aggregation">Aggregation</h3>
+<p>Aggregating profile data across time and dimensions.</p>
+<h3 id="filtering">Filtering</h3>
+<p>Filtering profile data based on custom criteria.</p>
+<h3 id="transformation">Transformation</h3>
+<p>Transforming profile data into different formats and representations.</p>
+<h2 id="visualization">Visualization</h2>
+<p>Creating custom visualizations for profile data analysis.</p>
+<h3 id="flame-graphs">Flame Graphs</h3>
+<p>Generating interactive flame graphs from custom profile data.</p>
+<h3 id="timeline-views">Timeline Views</h3>
+<p>Creating timeline-based visualizations for temporal analysis.</p>
+<h3 id="custom-charts">Custom Charts</h3>
+<p>Building domain-specific charts and graphs for performance analysis.</p>
+<h2 id="best-practices">Best Practices</h2>
+<ol>
+<li><strong>Low Overhead</strong>: Minimize profiling overhead through efficient sampling</li>
+<li><strong>Data Quality</strong>: Ensure high-quality profile data collection</li>
+<li><strong>Scalability</strong>: Design profilers that scale with application load</li>
+<li><strong>Modularity</strong>: Build modular profilers with pluggable components</li>
+<li><strong>Standards</strong>: Follow established profiling data formats when possible</li>
+<li><strong>Security</strong>: Implement proper security measures for sensitive profile data</li>
+<li><strong>Documentation</strong>: Document custom profiling metrics and methodologies</li>
+<li><strong>Testing</strong>: Thoroughly test custom profilers across different scenarios</li>
+</ol>
+<h2 id="summary">Summary</h2>
+<p>Custom profiling enables specialized performance analysis tailored to specific needs:</p>
+<ol>
+<li><strong>Flexible Architecture</strong>: Modular profiler design for extensibility</li>
+<li><strong>Custom Collectors</strong>: Specialized data collection for unique metrics</li>
+<li><strong>Advanced Processing</strong>: Sophisticated data processing and transformation</li>
+<li><strong>Integration</strong>: Seamless integration with existing profiling ecosystems</li>
+<li><strong>Visualization</strong>: Custom visualizations for domain-specific insights</li>
+<li><strong>Performance</strong>: Efficient profiling with minimal application impact</li>
+</ol>
+<p>These techniques enable organizations to build profiling solutions that provide unique insights into application performance characteristics.</p>
+</body></html>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../concurrency-profiling/channel-analysis.html" class="navigation navigation-prev " aria-label="Previous page: Channel Analysis">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="custom-profiles.html" class="navigation navigation-next " aria-label="Next page: Custom Profiles">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Custom Profiling","level":"2.6","depth":1,"next":{"title":"Custom Profiles","level":"2.6.1","depth":2,"path":"profiling-tools/custom-profiling/custom-profiles.md","ref":"profiling-tools/custom-profiling/custom-profiles.md","articles":[]},"previous":{"title":"Channel Analysis","level":"2.5.3","depth":2,"path":"profiling-tools/concurrency-profiling/channel-analysis.md","ref":"profiling-tools/concurrency-profiling/channel-analysis.md","articles":[]},"articles":[{"title":"Custom Profiles","level":"2.6.1","depth":2,"path":"profiling-tools/custom-profiling/custom-profiles.md","ref":"profiling-tools/custom-profiling/custom-profiles.md","articles":[]},{"title":"Runtime Metrics","level":"2.6.2","depth":2,"path":"profiling-tools/custom-profiling/runtime-metrics.md","ref":"profiling-tools/custom-profiling/runtime-metrics.md","articles":[]},{"title":"Execution Tracing","level":"2.6.3","depth":2,"path":"profiling-tools/custom-profiling/execution-tracing.md","ref":"profiling-tools/custom-profiling/execution-tracing.md","articles":[]}],"dir":"ltr"},"config":{"plugins":["-highlight","prism","mermaid"],"root":".","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"mermaid":{"theme":"default"},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Performance Engineering Team","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.0.0","go_version":"1.24+","repo_url":"https://github.com/psavelis/codechallenge"},"title":"Advanced Go Performance Engineering","language":"en","gitbook":">=3.0.0","description":"A Complete Guide to Profiling, Benchmarking, and Optimization Techniques in Go"},"file":{"path":"profiling-tools/custom-profiling/README.md","mtime":"2025-09-08T16:39:46.322Z","type":"markdown"},"gitbook":{"version":"6.1.4","time":"2025-09-08T17:50:06.395Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/honkit-plugin-mermaid/mermaid-load.js"></script>
+        
+    
+        
+        <script src="../../gitbook/honkit-plugin-mermaid/mermaid.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

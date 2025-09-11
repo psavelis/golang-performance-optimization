@@ -1,0 +1,1 @@
+{ "$schema": "http://json-schema.org/draft-07/schema#", "title": "PerformanceRiskScoringInput", "type": "object", "required": ["signals"], "properties": { "signals": {"type": "object", "additionalProperties": {"type": ["number", "string"]}} }, "additionalProperties": false }

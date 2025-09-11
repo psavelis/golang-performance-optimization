@@ -1,0 +1,43 @@
+{
+  "author": "Sam Gentle <sam@samgentle.com>",
+  "name": "phantom",
+  "description": "PhantomJS wrapper for Node",
+  "homepage": "https://github.com/sgentle/phantomjs-node",
+  "version": "0.8.4",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sgentle/phantomjs-node.git"
+  },
+  "contributors": [
+    {
+      "name": "Amir Raminfar",
+      "email": "findamir@gmail.com"
+    }
+  ],
+  "main": "phantom.js",
+  "engines": {
+    "node": ">=v0.8.0"
+  },
+  "dependencies": {
+    "dnode": ">=1.2.2",
+    "shoe": "~0.0.15",
+    "win-spawn": "~2.0.0",
+    "traverse": "~0.6.3"
+  },
+  "devDependencies": {
+    "browserify": "10.0.0",
+    "coffee-script": "~1.9.2",
+    "coffeeify": "^1.1.0",
+    "express": "3.2.5",
+    "temp": "~0.4.0",
+    "ps-tree": "~0.0.2",
+    "vows": "~0.7.0",
+    "bluebird": "~1.2.3",
+    "phantomjs": "~1.9.7-5"
+  },
+  "license": "MIT",
+  "scripts": {
+    "prepublish": "cake build",
+    "test": "cake test"
+  }
+}

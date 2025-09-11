@@ -1,0 +1,48 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 75
+    spike_limit_percentage: 25
+  batch:
+    timeout: 1s
+    send_batch_size: 8192
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: dev
+        action: upsert
+
+exporters:
+  logging:
+    loglevel: info
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  otlphttp/dynatrace:
+    # Set DT_OTLP_ENDPOINT to e.g. "https://{your-env-id}.live.dynatrace.com/api/v2/otlp"
+    endpoint: "${DT_OTLP_ENDPOINT}"
+    headers:
+      Authorization: "Api-Token ${DT_API_TOKEN}"
+    compression: gzip
+    timeout: 10s
+
+extensions:
+  health_check: {}
+  pprof: {}
+
+service:
+  extensions: [health_check, pprof]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [logging, otlp/tempo, otlphttp/dynatrace]

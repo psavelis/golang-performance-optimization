@@ -1,0 +1,4025 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Memory Leaks Detection · Advanced Go Performance Engineering</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.0.3">
+        <meta name="author" content="Performance Engineering Team">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../goroutine-profiling/" />
+    
+    
+    <link rel="prev" href="allocation-profiling.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Part I: Fundamentals</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../../getting-started/">
+            
+                <a href="../../getting-started/">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../../getting-started/environment-setup.html">
+            
+                <a href="../../getting-started/environment-setup.html">
+            
+                    
+                    Environment Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../../getting-started/first-profile.html">
+            
+                <a href="../../getting-started/first-profile.html">
+            
+                    
+                    Your First Profile
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../../getting-started/understanding-output.html">
+            
+                <a href="../../getting-started/understanding-output.html">
+            
+                    
+                    Understanding Output
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../../getting-started/architecture-overview.html">
+            
+                <a href="../../getting-started/architecture-overview.html">
+            
+                    
+                    Architecture Overview (Mermaid)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../../fundamentals/">
+            
+                <a href="../../fundamentals/">
+            
+                    
+                    Performance Fundamentals
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../../fundamentals/runtime-internals.html">
+            
+                <a href="../../fundamentals/runtime-internals.html">
+            
+                    
+                    Go Runtime Internals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../../fundamentals/memory-model.html">
+            
+                <a href="../../fundamentals/memory-model.html">
+            
+                    
+                    Memory Model
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../../fundamentals/goroutine-scheduler.html">
+            
+                <a href="../../fundamentals/goroutine-scheduler.html">
+            
+                    
+                    Goroutine Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../../fundamentals/garbage-collector.html">
+            
+                <a href="../../fundamentals/garbage-collector.html">
+            
+                    
+                    Garbage Collector
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part II: Profiling Tools & Techniques</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Profiling Tools Overview
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../cpu-profiling/">
+            
+                <a href="../cpu-profiling/">
+            
+                    
+                    CPU Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.2.1" data-path="../cpu-profiling/basic-cpu-profiling.html">
+            
+                <a href="../cpu-profiling/basic-cpu-profiling.html">
+            
+                    
+                    Basic CPU Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.2" data-path="../cpu-profiling/advanced-techniques.html">
+            
+                <a href="../cpu-profiling/advanced-techniques.html">
+            
+                    
+                    Advanced Techniques
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="../cpu-profiling/flamegraph-analysis.html">
+            
+                <a href="../cpu-profiling/flamegraph-analysis.html">
+            
+                    
+                    Flamegraph Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Memory Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.3.1" data-path="heap-profiling.html">
+            
+                <a href="heap-profiling.html">
+            
+                    
+                    Heap Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3.2" data-path="allocation-profiling.html">
+            
+                <a href="allocation-profiling.html">
+            
+                    
+                    Allocation Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.3.3" data-path="leak-detection.html">
+            
+                <a href="leak-detection.html">
+            
+                    
+                    Memory Leaks Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../goroutine-profiling/">
+            
+                <a href="../goroutine-profiling/">
+            
+                    
+                    Goroutine Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.4.1" data-path="../goroutine-profiling/goroutine-analysis.html">
+            
+                <a href="../goroutine-profiling/goroutine-analysis.html">
+            
+                    
+                    Goroutine Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.2" data-path="../goroutine-profiling/deadlock-detection.html">
+            
+                <a href="../goroutine-profiling/deadlock-detection.html">
+            
+                    
+                    Deadlock Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.3" data-path="../goroutine-profiling/goroutine-leaks.html">
+            
+                <a href="../goroutine-profiling/goroutine-leaks.html">
+            
+                    
+                    Goroutine Leaks
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../concurrency-profiling/">
+            
+                <a href="../concurrency-profiling/">
+            
+                    
+                    Mutex & Block Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.5.1" data-path="../concurrency-profiling/mutex-contention.html">
+            
+                <a href="../concurrency-profiling/mutex-contention.html">
+            
+                    
+                    Mutex Contention
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5.2" data-path="../concurrency-profiling/block-profiling.html">
+            
+                <a href="../concurrency-profiling/block-profiling.html">
+            
+                    
+                    Block Profiling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5.3" data-path="../concurrency-profiling/channel-analysis.html">
+            
+                <a href="../concurrency-profiling/channel-analysis.html">
+            
+                    
+                    Channel Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="../custom-profiling/">
+            
+                <a href="../custom-profiling/">
+            
+                    
+                    Custom Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.6.1" data-path="../custom-profiling/custom-profiles.html">
+            
+                <a href="../custom-profiling/custom-profiles.html">
+            
+                    
+                    Custom Profiles
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6.2" data-path="../custom-profiling/runtime-metrics.html">
+            
+                <a href="../custom-profiling/runtime-metrics.html">
+            
+                    
+                    Runtime Metrics
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6.3" data-path="../custom-profiling/execution-tracing.html">
+            
+                <a href="../custom-profiling/execution-tracing.html">
+            
+                    
+                    Execution Tracing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part III: Benchmarking Excellence</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../../benchmarking/">
+            
+                <a href="../../benchmarking/">
+            
+                    
+                    Benchmarking Fundamentals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../../benchmarking/writing-benchmarks/">
+            
+                <a href="../../benchmarking/writing-benchmarks/">
+            
+                    
+                    Writing Effective Benchmarks
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="../../benchmarking/writing-benchmarks/basic-benchmarks.html">
+            
+                <a href="../../benchmarking/writing-benchmarks/basic-benchmarks.html">
+            
+                    
+                    Basic Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="../../benchmarking/writing-benchmarks/sub-benchmarks.html">
+            
+                <a href="../../benchmarking/writing-benchmarks/sub-benchmarks.html">
+            
+                    
+                    Sub-benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="../../benchmarking/writing-benchmarks/parallel-benchmarks.html">
+            
+                <a href="../../benchmarking/writing-benchmarks/parallel-benchmarks.html">
+            
+                    
+                    Parallel Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="../../benchmarking/analysis/">
+            
+                <a href="../../benchmarking/analysis/">
+            
+                    
+                    Benchmark Analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="../../benchmarking/analysis/statistical-analysis.html">
+            
+                <a href="../../benchmarking/analysis/statistical-analysis.html">
+            
+                    
+                    Statistical Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="../../benchmarking/analysis/performance-regression.html">
+            
+                <a href="../../benchmarking/analysis/performance-regression.html">
+            
+                    
+                    Performance Regression
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="../../benchmarking/analysis/comparative-benchmarking.html">
+            
+                <a href="../../benchmarking/analysis/comparative-benchmarking.html">
+            
+                    
+                    Comparative Benchmarking
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../../benchmarking/advanced/">
+            
+                <a href="../../benchmarking/advanced/">
+            
+                    
+                    Advanced Benchmarking
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.4.1" data-path="../../benchmarking/advanced/micro-benchmarks.html">
+            
+                <a href="../../benchmarking/advanced/micro-benchmarks.html">
+            
+                    
+                    Micro-benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.2" data-path="../../benchmarking/advanced/e2e-benchmarks.html">
+            
+                <a href="../../benchmarking/advanced/e2e-benchmarks.html">
+            
+                    
+                    End-to-End Benchmarks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.3" data-path="../../benchmarking/advanced/load-testing.html">
+            
+                <a href="../../benchmarking/advanced/load-testing.html">
+            
+                    
+                    Load Testing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part IV: Optimization Techniques</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../../optimization/">
+            
+                <a href="../../optimization/">
+            
+                    
+                    Optimization Strategies
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../../optimization/algorithms/">
+            
+                <a href="../../optimization/algorithms/">
+            
+                    
+                    Algorithm Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="../../optimization/algorithms/time-complexity.html">
+            
+                <a href="../../optimization/algorithms/time-complexity.html">
+            
+                    
+                    Time Complexity Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="../../optimization/algorithms/space-complexity.html">
+            
+                <a href="../../optimization/algorithms/space-complexity.html">
+            
+                    
+                    Space Complexity Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="../../optimization/algorithms/data-structures.html">
+            
+                <a href="../../optimization/algorithms/data-structures.html">
+            
+                    
+                    Data Structure Selection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="../../optimization/memory/">
+            
+                <a href="../../optimization/memory/">
+            
+                    
+                    Memory Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="../../optimization/memory/memory-pools.html">
+            
+                <a href="../../optimization/memory/memory-pools.html">
+            
+                    
+                    Memory Pools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="../../optimization/memory/object-reuse.html">
+            
+                <a href="../../optimization/memory/object-reuse.html">
+            
+                    
+                    Object Reuse
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="../../optimization/memory/stack-vs-heap.html">
+            
+                <a href="../../optimization/memory/stack-vs-heap.html">
+            
+                    
+                    Stack vs Heap
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="../../optimization/memory/memory-layout.html">
+            
+                <a href="../../optimization/memory/memory-layout.html">
+            
+                    
+                    Memory Layout
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="../../optimization/concurrency/">
+            
+                <a href="../../optimization/concurrency/">
+            
+                    
+                    Concurrency Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.4.1" data-path="../../optimization/concurrency/goroutine-patterns.html">
+            
+                <a href="../../optimization/concurrency/goroutine-patterns.html">
+            
+                    
+                    Goroutine Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.2" data-path="../../optimization/concurrency/channel-optimization.html">
+            
+                <a href="../../optimization/concurrency/channel-optimization.html">
+            
+                    
+                    Channel Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.3" data-path="../../optimization/concurrency/worker-pools.html">
+            
+                <a href="../../optimization/concurrency/worker-pools.html">
+            
+                    
+                    Worker Pools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4.4" data-path="../../optimization/concurrency/lock-free.html">
+            
+                <a href="../../optimization/concurrency/lock-free.html">
+            
+                    
+                    Lock-Free Programming
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="../../optimization/io/">
+            
+                <a href="../../optimization/io/">
+            
+                    
+                    I/O Optimization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.5.1" data-path="../../optimization/io/buffer-management.html">
+            
+                <a href="../../optimization/io/buffer-management.html">
+            
+                    
+                    Buffer Management
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.2" data-path="../../optimization/io/streaming.html">
+            
+                <a href="../../optimization/io/streaming.html">
+            
+                    
+                    Streaming Processing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5.3" data-path="../../optimization/io/network-optimization.html">
+            
+                <a href="../../optimization/io/network-optimization.html">
+            
+                    
+                    Network Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="../../optimization/compiler/">
+            
+                <a href="../../optimization/compiler/">
+            
+                    
+                    Compiler Optimizations
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.6.1" data-path="../../optimization/compiler/inlining.html">
+            
+                <a href="../../optimization/compiler/inlining.html">
+            
+                    
+                    Inlining
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.2" data-path="../../optimization/compiler/escape-analysis.html">
+            
+                <a href="../../optimization/compiler/escape-analysis.html">
+            
+                    
+                    Escape Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6.3" data-path="../../optimization/compiler/build-optimization.html">
+            
+                <a href="../../optimization/compiler/build-optimization.html">
+            
+                    
+                    Build Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part V: Production Performance</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../../production/">
+            
+                <a href="../../production/">
+            
+                    
+                    Production Monitoring
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="../../production/continuous-profiling/">
+            
+                <a href="../../production/continuous-profiling/">
+            
+                    
+                    Continuous Profiling
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.2.1" data-path="../../production/continuous-profiling/setup.html">
+            
+                <a href="../../production/continuous-profiling/setup.html">
+            
+                    
+                    Production Profiling Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.2" data-path="../../production/continuous-profiling/pyroscope-examples.html">
+            
+                <a href="../../production/continuous-profiling/pyroscope-examples.html">
+            
+                    
+                    Pyroscope Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.3" data-path="../../production/continuous-profiling/automated-analysis.html">
+            
+                <a href="../../production/continuous-profiling/automated-analysis.html">
+            
+                    
+                    Automated Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.4" data-path="../../production/continuous-profiling/alerting.html">
+            
+                <a href="../../production/continuous-profiling/alerting.html">
+            
+                    
+                    Alert Systems
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.5" data-path="../../production/continuous-profiling/ci-pipelines.html">
+            
+                <a href="../../production/continuous-profiling/ci-pipelines.html">
+            
+                    
+                    CI Pipelines (PR Profiling)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.6" data-path="../../production/continuous-profiling/advanced-ci-profiling.html">
+            
+                <a href="../../production/continuous-profiling/advanced-ci-profiling.html">
+            
+                    
+                    Advanced CI Profiling & Regression Gates
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.7" data-path="../../production/continuous-profiling/staff-architecture-guide.html">
+            
+                <a href="../../production/continuous-profiling/staff-architecture-guide.html">
+            
+                    
+                    Staff / Architect Observability Strategy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.8" data-path="../../production/continuous-profiling/trace-correlation.html">
+            
+                <a href="../../production/continuous-profiling/trace-correlation.html">
+            
+                    
+                    Trace ↔ Profile Correlation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.9" data-path="../../production/continuous-profiling/hybrid-otel-pyroscope.html">
+            
+                <a href="../../production/continuous-profiling/hybrid-otel-pyroscope.html">
+            
+                    
+                    Hybrid OTel + Pyroscope
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.10" data-path="../../production/continuous-profiling/ai-assisted-analysis.html">
+            
+                <a href="../../production/continuous-profiling/ai-assisted-analysis.html">
+            
+                    
+                    AI-Assisted Analysis Pipeline
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.11" data-path="../../production/continuous-profiling/regression-gates-and-workflow.html">
+            
+                <a href="../../production/continuous-profiling/regression-gates-and-workflow.html">
+            
+                    
+                    Regression Gates & Workflow Automation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.12" data-path="../../production/continuous-profiling/observability-architecture-deep-dive.html">
+            
+                <a href="../../production/continuous-profiling/observability-architecture-deep-dive.html">
+            
+                    
+                    Observability Architecture Deep Dive
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.13" data-path="../../production/continuous-profiling/continuous-optimization-playbook.html">
+            
+                <a href="../../production/continuous-profiling/continuous-optimization-playbook.html">
+            
+                    
+                    Continuous Optimization Playbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.14" data-path="../../production/continuous-profiling/build-metadata-linking.html">
+            
+                <a href="../../production/continuous-profiling/build-metadata-linking.html">
+            
+                    
+                    Build Metadata & Deep Linking
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.15" data-path="../../production/continuous-profiling/performance-pr-checklist.html">
+            
+                <a href="../../production/continuous-profiling/performance-pr-checklist.html">
+            
+                    
+                    Performance PR Checklist
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.16" data-path="../../production/continuous-profiling/speedscope-and-gates.html">
+            
+                <a href="../../production/continuous-profiling/speedscope-and-gates.html">
+            
+                    
+                    Speedscope & Enforced Gates
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="../../production/metrics/">
+            
+                <a href="../../production/metrics/">
+            
+                    
+                    Metrics with Prometheus
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.3.1" data-path="../../production/metrics/prometheus-examples.html">
+            
+                <a href="../../production/metrics/prometheus-examples.html">
+            
+                    
+                    Prometheus Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.2" data-path="../../production/metrics/unobtrusive-metrics.html">
+            
+                <a href="../../production/metrics/unobtrusive-metrics.html">
+            
+                    
+                    Unobtrusive Metrics (CLI Jobs)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="../../production/tracing/">
+            
+                <a href="../../production/tracing/">
+            
+                    
+                    Distributed Tracing with OpenTelemetry
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.4.1" data-path="../../production/tracing/local-setup.html">
+            
+                <a href="../../production/tracing/local-setup.html">
+            
+                    
+                    Local Setup (OTel Collector)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4.2" data-path="../../production/tracing/vendor-guides.html">
+            
+                <a href="../../production/tracing/vendor-guides.html">
+            
+                    
+                    Vendor Guides (Datadog, New Relic, Splunk)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4.3" data-path="../../production/tracing/dynatrace-integration.html">
+            
+                <a href="../../production/tracing/dynatrace-integration.html">
+            
+                    
+                    Dynatrace Integration (OTLP)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="../../production/logging/">
+            
+                <a href="../../production/logging/">
+            
+                    
+                    Centralized Logging
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.5.1" data-path="../../production/logging/fluentd-loki-examples.html">
+            
+                <a href="../../production/logging/fluentd-loki-examples.html">
+            
+                    
+                    Fluentd → Loki Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5.2" data-path="../../production/logging/elk-setup.html">
+            
+                <a href="../../production/logging/elk-setup.html">
+            
+                    
+                    Advanced ELK Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6" data-path="../../production/performance-testing/">
+            
+                <a href="../../production/performance-testing/">
+            
+                    
+                    Performance Testing
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.6.1" data-path="../../production/performance-testing/test-design.html">
+            
+                <a href="../../production/performance-testing/test-design.html">
+            
+                    
+                    Performance Test Design
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6.2" data-path="../../production/performance-testing/cicd-integration.html">
+            
+                <a href="../../production/performance-testing/cicd-integration.html">
+            
+                    
+                    CI/CD Integration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6.3" data-path="../../production/performance-testing/regression-detection.html">
+            
+                <a href="../../production/performance-testing/regression-detection.html">
+            
+                    
+                    Regression Detection
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7" data-path="../../production/scalability/">
+            
+                <a href="../../production/scalability/">
+            
+                    
+                    Scalability Analysis
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.7.1" data-path="../../production/scalability/horizontal-scaling.html">
+            
+                <a href="../../production/scalability/horizontal-scaling.html">
+            
+                    
+                    Horizontal Scaling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7.2" data-path="../../production/scalability/vertical-scaling.html">
+            
+                <a href="../../production/scalability/vertical-scaling.html">
+            
+                    
+                    Vertical Scaling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7.3" data-path="../../production/scalability/bottleneck-analysis.html">
+            
+                <a href="../../production/scalability/bottleneck-analysis.html">
+            
+                    
+                    Bottleneck Analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VI: Case Studies & Best Practices</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../../case-studies/">
+            
+                <a href="../../case-studies/">
+            
+                    
+                    Real-World Case Studies
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.1.1" data-path="../../case-studies/web-service-optimization.html">
+            
+                <a href="../../case-studies/web-service-optimization.html">
+            
+                    
+                    Web Service Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.2" data-path="../../case-studies/microservices-optimization.html">
+            
+                <a href="../../case-studies/microservices-optimization.html">
+            
+                    
+                    Microservices Performance
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.3" data-path="../../case-studies/database-optimization.html">
+            
+                <a href="../../case-studies/database-optimization.html">
+            
+                    
+                    Database Optimization
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../../best-practices/">
+            
+                <a href="../../best-practices/">
+            
+                    
+                    Best Practices
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.2.1" data-path="../../best-practices/development-workflow.html">
+            
+                <a href="../../best-practices/development-workflow.html">
+            
+                    
+                    Development Workflow
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.2" data-path="../../best-practices/production-deployment.html">
+            
+                <a href="../../best-practices/production-deployment.html">
+            
+                    
+                    Production Deployment
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.3" data-path="../../best-practices/team-culture.html">
+            
+                <a href="../../best-practices/team-culture.html">
+            
+                    
+                    Team Culture
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VII: Tools & Resources</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="../../tools-resources/">
+            
+                <a href="../../tools-resources/">
+            
+                    
+                    Tools & Resources
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="7.1.1" data-path="../../tools-resources/essential-tools.html">
+            
+                <a href="../../tools-resources/essential-tools.html">
+            
+                    
+                    Essential Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.1.2" data-path="../../tools-resources/external-resources.html">
+            
+                <a href="../../tools-resources/external-resources.html">
+            
+                    
+                    External Resources
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.1.3" data-path="../../tools-resources/community.html">
+            
+                <a href="../../tools-resources/community.html">
+            
+                    
+                    Community Guide
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendices</li>
+        
+        
+    
+        <li class="chapter " data-level="8.1" data-path="../../appendices/runtime-flags.html">
+            
+                <a href="../../appendices/runtime-flags.html">
+            
+                    
+                    Appendix A: Go Runtime Flags
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.2" data-path="../../appendices/metrics-glossary.html">
+            
+                <a href="../../appendices/metrics-glossary.html">
+            
+                    
+                    Appendix B: Performance Metrics Glossary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.3" data-path="../../appendices/troubleshooting.html">
+            
+                <a href="../../appendices/troubleshooting.html">
+            
+                    
+                    Appendix C: Troubleshooting Guide
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="8.4" data-path="../../appendices/performance-patterns.html">
+            
+                <a href="../../appendices/performance-patterns.html">
+            
+                    
+                    Appendix D: Performance Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Part VIII: Observability & Performance MCPs</li>
+        
+        
+    
+        <li class="chapter " data-level="9.1" data-path="../../mcp/">
+            
+                <a href="../../mcp/">
+            
+                    
+                    MCP Overview
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2" data-path="../../mcp/observability/">
+            
+                <a href="../../mcp/observability/">
+            
+                    
+                    Observability MCPs
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.2.1" data-path="../../mcp/observability/prometheus-query-assistant.html">
+            
+                <a href="../../mcp/observability/prometheus-query-assistant.html">
+            
+                    
+                    Prometheus Query Assistant
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.2" data-path="../../mcp/observability/prometheus-alert-explainer.html">
+            
+                <a href="../../mcp/observability/prometheus-alert-explainer.html">
+            
+                    
+                    Prometheus Alert Explainer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.3" data-path="../../mcp/observability/pyroscope-profile-explorer.html">
+            
+                <a href="../../mcp/observability/pyroscope-profile-explorer.html">
+            
+                    
+                    Pyroscope Profile Explorer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.4" data-path="../../mcp/observability/pyroscope-diff-analyzer.html">
+            
+                <a href="../../mcp/observability/pyroscope-diff-analyzer.html">
+            
+                    
+                    Pyroscope Diff Analyzer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.5" data-path="../../mcp/observability/grafana-dashboard-author.html">
+            
+                <a href="../../mcp/observability/grafana-dashboard-author.html">
+            
+                    
+                    Grafana Dashboard Author
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.2.6" data-path="../../mcp/observability/log-aggregation-slicer.html">
+            
+                <a href="../../mcp/observability/log-aggregation-slicer.html">
+            
+                    
+                    Log Aggregation Slicer
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3" data-path="../../mcp/tracing/">
+            
+                <a href="../../mcp/tracing/">
+            
+                    
+                    Tracing MCPs
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.3.1" data-path="../../mcp/tracing/otel-trace-summarizer.html">
+            
+                <a href="../../mcp/tracing/otel-trace-summarizer.html">
+            
+                    
+                    OTel Trace Summarizer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3.2" data-path="../../mcp/tracing/span-anomaly-detector.html">
+            
+                <a href="../../mcp/tracing/span-anomaly-detector.html">
+            
+                    
+                    Span Anomaly Detector
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3.3" data-path="../../mcp/tracing/latency-regression-detector.html">
+            
+                <a href="../../mcp/tracing/latency-regression-detector.html">
+            
+                    
+                    Latency Regression Detector
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3.4" data-path="../../mcp/tracing/trace-profile-correlator.html">
+            
+                <a href="../../mcp/tracing/trace-profile-correlator.html">
+            
+                    
+                    Trace ↔ Profile Correlator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.3.5" data-path="../../mcp/tracing/critical-path-extractor.html">
+            
+                <a href="../../mcp/tracing/critical-path-extractor.html">
+            
+                    
+                    Critical Path Extractor
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4" data-path="../../mcp/performance/">
+            
+                <a href="../../mcp/performance/">
+            
+                    
+                    Performance MCPs
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.4.1" data-path="../../mcp/performance/benchmark-trend-analyzer.html">
+            
+                <a href="../../mcp/performance/benchmark-trend-analyzer.html">
+            
+                    
+                    Benchmark Trend Analyzer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.2" data-path="../../mcp/performance/regression-gatekeeper.html">
+            
+                <a href="../../mcp/performance/regression-gatekeeper.html">
+            
+                    
+                    Regression Gatekeeper
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.3" data-path="../../mcp/performance/flamegraph-diff-explainer.html">
+            
+                <a href="../../mcp/performance/flamegraph-diff-explainer.html">
+            
+                    
+                    Flamegraph Diff Explainer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.4" data-path="../../mcp/performance/allocation-hotspot-classifier.html">
+            
+                <a href="../../mcp/performance/allocation-hotspot-classifier.html">
+            
+                    
+                    Allocation Hotspot Classifier
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.5" data-path="../../mcp/performance/gc-pressure-advisor.html">
+            
+                <a href="../../mcp/performance/gc-pressure-advisor.html">
+            
+                    
+                    GC Pressure Advisor
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.6" data-path="../../mcp/performance/concurrency-contention-advisor.html">
+            
+                <a href="../../mcp/performance/concurrency-contention-advisor.html">
+            
+                    
+                    Concurrency Contention Advisor
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.7" data-path="../../mcp/performance/io-latency-bottleneck-finder.html">
+            
+                <a href="../../mcp/performance/io-latency-bottleneck-finder.html">
+            
+                    
+                    I/O Latency Bottleneck Finder
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.4.8" data-path="../../mcp/performance/query-plan-regression-analyzer.html">
+            
+                <a href="../../mcp/performance/query-plan-regression-analyzer.html">
+            
+                    
+                    Query Plan Regression Analyzer
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5" data-path="../../mcp/cross-cutting/">
+            
+                <a href="../../mcp/cross-cutting/">
+            
+                    
+                    Cross-Cutting MCPs
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.5.1" data-path="../../mcp/cross-cutting/slo-error-budget-monitor.html">
+            
+                <a href="../../mcp/cross-cutting/slo-error-budget-monitor.html">
+            
+                    
+                    SLO Error Budget Monitor
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.2" data-path="../../mcp/cross-cutting/capacity-forecasting-engine.html">
+            
+                <a href="../../mcp/cross-cutting/capacity-forecasting-engine.html">
+            
+                    
+                    Capacity Forecasting Engine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.3" data-path="../../mcp/cross-cutting/cost-efficiency-analyzer.html">
+            
+                <a href="../../mcp/cross-cutting/cost-efficiency-analyzer.html">
+            
+                    
+                    Cost Efficiency Analyzer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.4" data-path="../../mcp/cross-cutting/performance-risk-scoring.html">
+            
+                <a href="../../mcp/cross-cutting/performance-risk-scoring.html">
+            
+                    
+                    Performance Risk Scoring
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.5" data-path="../../mcp/cross-cutting/golden-signals-aggregator.html">
+            
+                <a href="../../mcp/cross-cutting/golden-signals-aggregator.html">
+            
+                    
+                    Golden Signals Aggregator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.5.6" data-path="../../mcp/cross-cutting/optimization-recommendation-orchestrator.html">
+            
+                <a href="../../mcp/cross-cutting/optimization-recommendation-orchestrator.html">
+            
+                    
+                    Optimization Recommendation Orchestrator
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="9.6" data-path="../../mcp/patterns/">
+            
+                <a href="../../mcp/patterns/">
+            
+                    
+                    MCP Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.7" data-path="../../mcp/references/">
+            
+                <a href="../../mcp/references/">
+            
+                    
+                    Reference Catalog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.8" data-path="../../mcp/index-table.html">
+            
+                <a href="../../mcp/index-table.html">
+            
+                    
+                    MCP Index Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.9" data-path="../../mcp/schemas/">
+            
+                <a href="../../mcp/schemas/">
+            
+                    
+                    Schemas
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.10" data-path="../../mcp/integration/architecture.html">
+            
+                <a href="../../mcp/integration/architecture.html">
+            
+                    
+                    Integration Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.11" data-path="../../mcp/quickstart.html">
+            
+                <a href="../../mcp/quickstart.html">
+            
+                    
+                    Quickstart
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.12" data-path="../../mcp/cli-usage.html">
+            
+                <a href="../../mcp/cli-usage.html">
+            
+                    
+                    CLI Usage
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.13" data-path="../../mcp/ci-examples.html">
+            
+                <a href="../../mcp/ci-examples.html">
+            
+                    
+                    CI Integration Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14" data-path="../../mcp/tutorials/">
+            
+                <a href="../../mcp/tutorials/">
+            
+                    
+                    Tutorials
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="9.14.1" data-path="../../mcp/tutorials/trace-summarizer.html">
+            
+                <a href="../../mcp/tutorials/trace-summarizer.html">
+            
+                    
+                    Building a Trace Summarizer MCP
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.2" data-path="../../mcp/tutorials/pyroscope-correlation.html">
+            
+                <a href="../../mcp/tutorials/pyroscope-correlation.html">
+            
+                    
+                    Adding Pyroscope Correlation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.3" data-path="../../mcp/tutorials/regression-gatekeeper.html">
+            
+                <a href="../../mcp/tutorials/regression-gatekeeper.html">
+            
+                    
+                    Implementing Regression Gatekeeper
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.4" data-path="../../mcp/tutorials/multi-source-flow.html">
+            
+                <a href="../../mcp/tutorials/multi-source-flow.html">
+            
+                    
+                    Multi-Source Observability Flow
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.5" data-path="../../mcp/tutorials/golden-signals-aggregator.html">
+            
+                <a href="../../mcp/tutorials/golden-signals-aggregator.html">
+            
+                    
+                    Golden Signals Aggregator Tutorial
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.6" data-path="../../mcp/tutorials/capacity-forecasting.html">
+            
+                <a href="../../mcp/tutorials/capacity-forecasting.html">
+            
+                    
+                    Capacity Forecasting Tutorial
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.7" data-path="../../mcp/tutorials/schema-validation.html">
+            
+                <a href="../../mcp/tutorials/schema-validation.html">
+            
+                    
+                    Schema Validation & Contracts
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="9.14.8" data-path="../../mcp/tutorials/ci-orchestration.html">
+            
+                <a href="../../mcp/tutorials/ci-orchestration.html">
+            
+                    
+                    CI Orchestration & Chaining
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >Memory Leaks Detection</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="memory-leak-detection">Memory Leak Detection</h1>
+<p>Memory leak detection is crucial for building robust Go applications that maintain stable memory usage over time. This comprehensive guide covers advanced techniques for detecting, analyzing, and preventing memory leaks in Go applications.</p>
+<h2 id="introduction-to-memory-leak-detection">Introduction to Memory Leak Detection</h2>
+<p>Memory leaks in Go can occur despite having a garbage collector. Common causes include:</p>
+<ul>
+<li><strong>Goroutine leaks</strong> - Goroutines that never terminate</li>
+<li><strong>Reference cycles</strong> - Objects that reference each other</li>
+<li><strong>Global variable accumulation</strong> - Growing global data structures</li>
+<li><strong>Resource leaks</strong> - Unclosed files, connections, or channels</li>
+<li><strong>Finalizer issues</strong> - Objects with finalizers not being collected</li>
+</ul>
+<h3 id="understanding-go-memory-management">Understanding Go Memory Management</h3>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"fmt"</span>
+    <span class="hljs-string">"runtime"</span>
+    <span class="hljs-string">"runtime/debug"</span>
+    <span class="hljs-string">"time"</span>
+)
+
+<span class="hljs-comment">// MemoryStats provides detailed memory statistics</span>
+<span class="hljs-keyword">type</span> MemoryStats <span class="hljs-keyword">struct</span> {
+    Timestamp    time.Time
+    Alloc        <span class="hljs-type">uint64</span> <span class="hljs-comment">// Current allocated memory</span>
+    TotalAlloc   <span class="hljs-type">uint64</span> <span class="hljs-comment">// Total allocated memory</span>
+    Sys          <span class="hljs-type">uint64</span> <span class="hljs-comment">// System memory</span>
+    Lookups      <span class="hljs-type">uint64</span> <span class="hljs-comment">// Number of pointer lookups</span>
+    Mallocs      <span class="hljs-type">uint64</span> <span class="hljs-comment">// Number of mallocs</span>
+    Frees        <span class="hljs-type">uint64</span> <span class="hljs-comment">// Number of frees</span>
+    HeapAlloc    <span class="hljs-type">uint64</span> <span class="hljs-comment">// Heap allocated memory</span>
+    HeapSys      <span class="hljs-type">uint64</span> <span class="hljs-comment">// Heap system memory</span>
+    HeapIdle     <span class="hljs-type">uint64</span> <span class="hljs-comment">// Idle heap memory</span>
+    HeapInuse    <span class="hljs-type">uint64</span> <span class="hljs-comment">// In-use heap memory</span>
+    HeapReleased <span class="hljs-type">uint64</span> <span class="hljs-comment">// Released heap memory</span>
+    HeapObjects  <span class="hljs-type">uint64</span> <span class="hljs-comment">// Number of heap objects</span>
+    StackInuse   <span class="hljs-type">uint64</span> <span class="hljs-comment">// Stack memory in use</span>
+    StackSys     <span class="hljs-type">uint64</span> <span class="hljs-comment">// Stack system memory</span>
+    MSpanInuse   <span class="hljs-type">uint64</span> <span class="hljs-comment">// MSpan structures in use</span>
+    MSpanSys     <span class="hljs-type">uint64</span> <span class="hljs-comment">// MSpan system memory</span>
+    MCacheInuse  <span class="hljs-type">uint64</span> <span class="hljs-comment">// MCache structures in use</span>
+    MCacheSys    <span class="hljs-type">uint64</span> <span class="hljs-comment">// MCache system memory</span>
+    BuckHashSys  <span class="hljs-type">uint64</span> <span class="hljs-comment">// Profiling bucket hash table memory</span>
+    GCSys        <span class="hljs-type">uint64</span> <span class="hljs-comment">// GC metadata memory</span>
+    OtherSys     <span class="hljs-type">uint64</span> <span class="hljs-comment">// Other system reservations</span>
+    NextGC       <span class="hljs-type">uint64</span> <span class="hljs-comment">// Next GC cycle target</span>
+    LastGC       <span class="hljs-type">uint64</span> <span class="hljs-comment">// Last GC time</span>
+    PauseTotalNs <span class="hljs-type">uint64</span> <span class="hljs-comment">// Total GC pause time</span>
+    PauseNs      [<span class="hljs-number">256</span>]<span class="hljs-type">uint64</span> <span class="hljs-comment">// Recent GC pause times</span>
+    PauseEnd     [<span class="hljs-number">256</span>]<span class="hljs-type">uint64</span> <span class="hljs-comment">// Recent GC pause end times</span>
+    NumGC        <span class="hljs-type">uint32</span> <span class="hljs-comment">// Number of GC cycles</span>
+    NumForcedGC  <span class="hljs-type">uint32</span> <span class="hljs-comment">// Number of forced GC cycles</span>
+    GCCPUFraction <span class="hljs-type">float64</span> <span class="hljs-comment">// Fraction of CPU time used by GC</span>
+    EnableGC     <span class="hljs-type">bool</span>    <span class="hljs-comment">// GC enabled flag</span>
+    DebugGC      <span class="hljs-type">bool</span>    <span class="hljs-comment">// GC debug flag</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">GetMemoryStats</span><span class="hljs-params">()</span></span> MemoryStats {
+    <span class="hljs-keyword">var</span> m runtime.MemStats
+    runtime.ReadMemStats(&amp;m)
+
+    <span class="hljs-keyword">return</span> MemoryStats{
+        Timestamp:     time.Now(),
+        Alloc:         m.Alloc,
+        TotalAlloc:    m.TotalAlloc,
+        Sys:           m.Sys,
+        Lookups:       m.Lookups,
+        Mallocs:       m.Mallocs,
+        Frees:         m.Frees,
+        HeapAlloc:     m.HeapAlloc,
+        HeapSys:       m.HeapSys,
+        HeapIdle:      m.HeapIdle,
+        HeapInuse:     m.HeapInuse,
+        HeapReleased:  m.HeapReleased,
+        HeapObjects:   m.HeapObjects,
+        StackInuse:    m.StackInuse,
+        StackSys:      m.StackSys,
+        MSpanInuse:    m.MSpanInuse,
+        MSpanSys:      m.MSpanSys,
+        MCacheInuse:   m.MCacheInuse,
+        MCacheSys:     m.MCacheSys,
+        BuckHashSys:   m.BuckHashSys,
+        GCSys:         m.GCSys,
+        OtherSys:      m.OtherSys,
+        NextGC:        m.NextGC,
+        LastGC:        m.LastGC,
+        PauseTotalNs:  m.PauseTotalNs,
+        PauseNs:       m.PauseNs,
+        PauseEnd:      m.PauseEnd,
+        NumGC:         m.NumGC,
+        NumForcedGC:   m.NumForcedGC,
+        GCCPUFraction: m.GCCPUFraction,
+        EnableGC:      m.EnableGC,
+        DebugGC:       m.DebugGC,
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(ms MemoryStats)</span></span> String() <span class="hljs-type">string</span> {
+    <span class="hljs-keyword">return</span> fmt.Sprintf(<span class="hljs-string">`Memory Statistics (%s):
+  Allocated: %s
+  Total Allocated: %s
+  System: %s
+  Heap Allocated: %s
+  Heap Objects: %d
+  GC Cycles: %d
+  GC CPU Fraction: %.4f
+  Live Objects: %d (Mallocs: %d - Frees: %d)`</span>,
+        ms.Timestamp.Format(<span class="hljs-string">"15:04:05"</span>),
+        formatBytes(ms.Alloc),
+        formatBytes(ms.TotalAlloc),
+        formatBytes(ms.Sys),
+        formatBytes(ms.HeapAlloc),
+        ms.HeapObjects,
+        ms.NumGC,
+        ms.GCCPUFraction,
+        ms.Mallocs-ms.Frees,
+        ms.Mallocs,
+        ms.Frees)
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">formatBytes</span><span class="hljs-params">(bytes <span class="hljs-type">uint64</span>)</span></span> <span class="hljs-type">string</span> {
+    <span class="hljs-keyword">const</span> (
+        KB = <span class="hljs-number">1024</span>
+        MB = KB * <span class="hljs-number">1024</span>
+        GB = MB * <span class="hljs-number">1024</span>
+    )
+
+    <span class="hljs-keyword">switch</span> {
+    <span class="hljs-keyword">case</span> bytes &gt;= GB:
+        <span class="hljs-keyword">return</span> fmt.Sprintf(<span class="hljs-string">"%.2f GB"</span>, <span class="hljs-type">float64</span>(bytes)/GB)
+    <span class="hljs-keyword">case</span> bytes &gt;= MB:
+        <span class="hljs-keyword">return</span> fmt.Sprintf(<span class="hljs-string">"%.2f MB"</span>, <span class="hljs-type">float64</span>(bytes)/MB)
+    <span class="hljs-keyword">case</span> bytes &gt;= KB:
+        <span class="hljs-keyword">return</span> fmt.Sprintf(<span class="hljs-string">"%.2f KB"</span>, <span class="hljs-type">float64</span>(bytes)/KB)
+    <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">return</span> fmt.Sprintf(<span class="hljs-string">"%d B"</span>, bytes)
+    }
+}
+
+<span class="hljs-comment">// Memory trend analysis</span>
+<span class="hljs-keyword">type</span> MemoryTrendAnalyzer <span class="hljs-keyword">struct</span> {
+    samples        []MemoryStats
+    maxSamples     <span class="hljs-type">int</span>
+    alertThresholds AlertThresholds
+}
+
+<span class="hljs-keyword">type</span> AlertThresholds <span class="hljs-keyword">struct</span> {
+    HeapGrowthRate    <span class="hljs-type">float64</span> <span class="hljs-comment">// MB/minute</span>
+    ObjectGrowthRate  <span class="hljs-type">float64</span> <span class="hljs-comment">// objects/minute</span>
+    GCFrequencyMax    <span class="hljs-type">float64</span> <span class="hljs-comment">// GCs/minute</span>
+    HeapUtilization   <span class="hljs-type">float64</span> <span class="hljs-comment">// percentage</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewMemoryTrendAnalyzer</span><span class="hljs-params">(maxSamples <span class="hljs-type">int</span>)</span></span> *MemoryTrendAnalyzer {
+    <span class="hljs-keyword">return</span> &amp;MemoryTrendAnalyzer{
+        maxSamples: maxSamples,
+        alertThresholds: AlertThresholds{
+            HeapGrowthRate:   <span class="hljs-number">10.0</span>,  <span class="hljs-comment">// 10 MB/minute</span>
+            ObjectGrowthRate: <span class="hljs-number">10000</span>, <span class="hljs-comment">// 10k objects/minute</span>
+            GCFrequencyMax:   <span class="hljs-number">60</span>,    <span class="hljs-comment">// 1 GC/second</span>
+            HeapUtilization:  <span class="hljs-number">0.9</span>,   <span class="hljs-comment">// 90%</span>
+        },
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mta *MemoryTrendAnalyzer)</span></span> AddSample(stats MemoryStats) {
+    mta.samples = <span class="hljs-built_in">append</span>(mta.samples, stats)
+
+    <span class="hljs-comment">// Keep only recent samples</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(mta.samples) &gt; mta.maxSamples {
+        mta.samples = mta.samples[<span class="hljs-number">1</span>:]
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mta *MemoryTrendAnalyzer)</span></span> AnalyzeTrends() TrendAnalysis {
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(mta.samples) &lt; <span class="hljs-number">2</span> {
+        <span class="hljs-keyword">return</span> TrendAnalysis{Insufficient: <span class="hljs-literal">true</span>}
+    }
+
+    first := mta.samples[<span class="hljs-number">0</span>]
+    last := mta.samples[<span class="hljs-built_in">len</span>(mta.samples)<span class="hljs-number">-1</span>]
+    duration := last.Timestamp.Sub(first.Timestamp)
+
+    <span class="hljs-keyword">if</span> duration == <span class="hljs-number">0</span> {
+        <span class="hljs-keyword">return</span> TrendAnalysis{Insufficient: <span class="hljs-literal">true</span>}
+    }
+
+    minutes := duration.Minutes()
+
+    <span class="hljs-comment">// Calculate growth rates</span>
+    heapGrowth := <span class="hljs-type">float64</span>(last.HeapAlloc-first.HeapAlloc) / (<span class="hljs-number">1024</span> * <span class="hljs-number">1024</span>) <span class="hljs-comment">// MB</span>
+    objectGrowth := <span class="hljs-type">float64</span>(<span class="hljs-type">int64</span>(last.HeapObjects) - <span class="hljs-type">int64</span>(first.HeapObjects))
+    gcGrowth := <span class="hljs-type">float64</span>(last.NumGC - first.NumGC)
+
+    heapGrowthRate := heapGrowth / minutes
+    objectGrowthRate := objectGrowth / minutes
+    gcFrequency := gcGrowth / minutes
+
+    <span class="hljs-comment">// Calculate heap utilization</span>
+    heapUtilization := <span class="hljs-type">float64</span>(last.HeapInuse) / <span class="hljs-type">float64</span>(last.HeapSys)
+
+    <span class="hljs-comment">// Detect anomalies</span>
+    alerts := []<span class="hljs-type">string</span>{}
+
+    <span class="hljs-keyword">if</span> heapGrowthRate &gt; mta.alertThresholds.HeapGrowthRate {
+        alerts = <span class="hljs-built_in">append</span>(alerts, fmt.Sprintf(<span class="hljs-string">"High heap growth rate: %.2f MB/min"</span>, heapGrowthRate))
+    }
+
+    <span class="hljs-keyword">if</span> objectGrowthRate &gt; mta.alertThresholds.ObjectGrowthRate {
+        alerts = <span class="hljs-built_in">append</span>(alerts, fmt.Sprintf(<span class="hljs-string">"High object growth rate: %.0f objects/min"</span>, objectGrowthRate))
+    }
+
+    <span class="hljs-keyword">if</span> gcFrequency &gt; mta.alertThresholds.GCFrequencyMax {
+        alerts = <span class="hljs-built_in">append</span>(alerts, fmt.Sprintf(<span class="hljs-string">"High GC frequency: %.1f GCs/min"</span>, gcFrequency))
+    }
+
+    <span class="hljs-keyword">if</span> heapUtilization &gt; mta.alertThresholds.HeapUtilization {
+        alerts = <span class="hljs-built_in">append</span>(alerts, fmt.Sprintf(<span class="hljs-string">"High heap utilization: %.1f%%"</span>, heapUtilization*<span class="hljs-number">100</span>))
+    }
+
+    <span class="hljs-keyword">return</span> TrendAnalysis{
+        Duration:         duration,
+        HeapGrowthRate:   heapGrowthRate,
+        ObjectGrowthRate: objectGrowthRate,
+        GCFrequency:      gcFrequency,
+        HeapUtilization:  heapUtilization,
+        Alerts:           alerts,
+        SampleCount:      <span class="hljs-built_in">len</span>(mta.samples),
+    }
+}
+
+<span class="hljs-keyword">type</span> TrendAnalysis <span class="hljs-keyword">struct</span> {
+    Insufficient     <span class="hljs-type">bool</span>
+    Duration         time.Duration
+    HeapGrowthRate   <span class="hljs-type">float64</span> <span class="hljs-comment">// MB/minute</span>
+    ObjectGrowthRate <span class="hljs-type">float64</span> <span class="hljs-comment">// objects/minute</span>
+    GCFrequency      <span class="hljs-type">float64</span> <span class="hljs-comment">// GCs/minute</span>
+    HeapUtilization  <span class="hljs-type">float64</span> <span class="hljs-comment">// percentage</span>
+    Alerts           []<span class="hljs-type">string</span>
+    SampleCount      <span class="hljs-type">int</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(ta TrendAnalysis)</span></span> String() <span class="hljs-type">string</span> {
+    <span class="hljs-keyword">if</span> ta.Insufficient {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"Insufficient data for trend analysis"</span>
+    }
+
+    result := fmt.Sprintf(<span class="hljs-string">`Memory Trend Analysis (%d samples over %v):
+  Heap Growth Rate: %.2f MB/min
+  Object Growth Rate: %.0f objects/min
+  GC Frequency: %.1f GCs/min
+  Heap Utilization: %.1f%%`</span>,
+        ta.SampleCount,
+        ta.Duration,
+        ta.HeapGrowthRate,
+        ta.ObjectGrowthRate,
+        ta.GCFrequency,
+        ta.HeapUtilization*<span class="hljs-number">100</span>)
+
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(ta.Alerts) &gt; <span class="hljs-number">0</span> {
+        result += <span class="hljs-string">"\n\nALERTS:"</span>
+        <span class="hljs-keyword">for</span> _, alert := <span class="hljs-keyword">range</span> ta.Alerts {
+            result += <span class="hljs-string">"\n  ⚠️  "</span> + alert
+        }
+    }
+
+    <span class="hljs-keyword">return</span> result
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">demonstrateBasicMemoryMonitoring</span><span class="hljs-params">()</span></span> {
+    fmt.Println(<span class="hljs-string">"=== BASIC MEMORY MONITORING ==="</span>)
+
+    analyzer := NewMemoryTrendAnalyzer(<span class="hljs-number">10</span>)
+
+    <span class="hljs-comment">// Simulate memory usage</span>
+    <span class="hljs-keyword">var</span> data [][]<span class="hljs-type">byte</span>
+
+    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++ {
+        <span class="hljs-comment">// Allocate some memory</span>
+        chunk := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>) <span class="hljs-comment">// 1MB</span>
+        data = <span class="hljs-built_in">append</span>(data, chunk)
+
+        <span class="hljs-comment">// Record memory stats</span>
+        stats := GetMemoryStats()
+        analyzer.AddSample(stats)
+
+        fmt.Printf(<span class="hljs-string">"Step %d: %s\n"</span>, i+<span class="hljs-number">1</span>, formatBytes(stats.HeapAlloc))
+
+        time.Sleep(<span class="hljs-number">100</span> * time.Millisecond)
+    }
+
+    <span class="hljs-comment">// Analyze trends</span>
+    analysis := analyzer.AnalyzeTrends()
+    fmt.Println(<span class="hljs-string">"\n"</span> + analysis.String())
+
+    <span class="hljs-comment">// Keep data alive to prevent GC</span>
+    runtime.KeepAlive(data)
+}
+</code></pre>
+<h2 id="advanced-leak-detection-techniques">Advanced Leak Detection Techniques</h2>
+<h3 id="goroutine-leak-detection">Goroutine Leak Detection</h3>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"context"</span>
+    <span class="hljs-string">"fmt"</span>
+    <span class="hljs-string">"runtime"</span>
+    <span class="hljs-string">"strings"</span>
+    <span class="hljs-string">"sync"</span>
+    <span class="hljs-string">"time"</span>
+)
+
+<span class="hljs-comment">// GoroutineTracker monitors goroutine creation and lifecycle</span>
+<span class="hljs-keyword">type</span> GoroutineTracker <span class="hljs-keyword">struct</span> {
+    mu               sync.RWMutex
+    baseCount        <span class="hljs-type">int</span>
+    samples          []GoroutineSample
+    alertThreshold   <span class="hljs-type">int</span>
+    alertCallback    <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(GoroutineAlert)</span></span>
+    trackingEnabled  <span class="hljs-type">bool</span>
+}
+
+<span class="hljs-keyword">type</span> GoroutineSample <span class="hljs-keyword">struct</span> {
+    Timestamp time.Time
+    Count     <span class="hljs-type">int</span>
+    Stacks    []<span class="hljs-type">string</span>
+}
+
+<span class="hljs-keyword">type</span> GoroutineAlert <span class="hljs-keyword">struct</span> {
+    Timestamp     time.Time
+    Count         <span class="hljs-type">int</span>
+    BaseCount     <span class="hljs-type">int</span>
+    Increase      <span class="hljs-type">int</span>
+    LeakedStacks  []<span class="hljs-type">string</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewGoroutineTracker</span><span class="hljs-params">()</span></span> *GoroutineTracker {
+    <span class="hljs-keyword">return</span> &amp;GoroutineTracker{
+        baseCount:      runtime.NumGoroutine(),
+        alertThreshold: <span class="hljs-number">10</span>, <span class="hljs-comment">// Alert if 10+ goroutines increase</span>
+        trackingEnabled: <span class="hljs-literal">true</span>,
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> SetAlertCallback(callback <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(GoroutineAlert)</span></span>) {
+    gt.mu.Lock()
+    <span class="hljs-keyword">defer</span> gt.mu.Unlock()
+    gt.alertCallback = callback
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> SetAlertThreshold(threshold <span class="hljs-type">int</span>) {
+    gt.mu.Lock()
+    <span class="hljs-keyword">defer</span> gt.mu.Unlock()
+    gt.alertThreshold = threshold
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> StartTracking(interval time.Duration) context.CancelFunc {
+    ctx, cancel := context.WithCancel(context.Background())
+
+    <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+        ticker := time.NewTicker(interval)
+        <span class="hljs-keyword">defer</span> ticker.Stop()
+
+        <span class="hljs-keyword">for</span> {
+            <span class="hljs-keyword">select</span> {
+            <span class="hljs-keyword">case</span> &lt;-ticker.C:
+                gt.checkGoroutines()
+            <span class="hljs-keyword">case</span> &lt;-ctx.Done():
+                <span class="hljs-keyword">return</span>
+            }
+        }
+    }()
+
+    <span class="hljs-keyword">return</span> cancel
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> checkGoroutines() {
+    <span class="hljs-keyword">if</span> !gt.trackingEnabled {
+        <span class="hljs-keyword">return</span>
+    }
+
+    gt.mu.Lock()
+    <span class="hljs-keyword">defer</span> gt.mu.Unlock()
+
+    currentCount := runtime.NumGoroutine()
+    stacks := gt.getGoroutineStacks()
+
+    sample := GoroutineSample{
+        Timestamp: time.Now(),
+        Count:     currentCount,
+        Stacks:    stacks,
+    }
+
+    gt.samples = <span class="hljs-built_in">append</span>(gt.samples, sample)
+
+    <span class="hljs-comment">// Keep only recent samples</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(gt.samples) &gt; <span class="hljs-number">100</span> {
+        gt.samples = gt.samples[<span class="hljs-number">1</span>:]
+    }
+
+    <span class="hljs-comment">// Check for potential leaks</span>
+    increase := currentCount - gt.baseCount
+    <span class="hljs-keyword">if</span> increase &gt;= gt.alertThreshold &amp;&amp; gt.alertCallback != <span class="hljs-literal">nil</span> {
+        leakedStacks := gt.identifyLeakedStacks()
+
+        alert := GoroutineAlert{
+            Timestamp:    time.Now(),
+            Count:        currentCount,
+            BaseCount:    gt.baseCount,
+            Increase:     increase,
+            LeakedStacks: leakedStacks,
+        }
+
+        gt.alertCallback(alert)
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> getGoroutineStacks() []<span class="hljs-type">string</span> {
+    buf := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>) <span class="hljs-comment">// 1MB buffer</span>
+    stackSize := runtime.Stack(buf, <span class="hljs-literal">true</span>)
+    stackData := <span class="hljs-type">string</span>(buf[:stackSize])
+
+    <span class="hljs-comment">// Split by goroutine boundaries</span>
+    stacks := strings.Split(stackData, <span class="hljs-string">"\n\ngoroutine"</span>)
+
+    <span class="hljs-comment">// Clean up stacks</span>
+    <span class="hljs-keyword">var</span> cleanStacks []<span class="hljs-type">string</span>
+    <span class="hljs-keyword">for</span> i, stack := <span class="hljs-keyword">range</span> stacks {
+        <span class="hljs-keyword">if</span> i &gt; <span class="hljs-number">0</span> {
+            stack = <span class="hljs-string">"goroutine"</span> + stack
+        }
+        <span class="hljs-keyword">if</span> strings.TrimSpace(stack) != <span class="hljs-string">""</span> {
+            cleanStacks = <span class="hljs-built_in">append</span>(cleanStacks, strings.TrimSpace(stack))
+        }
+    }
+
+    <span class="hljs-keyword">return</span> cleanStacks
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> identifyLeakedStacks() []<span class="hljs-type">string</span> {
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(gt.samples) &lt; <span class="hljs-number">2</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    }
+
+    current := gt.samples[<span class="hljs-built_in">len</span>(gt.samples)<span class="hljs-number">-1</span>]
+    baseline := gt.samples[<span class="hljs-number">0</span>]
+
+    <span class="hljs-comment">// Find stacks that appear frequently in recent samples</span>
+    stackCounts := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">int</span>)
+
+    <span class="hljs-keyword">for</span> _, stack := <span class="hljs-keyword">range</span> current.Stacks {
+        <span class="hljs-comment">// Extract the function signature</span>
+        signature := gt.extractStackSignature(stack)
+        <span class="hljs-keyword">if</span> signature != <span class="hljs-string">""</span> {
+            stackCounts[signature]++
+        }
+    }
+
+    <span class="hljs-comment">// Identify potentially leaked stack signatures</span>
+    <span class="hljs-keyword">var</span> leakedStacks []<span class="hljs-type">string</span>
+    <span class="hljs-keyword">for</span> signature, count := <span class="hljs-keyword">range</span> stackCounts {
+        <span class="hljs-keyword">if</span> count &gt;= <span class="hljs-number">3</span> &amp;&amp; gt.isLikelyLeak(signature) {
+            leakedStacks = <span class="hljs-built_in">append</span>(leakedStacks, signature)
+        }
+    }
+
+    <span class="hljs-keyword">return</span> leakedStacks
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> extractStackSignature(stack <span class="hljs-type">string</span>) <span class="hljs-type">string</span> {
+    lines := strings.Split(stack, <span class="hljs-string">"\n"</span>)
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(lines) &lt; <span class="hljs-number">3</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>
+    }
+
+    <span class="hljs-comment">// Look for the first non-runtime function call</span>
+    <span class="hljs-keyword">for</span> i, line := <span class="hljs-keyword">range</span> lines {
+        <span class="hljs-keyword">if</span> strings.Contains(line, <span class="hljs-string">"("</span>) &amp;&amp; !strings.Contains(line, <span class="hljs-string">"runtime."</span>) {
+            <span class="hljs-comment">// Extract function name and file location</span>
+            parts := strings.Fields(line)
+            <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(parts) &gt; <span class="hljs-number">0</span> {
+                <span class="hljs-keyword">return</span> parts[<span class="hljs-number">0</span>]
+            }
+        }
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> isLikelyLeak(signature <span class="hljs-type">string</span>) <span class="hljs-type">bool</span> {
+    <span class="hljs-comment">// Common patterns that indicate potential leaks</span>
+    leakPatterns := []<span class="hljs-type">string</span>{
+        <span class="hljs-string">"time.Sleep"</span>,
+        <span class="hljs-string">"chan.recv"</span>,
+        <span class="hljs-string">"chan.send"</span>,
+        <span class="hljs-string">"sync.WaitGroup.Wait"</span>,
+        <span class="hljs-string">"sync.Mutex.Lock"</span>,
+        <span class="hljs-string">"net.Conn.Read"</span>,
+        <span class="hljs-string">"net.Conn.Write"</span>,
+        <span class="hljs-string">"http.Client.Do"</span>,
+    }
+
+    <span class="hljs-keyword">for</span> _, pattern := <span class="hljs-keyword">range</span> leakPatterns {
+        <span class="hljs-keyword">if</span> strings.Contains(signature, pattern) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+        }
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> GetReport() GoroutineReport {
+    gt.mu.RLock()
+    <span class="hljs-keyword">defer</span> gt.mu.RUnlock()
+
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(gt.samples) == <span class="hljs-number">0</span> {
+        <span class="hljs-keyword">return</span> GoroutineReport{NoData: <span class="hljs-literal">true</span>}
+    }
+
+    current := gt.samples[<span class="hljs-built_in">len</span>(gt.samples)<span class="hljs-number">-1</span>]
+
+    <span class="hljs-keyword">return</span> GoroutineReport{
+        Timestamp:   current.Timestamp,
+        CurrentCount: current.Count,
+        BaseCount:   gt.baseCount,
+        Increase:    current.Count - gt.baseCount,
+        SampleCount: <span class="hljs-built_in">len</span>(gt.samples),
+        TopStacks:   gt.getTopStackSignatures(<span class="hljs-number">5</span>),
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gt *GoroutineTracker)</span></span> getTopStackSignatures(limit <span class="hljs-type">int</span>) []StackSignature {
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(gt.samples) == <span class="hljs-number">0</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    }
+
+    current := gt.samples[<span class="hljs-built_in">len</span>(gt.samples)<span class="hljs-number">-1</span>]
+    signatureCounts := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">int</span>)
+
+    <span class="hljs-keyword">for</span> _, stack := <span class="hljs-keyword">range</span> current.Stacks {
+        signature := gt.extractStackSignature(stack)
+        <span class="hljs-keyword">if</span> signature != <span class="hljs-string">""</span> {
+            signatureCounts[signature]++
+        }
+    }
+
+    <span class="hljs-comment">// Sort by count</span>
+    <span class="hljs-keyword">type</span> sigCount <span class="hljs-keyword">struct</span> {
+        signature <span class="hljs-type">string</span>
+        count     <span class="hljs-type">int</span>
+    }
+
+    <span class="hljs-keyword">var</span> sigs []sigCount
+    <span class="hljs-keyword">for</span> sig, count := <span class="hljs-keyword">range</span> signatureCounts {
+        sigs = <span class="hljs-built_in">append</span>(sigs, sigCount{sig, count})
+    }
+
+    <span class="hljs-comment">// Simple bubble sort for small data</span>
+    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">len</span>(sigs)<span class="hljs-number">-1</span>; i++ {
+        <span class="hljs-keyword">for</span> j := <span class="hljs-number">0</span>; j &lt; <span class="hljs-built_in">len</span>(sigs)-i<span class="hljs-number">-1</span>; j++ {
+            <span class="hljs-keyword">if</span> sigs[j].count &lt; sigs[j+<span class="hljs-number">1</span>].count {
+                sigs[j], sigs[j+<span class="hljs-number">1</span>] = sigs[j+<span class="hljs-number">1</span>], sigs[j]
+            }
+        }
+    }
+
+    <span class="hljs-keyword">var</span> result []StackSignature
+    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">len</span>(sigs) &amp;&amp; i &lt; limit; i++ {
+        result = <span class="hljs-built_in">append</span>(result, StackSignature{
+            Signature: sigs[i].signature,
+            Count:     sigs[i].count,
+        })
+    }
+
+    <span class="hljs-keyword">return</span> result
+}
+
+<span class="hljs-keyword">type</span> GoroutineReport <span class="hljs-keyword">struct</span> {
+    NoData       <span class="hljs-type">bool</span>
+    Timestamp    time.Time
+    CurrentCount <span class="hljs-type">int</span>
+    BaseCount    <span class="hljs-type">int</span>
+    Increase     <span class="hljs-type">int</span>
+    SampleCount  <span class="hljs-type">int</span>
+    TopStacks    []StackSignature
+}
+
+<span class="hljs-keyword">type</span> StackSignature <span class="hljs-keyword">struct</span> {
+    Signature <span class="hljs-type">string</span>
+    Count     <span class="hljs-type">int</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(gr GoroutineReport)</span></span> String() <span class="hljs-type">string</span> {
+    <span class="hljs-keyword">if</span> gr.NoData {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"No goroutine tracking data available"</span>
+    }
+
+    result := fmt.Sprintf(<span class="hljs-string">`Goroutine Report (%s):
+  Current Count: %d
+  Baseline Count: %d
+  Increase: %d
+  Samples Collected: %d`</span>,
+        gr.Timestamp.Format(<span class="hljs-string">"15:04:05"</span>),
+        gr.CurrentCount,
+        gr.BaseCount,
+        gr.Increase,
+        gr.SampleCount)
+
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(gr.TopStacks) &gt; <span class="hljs-number">0</span> {
+        result += <span class="hljs-string">"\n\nTop Stack Signatures:"</span>
+        <span class="hljs-keyword">for</span> _, stack := <span class="hljs-keyword">range</span> gr.TopStacks {
+            result += fmt.Sprintf(<span class="hljs-string">"\n  %s: %d goroutines"</span>, stack.Signature, stack.Count)
+        }
+    }
+
+    <span class="hljs-keyword">return</span> result
+}
+
+<span class="hljs-comment">// Leak simulation for testing</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">simulateGoroutineLeak</span><span class="hljs-params">(count <span class="hljs-type">int</span>)</span></span> {
+    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; count; i++ {
+        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(id <span class="hljs-type">int</span>)</span></span> {
+            <span class="hljs-comment">// Simulate a goroutine that blocks indefinitely</span>
+            ch := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">bool</span>)
+            &lt;-ch <span class="hljs-comment">// This will block forever</span>
+        }(i)
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">simulateChannelLeak</span><span class="hljs-params">(count <span class="hljs-type">int</span>)</span></span> {
+    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; count; i++ {
+        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(id <span class="hljs-type">int</span>)</span></span> {
+            ch := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">int</span>, <span class="hljs-number">1</span>)
+            <span class="hljs-keyword">for</span> {
+                <span class="hljs-keyword">select</span> {
+                <span class="hljs-keyword">case</span> ch &lt;- id:
+                    time.Sleep(<span class="hljs-number">100</span> * time.Millisecond)
+                <span class="hljs-keyword">default</span>:
+                    time.Sleep(<span class="hljs-number">50</span> * time.Millisecond)
+                }
+            }
+        }(i)
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">demonstrateGoroutineLeakDetection</span><span class="hljs-params">()</span></span> {
+    fmt.Println(<span class="hljs-string">"\n=== GOROUTINE LEAK DETECTION ==="</span>)
+
+    tracker := NewGoroutineTracker()
+    tracker.SetAlertThreshold(<span class="hljs-number">5</span>)
+
+    <span class="hljs-comment">// Set up alert callback</span>
+    tracker.SetAlertCallback(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(alert GoroutineAlert)</span></span> {
+        fmt.Printf(<span class="hljs-string">"\n🚨 GOROUTINE LEAK ALERT 🚨\n"</span>)
+        fmt.Printf(<span class="hljs-string">"Count: %d (baseline: %d, increase: %d)\n"</span>, 
+            alert.Count, alert.BaseCount, alert.Increase)
+
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(alert.LeakedStacks) &gt; <span class="hljs-number">0</span> {
+            fmt.Printf(<span class="hljs-string">"Potential leak sources:\n"</span>)
+            <span class="hljs-keyword">for</span> _, stack := <span class="hljs-keyword">range</span> alert.LeakedStacks {
+                fmt.Printf(<span class="hljs-string">"  - %s\n"</span>, stack)
+            }
+        }
+        fmt.Println()
+    })
+
+    <span class="hljs-comment">// Start tracking</span>
+    cancel := tracker.StartTracking(<span class="hljs-number">500</span> * time.Millisecond)
+    <span class="hljs-keyword">defer</span> cancel()
+
+    <span class="hljs-comment">// Show initial state</span>
+    time.Sleep(<span class="hljs-number">1</span> * time.Second)
+    fmt.Println(tracker.GetReport().String())
+
+    <span class="hljs-comment">// Simulate normal goroutine creation</span>
+    fmt.Println(<span class="hljs-string">"\nCreating normal goroutines..."</span>)
+    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++ {
+        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(id <span class="hljs-type">int</span>)</span></span> {
+            time.Sleep(<span class="hljs-number">2</span> * time.Second)
+        }(i)
+    }
+
+    time.Sleep(<span class="hljs-number">1</span> * time.Second)
+    fmt.Println(tracker.GetReport().String())
+
+    <span class="hljs-comment">// Simulate goroutine leak</span>
+    fmt.Println(<span class="hljs-string">"\nSimulating goroutine leak..."</span>)
+    simulateGoroutineLeak(<span class="hljs-number">8</span>)
+
+    time.Sleep(<span class="hljs-number">2</span> * time.Second)
+    fmt.Println(tracker.GetReport().String())
+
+    <span class="hljs-comment">// Simulate channel leak</span>
+    fmt.Println(<span class="hljs-string">"\nSimulating channel-based leak..."</span>)
+    simulateChannelLeak(<span class="hljs-number">3</span>)
+
+    time.Sleep(<span class="hljs-number">2</span> * time.Second)
+    fmt.Println(tracker.GetReport().String())
+}
+</code></pre>
+<h3 id="memory-reference-analysis">Memory Reference Analysis</h3>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"fmt"</span>
+    <span class="hljs-string">"reflect"</span>
+    <span class="hljs-string">"runtime"</span>
+    <span class="hljs-string">"unsafe"</span>
+)
+
+<span class="hljs-comment">// ReferenceTracker analyzes object references and potential cycles</span>
+<span class="hljs-keyword">type</span> ReferenceTracker <span class="hljs-keyword">struct</span> {
+    tracked <span class="hljs-keyword">map</span>[<span class="hljs-type">uintptr</span>]*ObjectInfo
+    roots   []<span class="hljs-type">uintptr</span>
+}
+
+<span class="hljs-keyword">type</span> ObjectInfo <span class="hljs-keyword">struct</span> {
+    Address    <span class="hljs-type">uintptr</span>
+    Type       reflect.Type
+    Size       <span class="hljs-type">uintptr</span>
+    References []<span class="hljs-type">uintptr</span>
+    RefCount   <span class="hljs-type">int</span>
+    Reachable  <span class="hljs-type">bool</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewReferenceTracker</span><span class="hljs-params">()</span></span> *ReferenceTracker {
+    <span class="hljs-keyword">return</span> &amp;ReferenceTracker{
+        tracked: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">uintptr</span>]*ObjectInfo),
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rt *ReferenceTracker)</span></span> TrackObject(obj <span class="hljs-keyword">interface</span>{}) {
+    <span class="hljs-keyword">if</span> obj == <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span>
+    }
+
+    v := reflect.ValueOf(obj)
+    <span class="hljs-keyword">if</span> v.Kind() == reflect.Ptr &amp;&amp; !v.IsNil() {
+        addr := v.Pointer()
+
+        info := &amp;ObjectInfo{
+            Address: addr,
+            Type:    v.Elem().Type(),
+            Size:    v.Elem().Type().Size(),
+        }
+
+        rt.tracked[addr] = info
+        rt.analyzeReferences(v.Elem(), info)
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rt *ReferenceTracker)</span></span> analyzeReferences(v reflect.Value, info *ObjectInfo) {
+    <span class="hljs-keyword">switch</span> v.Kind() {
+    <span class="hljs-keyword">case</span> reflect.Ptr:
+        <span class="hljs-keyword">if</span> !v.IsNil() {
+            refAddr := v.Pointer()
+            info.References = <span class="hljs-built_in">append</span>(info.References, refAddr)
+        }
+
+    <span class="hljs-keyword">case</span> reflect.Slice:
+        <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; v.Len(); i++ {
+            rt.analyzeReferences(v.Index(i), info)
+        }
+
+    <span class="hljs-keyword">case</span> reflect.Array:
+        <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; v.Len(); i++ {
+            rt.analyzeReferences(v.Index(i), info)
+        }
+
+    <span class="hljs-keyword">case</span> reflect.Struct:
+        <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; v.NumField(); i++ {
+            field := v.Field(i)
+            <span class="hljs-keyword">if</span> field.CanInterface() {
+                rt.analyzeReferences(field, info)
+            }
+        }
+
+    <span class="hljs-keyword">case</span> reflect.Map:
+        <span class="hljs-keyword">for</span> _, key := <span class="hljs-keyword">range</span> v.MapKeys() {
+            rt.analyzeReferences(key, info)
+            rt.analyzeReferences(v.MapIndex(key), info)
+        }
+
+    <span class="hljs-keyword">case</span> reflect.Interface:
+        <span class="hljs-keyword">if</span> !v.IsNil() {
+            rt.analyzeReferences(v.Elem(), info)
+        }
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rt *ReferenceTracker)</span></span> FindCycles() [][]<span class="hljs-type">uintptr</span> {
+    <span class="hljs-keyword">var</span> cycles [][]<span class="hljs-type">uintptr</span>
+    visited := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">uintptr</span>]<span class="hljs-type">bool</span>)
+    recStack := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">uintptr</span>]<span class="hljs-type">bool</span>)
+
+    <span class="hljs-keyword">for</span> addr := <span class="hljs-keyword">range</span> rt.tracked {
+        <span class="hljs-keyword">if</span> !visited[addr] {
+            <span class="hljs-keyword">if</span> cycle := rt.dfsForCycle(addr, visited, recStack, []<span class="hljs-type">uintptr</span>{}); cycle != <span class="hljs-literal">nil</span> {
+                cycles = <span class="hljs-built_in">append</span>(cycles, cycle)
+            }
+        }
+    }
+
+    <span class="hljs-keyword">return</span> cycles
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rt *ReferenceTracker)</span></span> dfsForCycle(addr <span class="hljs-type">uintptr</span>, visited, recStack <span class="hljs-keyword">map</span>[<span class="hljs-type">uintptr</span>]<span class="hljs-type">bool</span>, path []<span class="hljs-type">uintptr</span>) []<span class="hljs-type">uintptr</span> {
+    visited[addr] = <span class="hljs-literal">true</span>
+    recStack[addr] = <span class="hljs-literal">true</span>
+    path = <span class="hljs-built_in">append</span>(path, addr)
+
+    info, exists := rt.tracked[addr]
+    <span class="hljs-keyword">if</span> !exists {
+        recStack[addr] = <span class="hljs-literal">false</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    }
+
+    <span class="hljs-keyword">for</span> _, refAddr := <span class="hljs-keyword">range</span> info.References {
+        <span class="hljs-keyword">if</span> !visited[refAddr] {
+            <span class="hljs-keyword">if</span> cycle := rt.dfsForCycle(refAddr, visited, recStack, path); cycle != <span class="hljs-literal">nil</span> {
+                <span class="hljs-keyword">return</span> cycle
+            }
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> recStack[refAddr] {
+            <span class="hljs-comment">// Found cycle - return the cycle portion</span>
+            cycleStart := <span class="hljs-number">-1</span>
+            <span class="hljs-keyword">for</span> i, p := <span class="hljs-keyword">range</span> path {
+                <span class="hljs-keyword">if</span> p == refAddr {
+                    cycleStart = i
+                    <span class="hljs-keyword">break</span>
+                }
+            }
+            <span class="hljs-keyword">if</span> cycleStart &gt;= <span class="hljs-number">0</span> {
+                <span class="hljs-keyword">return</span> <span class="hljs-built_in">append</span>(path[cycleStart:], refAddr)
+            }
+        }
+    }
+
+    recStack[addr] = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rt *ReferenceTracker)</span></span> GetReport() ReferenceReport {
+    totalObjects := <span class="hljs-built_in">len</span>(rt.tracked)
+    totalSize := <span class="hljs-type">uintptr</span>(<span class="hljs-number">0</span>)
+    cycles := rt.FindCycles()
+
+    <span class="hljs-keyword">for</span> _, info := <span class="hljs-keyword">range</span> rt.tracked {
+        totalSize += info.Size
+    }
+
+    <span class="hljs-keyword">return</span> ReferenceReport{
+        TotalObjects: totalObjects,
+        TotalSize:    totalSize,
+        Cycles:       cycles,
+        Objects:      rt.tracked,
+    }
+}
+
+<span class="hljs-keyword">type</span> ReferenceReport <span class="hljs-keyword">struct</span> {
+    TotalObjects <span class="hljs-type">int</span>
+    TotalSize    <span class="hljs-type">uintptr</span>
+    Cycles       [][]<span class="hljs-type">uintptr</span>
+    Objects      <span class="hljs-keyword">map</span>[<span class="hljs-type">uintptr</span>]*ObjectInfo
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rr ReferenceReport)</span></span> String() <span class="hljs-type">string</span> {
+    result := fmt.Sprintf(<span class="hljs-string">`Reference Analysis Report:
+  Total Objects: %d
+  Total Size: %s
+  Reference Cycles: %d`</span>,
+        rr.TotalObjects,
+        formatBytes(<span class="hljs-type">uint64</span>(rr.TotalSize)),
+        <span class="hljs-built_in">len</span>(rr.Cycles))
+
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(rr.Cycles) &gt; <span class="hljs-number">0</span> {
+        result += <span class="hljs-string">"\n\nDetected Cycles:"</span>
+        <span class="hljs-keyword">for</span> i, cycle := <span class="hljs-keyword">range</span> rr.Cycles {
+            result += fmt.Sprintf(<span class="hljs-string">"\n  Cycle %d: %d objects"</span>, i+<span class="hljs-number">1</span>, <span class="hljs-built_in">len</span>(cycle))
+            <span class="hljs-keyword">for</span> _, addr := <span class="hljs-keyword">range</span> cycle {
+                <span class="hljs-keyword">if</span> info, exists := rr.Objects[addr]; exists {
+                    result += fmt.Sprintf(<span class="hljs-string">"\n    %s (0x%x)"</span>, info.Type.String(), addr)
+                }
+            }
+        }
+    }
+
+    <span class="hljs-keyword">return</span> result
+}
+
+<span class="hljs-comment">// Example objects for testing reference cycles</span>
+<span class="hljs-keyword">type</span> Node <span class="hljs-keyword">struct</span> {
+    Value <span class="hljs-type">int</span>
+    Next  *Node
+    Prev  *Node
+    Data  []<span class="hljs-type">byte</span>
+}
+
+<span class="hljs-keyword">type</span> Container <span class="hljs-keyword">struct</span> {
+    Items []*Item
+    Owner *Owner
+}
+
+<span class="hljs-keyword">type</span> Item <span class="hljs-keyword">struct</span> {
+    ID        <span class="hljs-type">int</span>
+    Container *Container
+    Related   []*Item
+}
+
+<span class="hljs-keyword">type</span> Owner <span class="hljs-keyword">struct</span> {
+    Name       <span class="hljs-type">string</span>
+    Containers []*Container
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">demonstrateReferenceAnalysis</span><span class="hljs-params">()</span></span> {
+    fmt.Println(<span class="hljs-string">"\n=== REFERENCE CYCLE ANALYSIS ==="</span>)
+
+    tracker := NewReferenceTracker()
+
+    <span class="hljs-comment">// Create objects with potential cycles</span>
+
+    <span class="hljs-comment">// Simple circular linked list</span>
+    node1 := &amp;Node{Value: <span class="hljs-number">1</span>, Data: <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">1024</span>)}
+    node2 := &amp;Node{Value: <span class="hljs-number">2</span>, Data: <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">1024</span>)}
+    node3 := &amp;Node{Value: <span class="hljs-number">3</span>, Data: <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">1024</span>)}
+
+    node1.Next = node2
+    node2.Next = node3
+    node3.Next = node1 <span class="hljs-comment">// Creates cycle</span>
+
+    node1.Prev = node3
+    node2.Prev = node1
+    node3.Prev = node2
+
+    tracker.TrackObject(node1)
+    tracker.TrackObject(node2)
+    tracker.TrackObject(node3)
+
+    <span class="hljs-comment">// Complex object hierarchy with cycles</span>
+    owner := &amp;Owner{Name: <span class="hljs-string">"Owner1"</span>}
+    container := &amp;Container{Owner: owner}
+    owner.Containers = []*Container{container}
+
+    item1 := &amp;Item{ID: <span class="hljs-number">1</span>, Container: container}
+    item2 := &amp;Item{ID: <span class="hljs-number">2</span>, Container: container}
+    item1.Related = []*Item{item2}
+    item2.Related = []*Item{item1}
+
+    container.Items = []*Item{item1, item2}
+
+    tracker.TrackObject(owner)
+    tracker.TrackObject(container)
+    tracker.TrackObject(item1)
+    tracker.TrackObject(item2)
+
+    <span class="hljs-comment">// Generate report</span>
+    report := tracker.GetReport()
+    fmt.Println(report.String())
+
+    <span class="hljs-comment">// Keep objects alive</span>
+    runtime.KeepAlive(node1)
+    runtime.KeepAlive(owner)
+}
+</code></pre>
+<h2 id="automated-leak-detection-tools">Automated Leak Detection Tools</h2>
+<h3 id="continuous-memory-monitor">Continuous Memory Monitor</h3>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"context"</span>
+    <span class="hljs-string">"encoding/json"</span>
+    <span class="hljs-string">"fmt"</span>
+    <span class="hljs-string">"log"</span>
+    <span class="hljs-string">"net/http"</span>
+    <span class="hljs-string">"os"</span>
+    <span class="hljs-string">"path/filepath"</span>
+    <span class="hljs-string">"sync"</span>
+    <span class="hljs-string">"time"</span>
+)
+
+<span class="hljs-comment">// MemoryMonitor provides continuous memory leak detection</span>
+<span class="hljs-keyword">type</span> MemoryMonitor <span class="hljs-keyword">struct</span> {
+    config           MonitorConfig
+    trendAnalyzer    *MemoryTrendAnalyzer
+    goroutineTracker *GoroutineTracker
+    alertManager     *AlertManager
+    running          <span class="hljs-type">bool</span>
+    mu               sync.RWMutex
+    cancel           context.CancelFunc
+}
+
+<span class="hljs-keyword">type</span> MonitorConfig <span class="hljs-keyword">struct</span> {
+    SampleInterval    time.Duration
+    AlertThresholds   AlertThresholds
+    LogFile          <span class="hljs-type">string</span>
+    WebServerPort    <span class="hljs-type">int</span>
+    AlertWebhook     <span class="hljs-type">string</span>
+    MaxLogSize       <span class="hljs-type">int64</span>
+}
+
+<span class="hljs-keyword">type</span> AlertManager <span class="hljs-keyword">struct</span> {
+    webhookURL    <span class="hljs-type">string</span>
+    alertHistory  []Alert
+    mu            sync.RWMutex
+    maxHistory    <span class="hljs-type">int</span>
+}
+
+<span class="hljs-keyword">type</span> Alert <span class="hljs-keyword">struct</span> {
+    Timestamp   time.Time    <span class="hljs-string">`json:"timestamp"`</span>
+    Type        <span class="hljs-type">string</span>       <span class="hljs-string">`json:"type"`</span>
+    Severity    <span class="hljs-type">string</span>       <span class="hljs-string">`json:"severity"`</span>
+    Message     <span class="hljs-type">string</span>       <span class="hljs-string">`json:"message"`</span>
+    Details     <span class="hljs-keyword">interface</span>{}  <span class="hljs-string">`json:"details"`</span>
+    Resolved    <span class="hljs-type">bool</span>         <span class="hljs-string">`json:"resolved"`</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewMemoryMonitor</span><span class="hljs-params">(config MonitorConfig)</span></span> *MemoryMonitor {
+    <span class="hljs-keyword">return</span> &amp;MemoryMonitor{
+        config:           config,
+        trendAnalyzer:    NewMemoryTrendAnalyzer(<span class="hljs-number">100</span>),
+        goroutineTracker: NewGoroutineTracker(),
+        alertManager:     NewAlertManager(config.AlertWebhook, <span class="hljs-number">1000</span>),
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewAlertManager</span><span class="hljs-params">(webhookURL <span class="hljs-type">string</span>, maxHistory <span class="hljs-type">int</span>)</span></span> *AlertManager {
+    <span class="hljs-keyword">return</span> &amp;AlertManager{
+        webhookURL: webhookURL,
+        maxHistory: maxHistory,
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(am *AlertManager)</span></span> SendAlert(alert Alert) {
+    am.mu.Lock()
+    am.alertHistory = <span class="hljs-built_in">append</span>(am.alertHistory, alert)
+
+    <span class="hljs-comment">// Keep only recent alerts</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(am.alertHistory) &gt; am.maxHistory {
+        am.alertHistory = am.alertHistory[<span class="hljs-number">1</span>:]
+    }
+    am.mu.Unlock()
+
+    <span class="hljs-comment">// Log alert</span>
+    log.Printf(<span class="hljs-string">"ALERT [%s]: %s - %s"</span>, alert.Severity, alert.Type, alert.Message)
+
+    <span class="hljs-comment">// Send webhook if configured</span>
+    <span class="hljs-keyword">if</span> am.webhookURL != <span class="hljs-string">""</span> {
+        <span class="hljs-keyword">go</span> am.sendWebhook(alert)
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(am *AlertManager)</span></span> sendWebhook(alert Alert) {
+    data, err := json.Marshal(alert)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Printf(<span class="hljs-string">"Failed to marshal alert: %v"</span>, err)
+        <span class="hljs-keyword">return</span>
+    }
+
+    resp, err := http.Post(am.webhookURL, <span class="hljs-string">"application/json"</span>, strings.NewReader(<span class="hljs-type">string</span>(data)))
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Printf(<span class="hljs-string">"Failed to send webhook: %v"</span>, err)
+        <span class="hljs-keyword">return</span>
+    }
+    <span class="hljs-keyword">defer</span> resp.Body.Close()
+
+    <span class="hljs-keyword">if</span> resp.StatusCode &gt;= <span class="hljs-number">400</span> {
+        log.Printf(<span class="hljs-string">"Webhook returned error status: %d"</span>, resp.StatusCode)
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(am *AlertManager)</span></span> GetAlerts() []Alert {
+    am.mu.RLock()
+    <span class="hljs-keyword">defer</span> am.mu.RUnlock()
+
+    alerts := <span class="hljs-built_in">make</span>([]Alert, <span class="hljs-built_in">len</span>(am.alertHistory))
+    <span class="hljs-built_in">copy</span>(alerts, am.alertHistory)
+    <span class="hljs-keyword">return</span> alerts
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mm *MemoryMonitor)</span></span> Start() <span class="hljs-type">error</span> {
+    mm.mu.Lock()
+    <span class="hljs-keyword">defer</span> mm.mu.Unlock()
+
+    <span class="hljs-keyword">if</span> mm.running {
+        <span class="hljs-keyword">return</span> fmt.Errorf(<span class="hljs-string">"monitor already running"</span>)
+    }
+
+    ctx, cancel := context.WithCancel(context.Background())
+    mm.cancel = cancel
+    mm.running = <span class="hljs-literal">true</span>
+
+    <span class="hljs-comment">// Set up trend analyzer alerts</span>
+    mm.trendAnalyzer.alertThresholds = mm.config.AlertThresholds
+
+    <span class="hljs-comment">// Set up goroutine tracker alerts</span>
+    mm.goroutineTracker.SetAlertCallback(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(alert GoroutineAlert)</span></span> {
+        mm.alertManager.SendAlert(Alert{
+            Timestamp: alert.Timestamp,
+            Type:      <span class="hljs-string">"goroutine_leak"</span>,
+            Severity:  <span class="hljs-string">"warning"</span>,
+            Message:   fmt.Sprintf(<span class="hljs-string">"Potential goroutine leak: %d goroutines (+%d from baseline)"</span>, alert.Count, alert.Increase),
+            Details:   alert,
+        })
+    })
+
+    <span class="hljs-comment">// Start monitoring goroutines</span>
+    mm.goroutineTracker.StartTracking(mm.config.SampleInterval)
+
+    <span class="hljs-comment">// Start memory monitoring</span>
+    <span class="hljs-keyword">go</span> mm.monitorLoop(ctx)
+
+    <span class="hljs-comment">// Start web server if configured</span>
+    <span class="hljs-keyword">if</span> mm.config.WebServerPort &gt; <span class="hljs-number">0</span> {
+        <span class="hljs-keyword">go</span> mm.startWebServer(ctx)
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mm *MemoryMonitor)</span></span> Stop() {
+    mm.mu.Lock()
+    <span class="hljs-keyword">defer</span> mm.mu.Unlock()
+
+    <span class="hljs-keyword">if</span> !mm.running {
+        <span class="hljs-keyword">return</span>
+    }
+
+    mm.running = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">if</span> mm.cancel != <span class="hljs-literal">nil</span> {
+        mm.cancel()
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mm *MemoryMonitor)</span></span> monitorLoop(ctx context.Context) {
+    ticker := time.NewTicker(mm.config.SampleInterval)
+    <span class="hljs-keyword">defer</span> ticker.Stop()
+
+    logFile := mm.openLogFile()
+    <span class="hljs-keyword">defer</span> logFile.Close()
+
+    <span class="hljs-keyword">for</span> {
+        <span class="hljs-keyword">select</span> {
+        <span class="hljs-keyword">case</span> &lt;-ticker.C:
+            mm.collectSample(logFile)
+        <span class="hljs-keyword">case</span> &lt;-ctx.Done():
+            <span class="hljs-keyword">return</span>
+        }
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mm *MemoryMonitor)</span></span> collectSample(logFile *os.File) {
+    stats := GetMemoryStats()
+    mm.trendAnalyzer.AddSample(stats)
+
+    <span class="hljs-comment">// Analyze trends</span>
+    analysis := mm.trendAnalyzer.AnalyzeTrends()
+
+    <span class="hljs-comment">// Log sample</span>
+    <span class="hljs-keyword">if</span> logFile != <span class="hljs-literal">nil</span> {
+        logEntry := <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-keyword">interface</span>{}{
+            <span class="hljs-string">"timestamp"</span>: stats.Timestamp,
+            <span class="hljs-string">"memory"</span>:    stats,
+            <span class="hljs-string">"analysis"</span>:  analysis,
+        }
+
+        data, _ := json.Marshal(logEntry)
+        logFile.WriteString(<span class="hljs-type">string</span>(data) + <span class="hljs-string">"\n"</span>)
+    }
+
+    <span class="hljs-comment">// Check for alerts</span>
+    <span class="hljs-keyword">for</span> _, alertMsg := <span class="hljs-keyword">range</span> analysis.Alerts {
+        severity := <span class="hljs-string">"warning"</span>
+        <span class="hljs-keyword">if</span> analysis.HeapGrowthRate &gt; mm.config.AlertThresholds.HeapGrowthRate*<span class="hljs-number">2</span> {
+            severity = <span class="hljs-string">"critical"</span>
+        }
+
+        mm.alertManager.SendAlert(Alert{
+            Timestamp: time.Now(),
+            Type:      <span class="hljs-string">"memory_leak"</span>,
+            Severity:  severity,
+            Message:   alertMsg,
+            Details:   analysis,
+        })
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mm *MemoryMonitor)</span></span> openLogFile() *os.File {
+    <span class="hljs-keyword">if</span> mm.config.LogFile == <span class="hljs-string">""</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    }
+
+    <span class="hljs-comment">// Create directory if needed</span>
+    dir := filepath.Dir(mm.config.LogFile)
+    os.MkdirAll(dir, <span class="hljs-number">0755</span>)
+
+    <span class="hljs-comment">// Open log file</span>
+    file, err := os.OpenFile(mm.config.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, <span class="hljs-number">0644</span>)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Printf(<span class="hljs-string">"Failed to open log file: %v"</span>, err)
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    }
+
+    <span class="hljs-comment">// Check file size</span>
+    <span class="hljs-keyword">if</span> info, err := file.Stat(); err == <span class="hljs-literal">nil</span> &amp;&amp; info.Size() &gt; mm.config.MaxLogSize {
+        <span class="hljs-comment">// Rotate log file</span>
+        file.Close()
+        os.Rename(mm.config.LogFile, mm.config.LogFile+<span class="hljs-string">".old"</span>)
+        file, _ = os.OpenFile(mm.config.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, <span class="hljs-number">0644</span>)
+    }
+
+    <span class="hljs-keyword">return</span> file
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mm *MemoryMonitor)</span></span> startWebServer(ctx context.Context) {
+    mux := http.NewServeMux()
+
+    <span class="hljs-comment">// Status endpoint</span>
+    mux.HandleFunc(<span class="hljs-string">"/status"</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> {
+        mm.mu.RLock()
+        running := mm.running
+        mm.mu.RUnlock()
+
+        status := <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-keyword">interface</span>{}{
+            <span class="hljs-string">"running"</span>:          running,
+            <span class="hljs-string">"memory_stats"</span>:     GetMemoryStats(),
+            <span class="hljs-string">"goroutine_report"</span>: mm.goroutineTracker.GetReport(),
+            <span class="hljs-string">"trend_analysis"</span>:   mm.trendAnalyzer.AnalyzeTrends(),
+        }
+
+        w.Header().Set(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
+        json.NewEncoder(w).Encode(status)
+    })
+
+    <span class="hljs-comment">// Alerts endpoint</span>
+    mux.HandleFunc(<span class="hljs-string">"/alerts"</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> {
+        alerts := mm.alertManager.GetAlerts()
+
+        w.Header().Set(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
+        json.NewEncoder(w).Encode(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-keyword">interface</span>{}{
+            <span class="hljs-string">"alerts"</span>: alerts,
+            <span class="hljs-string">"count"</span>:  <span class="hljs-built_in">len</span>(alerts),
+        })
+    })
+
+    <span class="hljs-comment">// Force GC endpoint</span>
+    mux.HandleFunc(<span class="hljs-string">"/gc"</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> {
+        <span class="hljs-keyword">if</span> r.Method != <span class="hljs-string">"POST"</span> {
+            http.Error(w, <span class="hljs-string">"Method not allowed"</span>, http.StatusMethodNotAllowed)
+            <span class="hljs-keyword">return</span>
+        }
+
+        runtime.GC()
+
+        w.Header().Set(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
+        json.NewEncoder(w).Encode(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
+            <span class="hljs-string">"status"</span>: <span class="hljs-string">"GC triggered"</span>,
+        })
+    })
+
+    server := &amp;http.Server{
+        Addr:    fmt.Sprintf(<span class="hljs-string">":%d"</span>, mm.config.WebServerPort),
+        Handler: mux,
+    }
+
+    <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+        &lt;-ctx.Done()
+        server.Shutdown(context.Background())
+    }()
+
+    log.Printf(<span class="hljs-string">"Memory monitor web server starting on port %d"</span>, mm.config.WebServerPort)
+    <span class="hljs-keyword">if</span> err := server.ListenAndServe(); err != <span class="hljs-literal">nil</span> &amp;&amp; err != http.ErrServerClosed {
+        log.Printf(<span class="hljs-string">"Web server error: %v"</span>, err)
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(mm *MemoryMonitor)</span></span> GetDashboardData() <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-keyword">interface</span>{} {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-keyword">interface</span>{}{
+        <span class="hljs-string">"memory_stats"</span>:     GetMemoryStats(),
+        <span class="hljs-string">"goroutine_report"</span>: mm.goroutineTracker.GetReport(),
+        <span class="hljs-string">"trend_analysis"</span>:   mm.trendAnalyzer.AnalyzeTrends(),
+        <span class="hljs-string">"recent_alerts"</span>:    mm.alertManager.GetAlerts(),
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">demonstrateAutomatedMonitoring</span><span class="hljs-params">()</span></span> {
+    fmt.Println(<span class="hljs-string">"\n=== AUTOMATED MEMORY MONITORING ==="</span>)
+
+    config := MonitorConfig{
+        SampleInterval: <span class="hljs-number">1</span> * time.Second,
+        AlertThresholds: AlertThresholds{
+            HeapGrowthRate:   <span class="hljs-number">5.0</span>,  <span class="hljs-comment">// 5 MB/minute</span>
+            ObjectGrowthRate: <span class="hljs-number">5000</span>, <span class="hljs-comment">// 5k objects/minute</span>
+            GCFrequencyMax:   <span class="hljs-number">30</span>,   <span class="hljs-comment">// 30 GCs/minute</span>
+            HeapUtilization:  <span class="hljs-number">0.85</span>, <span class="hljs-comment">// 85%</span>
+        },
+        LogFile:       <span class="hljs-string">"/tmp/memory_monitor.log"</span>,
+        WebServerPort: <span class="hljs-number">8080</span>,
+        MaxLogSize:    <span class="hljs-number">10</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span>, <span class="hljs-comment">// 10MB</span>
+    }
+
+    monitor := NewMemoryMonitor(config)
+
+    <span class="hljs-keyword">if</span> err := monitor.Start(); err != <span class="hljs-literal">nil</span> {
+        log.Fatalf(<span class="hljs-string">"Failed to start monitor: %v"</span>, err)
+    }
+    <span class="hljs-keyword">defer</span> monitor.Stop()
+
+    fmt.Printf(<span class="hljs-string">"Memory monitor started. Web interface: http://localhost:%d/status\n"</span>, config.WebServerPort)
+
+    <span class="hljs-comment">// Simulate memory usage patterns</span>
+    fmt.Println(<span class="hljs-string">"Simulating memory usage..."</span>)
+
+    <span class="hljs-keyword">var</span> data [][]<span class="hljs-type">byte</span>
+
+    <span class="hljs-comment">// Gradual memory growth</span>
+    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++ {
+        chunk := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>) <span class="hljs-comment">// 1MB chunks</span>
+        data = <span class="hljs-built_in">append</span>(data, chunk)
+
+        fmt.Printf(<span class="hljs-string">"Allocated %d MB\n"</span>, i+<span class="hljs-number">1</span>)
+        time.Sleep(<span class="hljs-number">2</span> * time.Second)
+    }
+
+    <span class="hljs-comment">// Simulate goroutine leak</span>
+    fmt.Println(<span class="hljs-string">"Simulating goroutine leak..."</span>)
+    simulateGoroutineLeak(<span class="hljs-number">10</span>)
+
+    <span class="hljs-comment">// Let monitor collect data</span>
+    time.Sleep(<span class="hljs-number">10</span> * time.Second)
+
+    <span class="hljs-comment">// Show dashboard data</span>
+    dashboard := monitor.GetDashboardData()
+    dashboardJSON, _ := json.MarshalIndent(dashboard, <span class="hljs-string">""</span>, <span class="hljs-string">"  "</span>)
+    fmt.Printf(<span class="hljs-string">"\nDashboard Data:\n%s\n"</span>, dashboardJSON)
+
+    <span class="hljs-comment">// Keep data alive</span>
+    runtime.KeepAlive(data)
+}
+</code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li>Learn <a href="../profiling-tools/integration.md">Profiling Integration</a> techniques</li>
+<li>Study <a href="../benchmarking/README.md">Performance Benchmarking</a> methods</li>
+<li>Explore <a href="../monitoring/README.md">Production Monitoring</a> strategies</li>
+<li>Master <a href="../testing/README.md">Automated Testing</a> for memory leaks</li>
+</ul>
+<h2 id="summary">Summary</h2>
+<p>Memory leak detection in Go requires:</p>
+<ol>
+<li><strong>Understanding leak patterns</strong> - Goroutine, reference, and resource leaks</li>
+<li><strong>Implementing monitoring</strong> - Continuous tracking of memory trends</li>
+<li><strong>Analyzing references</strong> - Detecting cycles and unreachable objects</li>
+<li><strong>Automated detection</strong> - Building tools for production monitoring</li>
+<li><strong>Proactive prevention</strong> - Designing leak-resistant code patterns</li>
+</ol>
+<p>Use these techniques to build robust applications that maintain stable memory usage over time.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="allocation-profiling.html" class="navigation navigation-prev " aria-label="Previous page: Allocation Profiling">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../goroutine-profiling/" class="navigation navigation-next " aria-label="Next page: Goroutine Profiling">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Memory Leaks Detection","level":"2.3.3","depth":2,"next":{"title":"Goroutine Profiling","level":"2.4","depth":1,"path":"profiling-tools/goroutine-profiling/README.md","ref":"profiling-tools/goroutine-profiling/README.md","articles":[{"title":"Goroutine Analysis","level":"2.4.1","depth":2,"path":"profiling-tools/goroutine-profiling/goroutine-analysis.md","ref":"profiling-tools/goroutine-profiling/goroutine-analysis.md","articles":[]},{"title":"Deadlock Detection","level":"2.4.2","depth":2,"path":"profiling-tools/goroutine-profiling/deadlock-detection.md","ref":"profiling-tools/goroutine-profiling/deadlock-detection.md","articles":[]},{"title":"Goroutine Leaks","level":"2.4.3","depth":2,"path":"profiling-tools/goroutine-profiling/goroutine-leaks.md","ref":"profiling-tools/goroutine-profiling/goroutine-leaks.md","articles":[]}]},"previous":{"title":"Allocation Profiling","level":"2.3.2","depth":2,"path":"profiling-tools/memory-profiling/allocation-profiling.md","ref":"profiling-tools/memory-profiling/allocation-profiling.md","articles":[]},"dir":"ltr"},"config":{"plugins":["fontsettings","theme-default","livereload"],"root":".","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Performance Engineering Team","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.0.0","go_version":"1.24+","repo_url":"https://github.com/psavelis/codechallenge"},"title":"Advanced Go Performance Engineering","language":"en","gitbook":">=3.0.0","description":"A Complete Guide to Profiling, Benchmarking, and Optimization Techniques in Go"},"file":{"path":"profiling-tools/memory-profiling/leak-detection.md","mtime":"2025-09-05T18:37:28.341Z","type":"markdown"},"gitbook":{"version":"6.0.3","time":"2025-09-09T16:55:21.356Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
