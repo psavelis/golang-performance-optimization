@@ -5,6 +5,7 @@ This section provides comprehensive resources for Go performance engineering, fr
 ## What You'll Find Here
 
 ### Essential Tools and Frameworks
+
 Comprehensive guide to the tools that form the foundation of Go performance engineering:
 
 - **Core Go Performance Tools**: pprof, trace, benchmarking frameworks
@@ -13,6 +14,7 @@ Comprehensive guide to the tools that form the foundation of Go performance engi
 - **Production Monitoring**: Real-time performance monitoring systems
 
 ### External Resources and Learning
+
 Curated collection of high-quality learning materials and resources:
 
 - **Books and Publications**: Essential reading for Go performance engineering
@@ -21,6 +23,7 @@ Curated collection of high-quality learning materials and resources:
 - **Technical Blogs**: Must-follow blogs and technical articles
 
 ### Community and Contribution
+
 Connect with the vibrant Go performance community:
 
 - **Active Communities**: Slack, Reddit, forums, and user groups
@@ -573,28 +576,33 @@ ENTRYPOINT ["/app"]
 ## References and Further Reading
 
 ### Official Documentation
+
 - [Go Performance](https://golang.org/doc/effective_go.html#performance)
 - [pprof Documentation](https://pkg.go.dev/net/http/pprof)
 - [Runtime Package](https://pkg.go.dev/runtime)
 - [Testing Package](https://pkg.go.dev/testing)
 
 ### Performance Guides
+
 - [High Performance Go Workshop](https://dave.cheney.net/high-performance-go-workshop/dotgo-paris.html)
 - [Go Performance Tuning](https://github.com/dgryski/go-perfbook)
 - [Optimization Guide](https://segment.com/blog/allocation-efficiency-in-high-performance-go-services/)
 
 ### Books
+
 - **"The Go Programming Language"** by Alan Donovan and Brian Kernighan
 - **"Go in Action"** by William Kennedy, Brian Ketelsen, and Erik St. Martin  
 - **"Concurrency in Go"** by Katherine Cox-Buday
 - **"Cloud Native Go"** by Matthew Titmus
 
 ### Blogs and Articles
+
 - [Golang Performance Optimization](https://bravenewgeek.com/so-you-wanna-go-fast/)
 - [Memory Management in Go](https://blog.golang.org/go-memory-model)
 - [GC Tuning Guide](https://tip.golang.org/doc/gc-guide)
 
 ### Community Resources
+
 - [Golang Performance Google Group](https://groups.google.com/g/golang-nuts)
 - [r/golang Performance Discussions](https://reddit.com/r/golang)
 - [Stack Overflow Go Performance](https://stackoverflow.com/questions/tagged/go+performance)

@@ -398,6 +398,24 @@ ci_profiles: clean
 	go tool pprof -top -alloc_space -nodecount=15 generator_mem.prof > .docs/artifacts/ci/generator_mem_top.txt 2>/dev/null || true
 	go tool pprof -top -alloc_space -nodecount=15 generator_optimized_mem.prof > .docs/artifacts/ci/generator_optimized_mem_top.txt 2>/dev/null || true
 	# Diff (CPU time) optimized vs original
+
+# ------------------------------
+# Documentation (HonKit + markdownlint)
+# ------------------------------
+.PHONY: docs_install deps_docs docs_lint docs_build docs_serve
+
+deps_docs:
+	cd gitbook && npm ci
+
+docs_lint:
+	@[ -x "$(shell command -v npx)" ] || { echo "npx not found. Install Node.js"; exit 1; }
+	cd gitbook && npx markdownlint "**/*.md" -c ../.markdownlint.json --ignore "_book/**"
+
+docs_build: deps_docs
+	cd gitbook && npx honkit build
+
+docs_serve: deps_docs
+	cd gitbook && npx honkit serve
 	go tool pprof -top -nodecount=15 -diff_base=generator_cpu.prof generator_optimized_cpu.prof > .docs/artifacts/ci/generator_cpu_diff_top.txt 2>/dev/null || true
 	# Diff (alloc_space)
 	go tool pprof -top -alloc_space -nodecount=15 -diff_base=generator_mem.prof generator_optimized_mem.prof > .docs/artifacts/ci/generator_mem_diff_top.txt 2>/dev/null || true

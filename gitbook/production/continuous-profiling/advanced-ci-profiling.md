@@ -13,7 +13,7 @@ This chapter extends the basic PR profiling pipeline with diff analysis, automat
 
 ## Artifact Layout
 
-```
+```text
 .docs/artifacts/ci/
   flamegraphs/
     generator_cpu.svg
@@ -34,7 +34,7 @@ This chapter extends the basic PR profiling pipeline with diff analysis, automat
 
 `generator_cpu_diff_top.txt` is produced by:
 
-```
+```bash
 go tool pprof -top -diff_base=generator_cpu.prof generator_optimized_cpu.prof
 ```
 
@@ -44,7 +44,7 @@ Meaning of signs:
 
 Allocation diff uses:
 
-```
+```bash
 go tool pprof -top -alloc_space -diff_base=generator_mem.prof generator_optimized_mem.prof
 ```
 

@@ -278,6 +278,7 @@ const (
     PoolResize
 )
 
+```go
 // PoolCollector collects pool metrics
 type PoolCollector interface {
     CollectEvent(event PoolEvent)
@@ -1319,26 +1320,27 @@ func ExamplePoolUsage() {
         EnableMonitoring: true,
         PoolType:         SyncPool,
     }
-    
+
     manager := NewPoolManager(config)
-    
+
     // Get a typed pool for byte slices
     bytePool := manager.GetTypedPool("bytes", func() interface{} {
         return make([]byte, 1024)
     })
-    
+
     // Use the pool
     buffer := bytePool.Get().([]byte)
-    
+
     // Use buffer...
-    
+
     // Return to pool
     bytePool.Put(buffer)
-    
+
     // Get metrics
     metrics := bytePool.GetMetrics()
     fmt.Printf("Pool hit rate: %.2f%%\n", float64(metrics.Hits)/float64(metrics.Gets)*100)
 }
+
 ```
 
 ## Performance Analysis

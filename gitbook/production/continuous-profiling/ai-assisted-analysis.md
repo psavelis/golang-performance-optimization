@@ -38,15 +38,20 @@ Location: `.docs/artifacts/ci/ai_analysis/`
 Thresholds are conservative; tune in `cmd/ai-profiler-analyzer/main.go` if your workload is noisier.
 
 ## Enabling Real LLM Integration
+
 1. Deploy an internal microservice exposing `POST /analyze` returning JSON like:
+
    ```json
    { "summary_override": "High-level narrative...", "recommendations": ["...","..."] }
    ```
+
 2. Export `AI_ANALYSIS_ENDPOINT=https://perf-ai.internal/analyze` in the workflow job environment.
 3. (Optional) Sign requests with a short-lived token (extend analyzer code where `maybeCallExternal` is invoked).
 
 ## Local Trial
+
 Run the existing CI profiling locally, then invoke analysis:
+
 ```bash
 make ci_profiles
 go run ./cmd/ai-profiler-analyzer
@@ -54,6 +59,7 @@ cat .docs/artifacts/ci/ai_analysis/report.md
 ```
 
 ## Interpreting Output
+
 Section | How to Use
 --------|-----------
 CPU/Memory Improvements | Confirm expected optimizations landed.
@@ -63,6 +69,7 @@ Benchmark Deltas | Correlate micro-benchmark slowdowns with hotspot symbol chang
 Recommendations | Immediate next actions; feed into a performance backlog.
 
 ## Extending Precision
+
 Enhancement | Benefit
 ------------|--------
 Speedscope JSON integration | Rich differential flamegraph UIs.
@@ -72,6 +79,7 @@ Symbol semantic grouping (packages) | Attribute ownership and team accountabilit
 JIT tap into tracing spans | Tie hotspot deltas directly to SLO-impacting endpoints.
 
 ## Governance Suggestions
+
 Level | Gate Example
 ------|--------------
 Warning | Any regression >5% Flat% or alloc-space.
@@ -81,6 +89,7 @@ Hard Fail | Any single benchmark slowdown >15% or CPU regression >10% Flat%.
 Wire these gates in the analyzer (currently it only reports). Add exit codes once signal-to-noise is tuned.
 
 ## Roadmap Ideas
+
 1. Export SARIF for IDE inline performance hints.
 2. Embed links to Pyroscope filtered views (trace_id + package filter).
 3. Auto-open GitHub issues for persistent regressions across 3 consecutive PRs.

@@ -4,7 +4,7 @@ This page demonstrates Mermaid diagrams in our GitBook and shows the end-to-end 
 
 ## Observability Stack (high level)
 
-```text
+```mermaid
 flowchart LR
   subgraph Apps
     G[generator*] -->|OTLP traces| OC[OTel Collector]

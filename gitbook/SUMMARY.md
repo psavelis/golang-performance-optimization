@@ -61,6 +61,7 @@
   * [Time Complexity Analysis](optimization/algorithms/time-complexity.md)
   * [Space Complexity Analysis](optimization/algorithms/space-complexity.md)
   * [Data Structure Selection](optimization/algorithms/data-structures.md)
+  * [Efficient Random Generation & Bit Manipulation](optimization/algorithms/efficient-random-generation.md)
 * [Memory Optimization](optimization/memory/README.md)
   * [Memory Pools](optimization/memory/memory-pools.md)
   * [Object Reuse](optimization/memory/object-reuse.md)

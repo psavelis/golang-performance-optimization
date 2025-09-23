@@ -38,27 +38,32 @@ make start_profiling_stack
 ## Build and Run the Examples
 
 - Build all binaries:
+
 ```bash
 make build
 ```
 
 - Run Pyroscope-enabled generator (writes JSON file):
+
 ```bash
 make run_pyroscope_generator
 ```
 
 - Run Pyroscope-enabled loader (loads JSON into Postgres):
+
 ```bash
 make run_pyroscope_loader
 ```
 
 Both apps push profiles to Pyroscope automatically. In the UI you’ll see:
+
 - interviewing-golang.generator
 - interviewing-golang.loader
 
 ## Configuration
 
 The profilers are configured via environment variables:
+
 - PYROSCOPE_SERVER_ADDRESS (default http://localhost:4040)
 - PYROSCOPE_APPLICATION_NAME (default set by binary)
 - PYROSCOPE_TENANT_ID (optional)

@@ -5,19 +5,22 @@ This section covers the complete ecosystem of Go profiling tools, from built-in 
 ## Tool Categories
 
 ### 🔧 Built-in Go Tools
+
 - **`go tool pprof`** - Primary profiling interface
 - **`go tool trace`** - Execution tracing and analysis
 - **`go test -bench`** - Benchmarking framework
 - **Runtime diagnostics** - Built-in performance monitoring
 
 ### 📊 Profile Types
+
 - **[CPU Profiling](cpu-profiling/README.md)** - Function execution time analysis
-- **[Memory Profiling](memory-profiling/README.md)** - Heap and allocation analysis  
+- **[Memory Profiling](memory-profiling/README.md)** - Heap and allocation analysis
 - **[Goroutine Profiling](goroutine-profiling/README.md)** - Concurrency analysis
 - **[Mutex & Block Profiling](concurrency-profiling/README.md)** - Synchronization analysis
 - **[Custom Profiling](custom-profiling/README.md)** - Application-specific metrics
 
 ### 🌐 Third-party Tools
+
 - **Flamegraph tools** - Visual profile analysis
 - **Continuous profiling platforms** - Production monitoring
 - **Performance testing frameworks** - Load and stress testing
@@ -56,24 +59,28 @@ go tool trace trace.out
 ## Tool Selection Guide
 
 ### Choose CPU Profiling When:
+
 - ✅ Functions consuming excessive CPU time
 - ✅ Algorithm optimization needed
 - ✅ Hot path identification required
 - ✅ Baseline performance measurement
 
 ### Choose Memory Profiling When:
+
 - ✅ High memory usage or leaks suspected
 - ✅ Garbage collection pressure
 - ✅ Allocation pattern analysis needed
 - ✅ Memory optimization opportunities
 
 ### Choose Goroutine Profiling When:
+
 - ✅ Concurrency issues or deadlocks
 - ✅ Goroutine leaks suspected
 - ✅ Scheduler analysis needed
 - ✅ Channel operation debugging
 
 ### Choose Blocking Profiling When:
+
 - ✅ Lock contention suspected
 - ✅ I/O bottlenecks present
 - ✅ Synchronization issues
@@ -82,6 +89,7 @@ go tool trace trace.out
 ## Advanced Profiling Workflows
 
 ### Multi-Profile Analysis
+
 ```bash
 # Collect comprehensive profile set
 go test -bench=BenchmarkCritical \
@@ -98,6 +106,7 @@ go tool trace trace.out
 ```
 
 ### Production Profiling Pipeline
+
 ```bash
 #!/bin/bash
 # production-profile.sh
@@ -123,6 +132,7 @@ echo "Profiles collected in $PROFILE_DIR"
 ## Tool Integration Patterns
 
 ### Development Workflow
+
 ```go
 // Integrated profiling in development
 func main() {
@@ -140,6 +150,7 @@ func main() {
 ```
 
 ### Continuous Integration
+
 ```yaml
 # .github/workflows/performance.yml
 name: Performance Testing
@@ -178,6 +189,7 @@ jobs:
 ## Best Practices Summary
 
 ### ✅ Do's
+
 - **Profile first, optimize second** - Measure before making changes
 - **Use multiple profile types** - Get complete performance picture
 - **Profile production workloads** - Real data reveals real issues
@@ -185,6 +197,7 @@ jobs:
 - **Compare before/after** - Validate optimization effectiveness
 
 ### ❌ Don'ts
+
 - **Don't guess at bottlenecks** - Always measure and verify
 - **Don't profile toy examples** - Use realistic workloads
 - **Don't ignore low-hanging fruit** - Address obvious issues first
@@ -194,17 +207,20 @@ jobs:
 ## Learning Path
 
 ### Beginner (2-4 hours)
+
 1. **[Basic CPU Profiling](cpu-profiling/basic-cpu-profiling.md)**
 2. **[Memory Profiling Basics](memory-profiling/heap-profiling.md)**
 3. **Practice with sample applications**
 
 ### Intermediate (6-8 hours)
+
 1. **[Advanced CPU Techniques](cpu-profiling/advanced-techniques.md)**
 2. **[Goroutine Analysis](goroutine-profiling/goroutine-analysis.md)**
 3. **[Blocking Operations](concurrency-profiling/mutex-contention.md)**
 4. **Multi-profile correlation**
 
 ### Advanced (10+ hours)
+
 1. **[Custom Profiling](custom-profiling/custom-profiles.md)**
 2. **[Production Monitoring](custom-profiling/runtime-metrics.md)**
 3. **[Flamegraph Analysis](cpu-profiling/flamegraph-analysis.md)**
@@ -213,6 +229,7 @@ jobs:
 ## Tools Ecosystem
 
 ### Core Go Tools
+
 ```bash
 # Built into Go toolchain
 go tool pprof     # Profile analysis
@@ -222,6 +239,7 @@ go tool objdump   # Assembly analysis
 ```
 
 ### Essential Extensions
+
 ```bash
 # Install additional tools
 go install github.com/google/pprof@latest
@@ -234,8 +252,9 @@ export PATH=$PATH:$PWD/FlameGraph
 ```
 
 ### Recommended Third-party
+
 - **Grafana Pyroscope** - Continuous profiling platform
-- **DataDog Profiler** - Commercial profiling service  
+- **DataDog Profiler** - Commercial profiling service
 - **Go-torch** - Flamegraph generation (legacy)
 - **Hey/AB** - HTTP load testing with profiling
 

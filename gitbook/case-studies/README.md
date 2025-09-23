@@ -10,13 +10,13 @@ This section presents detailed analysis of actual performance optimization proje
 **Techniques**: CPU profiling, memory optimization, string pool implementation  
 **Result**: 798ms → 149ms response time for 100K operations
 
-### 📊 [Data Processing Pipeline](data-processing.md) 
+### 📊 [Data Processing Pipeline](database-optimization.md) 
 **Problem**: Batch processing system couldn't meet SLA requirements  
 **Solution**: Streaming architecture with concurrent processing  
 **Techniques**: Goroutine profiling, channel optimization, memory streaming  
 **Result**: 10x throughput increase with 60% memory reduction
 
-### 🏗️ [Microservices Performance](microservices-performance.md)
+### 🏗️ [Microservices Performance](microservices-optimization.md)
 **Problem**: Service mesh introducing unacceptable latency  
 **Solution**: Protocol optimization and connection pooling  
 **Techniques**: Network profiling, blocking analysis, custom metrics  

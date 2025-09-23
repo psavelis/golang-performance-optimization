@@ -103,7 +103,7 @@ Prioritize functions with high `flat%` and high `cum` if they’re on critical p
 
 A `benchstat` diff example:
 
-```
+```text
 name                       old time/op    new time/op    delta
 GeneratorOriginal-8          2.45ms ± 3%    2.10ms ± 2%  -14.3%  (p=0.002 n=5+5)
 GeneratorOptimized-8         1.10ms ± 2%    1.05ms ± 2%   -4.5%  (p=0.041 n=5+5)

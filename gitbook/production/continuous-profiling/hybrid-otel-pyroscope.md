@@ -1,12 +1,14 @@
 # Hybrid OpenTelemetry + Pyroscope Profiling
 
 This guide shows how to run a binary with BOTH:
+
 - OpenTelemetry tracing (exported to Tempo / any OTLP backend)
 - Continuous profiling via Grafana Pyroscope
 - Optional trace ↔ profile correlation tags (trace_id, root_span_id)
 
 ## When To Use
 Use the hybrid setup when you need to answer both:
+
 1. "What distributed request / span is slow?" (tracing)
 2. "Why is it slow at the code level?" (profiling)
 
@@ -28,7 +30,7 @@ Enable by environment flags instead of separate builds.
 | OTEL_RESOURCE_ATTRIBUTES | service.name / env / etc | unset |
 
 ## Minimal Local Run
-```
+```bash
 PYROSCOPE_ENABLE=true \
 PYROSCOPE_TRACE_CORRELATION=true \
 OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317 \
@@ -36,7 +38,7 @@ OTEL_RESOURCE_ATTRIBUTES="service.name=generator-otel,env=dev" \
 go run ./cmd/generator-otel 5000 /tmp/out.json
 ```
 Then load them:
-```
+```bash
 PYROSCOPE_ENABLE=true \
 PYROSCOPE_TRACE_CORRELATION=true \
 OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317 \
@@ -54,7 +56,8 @@ go run ./cmd/loader-otel postgres://user:pass@localhost:5432/db?sslmode=disable 
 
 ## Building Deep Links (Manual)
 Pyroscope UI supports query params. Example pattern:
-```
+
+```text
 http://localhost:4040/?query=service%3Dgenerator-otel%20trace_id%3D<TRACE>
 ```
 Tempo trace URL (varies by stack) often ends with `/trace/<TRACE>`. Store that ID.

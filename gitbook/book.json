@@ -10,10 +10,17 @@
         "summary": "SUMMARY.md"
     },
     "plugins": [
+        "-highlight",        
+        "prism",              
+        "mermaid-gb3",        
         "fontsettings",
         "theme-default"
     ],
     "pluginsConfig": {
+        "mermaid-gb3": {
+            "startOnLoad": true,
+            "theme": "default"
+        }
     },
     "variables": {
         "version": "1.0.0",
