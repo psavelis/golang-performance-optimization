@@ -5,7 +5,6 @@ on:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - 'gitbook/**'
-      - '**.md'
   workflow_dispatch: {}
 
 permissions:
@@ -91,16 +90,80 @@ jobs:
             echo '```' >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Post PR comment (initial only)
-        if: github.event.action == 'opened'
+      - name: Prepare profiling comment
+        run: |
+          # Create profiling comment file with actual data
+          cat << 'EOF' > profiling_comment.md
+          ## 🔥 Profiling Results
+          
+          📊 **Artifacts**: `ci-profiles-${{ github.sha }}`
+          
+          ### CPU Hotspots (Top 10)
+          
+          **Original Implementation:**
+          ```text
+          EOF
+          
+          if [ -f .docs/artifacts/ci/generator_cpu_top.txt ]; then
+            head -15 .docs/artifacts/ci/generator_cpu_top.txt | tail -10 >> profiling_comment.md
+          else
+            echo "No data available" >> profiling_comment.md
+          fi
+          
+          cat << 'EOF' >> profiling_comment.md
+          ```
+          
+          **Optimized Implementation:**
+          ```text
+          EOF
+          
+          if [ -f .docs/artifacts/ci/generator_optimized_cpu_top.txt ]; then
+            head -15 .docs/artifacts/ci/generator_optimized_cpu_top.txt | tail -10 >> profiling_comment.md
+          else
+            echo "No data available" >> profiling_comment.md
+          fi
+          
+          cat << 'EOF' >> profiling_comment.md
+          ```
+          
+          ### Memory Allocations (Top 10)
+          
+          **Original Implementation:**
+          ```text
+          EOF
+          
+          if [ -f .docs/artifacts/ci/generator_mem_top.txt ]; then
+            head -15 .docs/artifacts/ci/generator_mem_top.txt | tail -10 >> profiling_comment.md
+          else
+            echo "No data available" >> profiling_comment.md
+          fi
+          
+          cat << 'EOF' >> profiling_comment.md
+          ```
+          
+          **Optimized Implementation:**
+          ```text
+          EOF
+          
+          if [ -f .docs/artifacts/ci/generator_optimized_mem_top.txt ]; then
+            head -15 .docs/artifacts/ci/generator_optimized_mem_top.txt | tail -10 >> profiling_comment.md
+          else
+            echo "No data available" >> profiling_comment.md
+          fi
+          
+          cat << 'EOF' >> profiling_comment.md
+          ```
+          
+          **🔍 Analysis**: See workflow summary for detailed diff analysis
+          EOF
+        
+      - name: Comment PR with profiling results
         uses: thollander/actions-comment-pull-request@v2
         with:
-          message: |
-            🚀 Continuous profiling artifacts generated for this PR.
-            * Flamegraphs & top hotspots uploaded as artifacts (ci-profiles-${{ github.sha }}).
-            * See the PR Checks summary tab for CPU & allocation hotspot excerpts.
-            * Raw .prof + proto exports available for deeper offline analysis.
-
+          comment_tag: profiling-summary
+          mode: recreate
+          filePath: profiling_comment.md
+  
   benchdiff:
     name: Benchmark Comparison
     runs-on: ubuntu-latest
@@ -163,6 +226,54 @@ jobs:
             echo '```' >> $GITHUB_STEP_SUMMARY
           fi
 
+      - name: Post PR comment with benchmark summary
+        run: |
+          # Create benchmark comment file
+          cat << 'EOF' > benchmark_comment.md
+          ## 📈 Benchmark Comparison Results
+          
+          📊 **Artifacts**: `benchdiff-${{ github.sha }}`
+          
+          ### Original Implementation vs Main Branch
+          
+          EOF
+          
+          if [ -f .docs/artifacts/benchdiff/bench_original.diff ]; then
+            echo '```text' >> benchmark_comment.md
+            head -20 .docs/artifacts/benchdiff/bench_original.diff >> benchmark_comment.md
+            echo '```' >> benchmark_comment.md
+          else
+            echo "_No benchmark differences detected for original implementation_" >> benchmark_comment.md
+          fi
+          
+          cat << 'EOF' >> benchmark_comment.md
+          
+          ### Optimized Implementation vs Main Branch
+          
+          EOF
+          
+          if [ -f .docs/artifacts/benchdiff/bench_optimized.diff ]; then
+            echo '```text' >> benchmark_comment.md
+            head -20 .docs/artifacts/benchdiff/bench_optimized.diff >> benchmark_comment.md
+            echo '```' >> benchmark_comment.md
+          else
+            echo "_No benchmark differences detected for optimized implementation_" >> benchmark_comment.md
+          fi
+          
+          cat << 'EOF' >> benchmark_comment.md
+          
+          **📋 Note**: Performance gates are evaluated with thresholds (see workflow for details)
+          
+          **🚨 Regressions**: Any slowdowns >5% will be flagged in the AI analysis
+          EOF
+          
+      - name: Comment PR with benchmark results
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          comment_tag: benchmark-summary
+          mode: recreate
+          filePath: benchmark_comment.md
+
   ai-analysis:
     name: AI Assisted Profiling Diff
     needs: [profiling, benchdiff]
@@ -212,10 +323,157 @@ jobs:
             echo '\n## AI Assisted Performance Analysis' >> $GITHUB_STEP_SUMMARY
             sed -n '1,120p' ci-artifacts/ai_analysis/report.md >> $GITHUB_STEP_SUMMARY
           fi
-      - name: PR Comment (first run)
-        if: github.event.action == 'opened'
+
+      - name: Post comprehensive AI analysis PR comment
+        run: |
+          if [ -f ci-artifacts/ai_analysis/report.md ]; then
+            # Create AI analysis comment file
+            cat << 'EOF' > ai_comment.md
+          ## 🤖 AI-Assisted Performance Analysis
+          
+          📊 **Artifacts**: `ai-analysis-${{ github.sha }}`
+          
+          ### Summary
+          EOF
+            
+            # Extract summary line
+            grep "^Overall" ci-artifacts/ai_analysis/report.md | head -1 >> ai_comment.md || echo "_Analysis in progress..._" >> ai_comment.md
+            echo "" >> ai_comment.md
+            
+            # Extract ratings
+            echo "### Ratings" >> ai_comment.md
+            sed -n '/^## Ratings/,/^##/p' ci-artifacts/ai_analysis/report.md | grep -v "^##" | head -10 >> ai_comment.md || echo "_Ratings not available_" >> ai_comment.md
+            echo "" >> ai_comment.md
+            
+            # CPU Improvements
+            if grep -q "## CPU Improvements" ci-artifacts/ai_analysis/report.md; then
+              echo "### ✅ CPU Improvements" >> ai_comment.md
+              sed -n '/^## CPU Improvements/,/^##/p' ci-artifacts/ai_analysis/report.md | grep "^-" | head -5 >> ai_comment.md
+              echo "" >> ai_comment.md
+            fi
+            
+            # CPU Regressions
+            if grep -q "## CPU Regressions" ci-artifacts/ai_analysis/report.md; then
+              echo "### ⚠️ CPU Regressions" >> ai_comment.md
+              sed -n '/^## CPU Regressions/,/^##/p' ci-artifacts/ai_analysis/report.md | grep "^-" | head -5 >> ai_comment.md
+              echo "" >> ai_comment.md
+            fi
+            
+            # Memory Improvements
+            if grep -q "## Memory Improvements" ci-artifacts/ai_analysis/report.md; then
+              echo "### ✅ Memory Improvements" >> ai_comment.md
+              sed -n '/^## Memory Improvements/,/^##/p' ci-artifacts/ai_analysis/report.md | grep "^-" | head -5 >> ai_comment.md
+              echo "" >> ai_comment.md
+            fi
+            
+            # Memory Regressions
+            if grep -q "## Memory Regressions" ci-artifacts/ai_analysis/report.md; then
+              echo "### ⚠️ Memory Regressions" >> ai_comment.md
+              sed -n '/^## Memory Regressions/,/^##/p' ci-artifacts/ai_analysis/report.md | grep "^-" | head -5 >> ai_comment.md
+              echo "" >> ai_comment.md
+            fi
+            
+            # Benchmark Deltas
+            if grep -q "## Benchmark Deltas" ci-artifacts/ai_analysis/report.md; then
+              echo "### 📊 Benchmark Deltas" >> ai_comment.md
+              sed -n '/^## Benchmark Deltas/,/^##/p' ci-artifacts/ai_analysis/report.md | grep "^-" | head -8 >> ai_comment.md
+              echo "" >> ai_comment.md
+            fi
+            
+            # Recommendations
+            echo "### 💡 Recommendations" >> ai_comment.md
+            sed -n '/^## Recommendations/,/^##/p' ci-artifacts/ai_analysis/report.md | grep "^-" | head -5 >> ai_comment.md || echo "_No specific recommendations at this time_" >> ai_comment.md
+            
+            echo "" >> ai_comment.md
+            echo "**📋 Full Report**: Download the \`ai-analysis-${{ github.sha }}\` artifact for complete analysis" >> ai_comment.md
+            
+          else
+            echo "## 🤖 AI-Assisted Performance Analysis" > ai_comment.md
+            echo "" >> ai_comment.md
+            echo "_AI analysis report not found - check workflow logs for errors_" >> ai_comment.md
+          fi
+          
+      - name: Comment PR with AI analysis
         uses: thollander/actions-comment-pull-request@v2
         with:
-          message: |
-            🤖 AI-assisted performance analysis generated (ai-analysis-${{ github.sha }} artifact).
-            Includes hotspot diffs, benchmark deltas, ratings & recommendations.
+          comment_tag: ai-analysis
+          mode: recreate
+          filePath: ai_comment.md
+
+  summary:
+    name: Post Comprehensive PR Summary
+    needs: [profiling, benchdiff, ai-analysis]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-artifacts
+          
+      - name: Create comprehensive summary
+        run: |
+          cat << 'EOF' > comprehensive_summary.md
+          ## 🚀 Complete Performance Analysis Summary
+          
+          This PR has been analyzed for performance characteristics across profiling, benchmarking, and AI-assisted analysis.
+          
+          ### 📋 Analysis Components
+          
+          #### ✅ Profiling Analysis
+          - **Status**: ${{ needs.profiling.result }}
+          - **Artifacts**: `ci-profiles-${{ github.sha }}`
+          - **Contains**: CPU/Memory hotspot analysis, flamegraphs, diff comparisons
+          
+          #### ✅ Benchmark Comparison
+          - **Status**: ${{ needs.benchdiff.result }}
+          - **Artifacts**: `benchdiff-${{ github.sha }}`
+          - **Contains**: Performance regression analysis vs main branch
+          
+          #### ✅ AI-Assisted Analysis
+          - **Status**: ${{ needs.ai-analysis.result }}
+          - **Artifacts**: `ai-analysis-${{ github.sha }}`
+          - **Contains**: Intelligent performance insights, ratings, and recommendations
+          
+          ### 🔍 Quick Access
+          
+          - **View workflow summary** for detailed analysis breakdowns
+          - **Download artifacts** for offline profiling with tools like `go tool pprof` or Speedscope
+          - **Check individual job comments** above for specific analysis results
+          
+          ### ⚡ Performance Gates
+          
+          EOF
+          
+          # Add performance gate status
+          if [ "${{ needs.ai-analysis.result }}" == "success" ]; then
+            echo "✅ **All performance gates passed** - No significant regressions detected" >> comprehensive_summary.md
+          elif [ "${{ needs.ai-analysis.result }}" == "failure" ]; then
+            echo "❌ **Performance gates failed** - Significant regressions detected (see AI analysis)" >> comprehensive_summary.md
+          else
+            echo "⚠️ **Performance gate status unclear** - Check AI analysis job for details" >> comprehensive_summary.md
+          fi
+          
+          cat << 'EOF' >> comprehensive_summary.md
+          
+          ---
+          
+          💡 **Tip**: For detailed analysis, download the artifacts and use:
+          ```bash
+          # Interactive CPU profile analysis
+          go tool pprof -http=:8080 generator_cpu.prof
+          
+          # Compare profiles with speedscope
+          npx speedscope generator_cpu.prof
+          
+          # Benchmark analysis
+          benchstat old.txt new.txt
+          ```
+          EOF
+          
+      - name: Post comprehensive summary
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          comment_tag: performance-summary
+          mode: recreate
+          filePath: comprehensive_summary.md
