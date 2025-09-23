@@ -1,0 +1,8 @@
+services:
+  otel-collector:
+    command: ["--config=/etc/otel/config.yaml"]
+    environment:
+      - DT_OTLP_ENDPOINT=${DT_OTLP_ENDPOINT}
+      - DT_API_TOKEN=${DT_API_TOKEN}
+    volumes:
+      - ./otel-collector/config.dynatrace.yaml:/etc/otel/config.yaml:ro

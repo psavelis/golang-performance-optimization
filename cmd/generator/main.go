@@ -3,13 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dmgo1014/interviewing-golang.git/pkg/generator"
-	"github.com/dmgo1014/interviewing-golang.git/pkg/model"
-	"github.com/google/uuid"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/dmgo1014/interviewing-golang/pkg/generator"
+	"github.com/dmgo1014/interviewing-golang/pkg/metrics"
+	"github.com/dmgo1014/interviewing-golang/pkg/model"
+	"github.com/google/uuid"
 )
 
 // Generates events and saves them to the specified output file.
@@ -25,6 +27,9 @@ import (
 // 1. The number of events to generate.
 // 2. The path to the output file where the events will be saved.
 func main() {
+	// start optional metrics server (no-op unless env enables it)
+	stopMetrics := metrics.StartFromEnv()
+	defer stopMetrics()
 
 	// log time duration on application shutdown
 	start := time.Now()
@@ -70,6 +75,9 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("unable to write file : %+v", err))
 	}
+
+	// optionally hold to let Prometheus scrape in short-lived runs
+	metrics.HoldFromEnv()
 }
 
 // generateEvent creates and returns a new instance of model.Event populated with random values for all its fields.

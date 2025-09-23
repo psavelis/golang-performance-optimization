@@ -1,0 +1,12 @@
+* text=auto eol=lf
+
+# Treat common docs as text
+*.md text
+*.MD text
+*.yaml text
+*.yml text
+*.json text
+
+# Linguist hints
+gitbook/** linguist-documentation
+*.md linguist-documentation

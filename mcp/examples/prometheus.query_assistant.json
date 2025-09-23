@@ -1,0 +1,7 @@
+{
+  "expression": "rate(http_requests_total{job=\"api\"}[5m])",
+  "range_minutes": 30,
+  "step_seconds": 15,
+  "optimize": true,
+  "expand": ["cardinality"]
+}
