@@ -32,12 +32,14 @@ jobs:
       - name: Install HonKit
         run: |
           npm --version
-          npx --yes honkit --version
+          npm install -g honkit
+          honkit --version
 
       - name: Build GitBook
         run: |
           mkdir -p public
-          npx --yes honkit build gitbook public
+          cd gitbook
+          honkit build . ../public
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
