@@ -1,0 +1,30 @@
+{
+    "title": "Advanced Go Performance Engineering",
+    "description": "A Complete Guide to Profiling, Benchmarking, and Optimization Techniques in Go",
+    "author": "Performance Engineering Team",
+    "language": "en",
+    "gitbook": ">=3.0.0",
+    "root": ".",
+    "structure": {
+        "readme": "README.md",
+        "summary": "SUMMARY.md"
+    },
+    "plugins": [
+        "-highlight",        
+        "prism",              
+        "mermaid-gb3",        
+        "fontsettings",
+        "theme-default"
+    ],
+    "pluginsConfig": {
+        "mermaid-gb3": {
+            "startOnLoad": true,
+            "theme": "default"
+        }
+    },
+    "variables": {
+        "version": "1.0.0",
+        "go_version": "1.24+",
+        "repo_url": "https://github.com/psavelis/codechallenge"
+    }
+}

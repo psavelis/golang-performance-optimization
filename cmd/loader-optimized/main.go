@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/dmgo1014/interviewing-golang/pkg/metrics"
 	"os"
 	"sync"
 	"time"
 
-	"github.com/dmgo1014/interviewing-golang.git/pkg/model"
+	"github.com/dmgo1014/interviewing-golang/pkg/model"
 	_ "github.com/lib/pq"
 	"github.com/xo/dburl"
 )
@@ -27,6 +28,9 @@ const (
 
 // Optimized loader with streaming JSON, batch processing, and concurrent workers
 func main() {
+	// start optional metrics server (env-driven)
+	stopMetrics := metrics.StartFromEnv()
+	defer stopMetrics()
 	start := time.Now()
 	defer func() {
 		fmt.Println("================")
@@ -71,6 +75,8 @@ func main() {
 	}
 
 	fmt.Printf("successfully loaded %d events\n", totalProcessed)
+	// optionally hold for scraping in short-lived runs
+	metrics.HoldFromEnv()
 }
 
 // Process events using streaming JSON and batch processing

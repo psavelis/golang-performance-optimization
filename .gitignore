@@ -19,9 +19,26 @@ target
 .idea
 
 # Generated artifacts (organized in .docs/artifacts/)
-# Uncomment to ignore these files during development:
-# *.json
-# *.prof
+# Ignore stray JSON or profile files at repo root to keep it clean
+/*.json
+/*.prof
 
 # Build output
 bin/
+
+.DS_Store
+*.DS_Store
+
+# Node and GitBook/HonKit artifacts
+node_modules/
+gitbook/node_modules/
+gitbook/_book/
+public/gitbook/
+/_book/
+
+# Common build output directories
+dist/
+build/
+coverage/
+tmp/
+*.log

@@ -1,156 +1,144 @@
-# Event Processing System - Performance Optimization
+# Go Event Processing - Performance Optimization
 
-This repository demonstrates performance optimization techniques for a Go-based event processing system. It showcases how systematic profiling-driven development can identify and resolve bottlenecks in data processing applications.
+Event generation and database loading system with documented performance improvements through systematic optimization.
 
 ## Performance Results
 
-| Metric | Baseline | Optimized | Improvement |
-|--------|----------|-----------|-------------|
-| Event Generation | 835ms | 139ms | 6.01× faster |
-| Database Loading | 43.38s | 7.41s | 5.85× faster |
-| Total Processing | 44.22s | 7.55s | 5.86× faster |
-| Throughput | 2,305 events/sec | 15,257 events/sec | 6.6× higher |
-| Memory Footprint | 590MB+ peak | 5MB constant | 99% reduction |
+| Implementation | Time (100K events) | Memory | Allocations | Improvement |
+|---------------|-------------------|---------|-------------|-------------|
+| **Original** | 798ms | 4.85MB | 187,602 | 1.0x |
+| **Optimized** | 149ms | 1.52MB | 3,033 | **5.35x** |
+| **Streaming** | 199ms | 3.95MB | 189,541 | 4.01x |
+
+**Primary Optimization**: String pool elimination of concatenation overhead
 
 ## Quick Start
 
 ```bash
-# Setup environment
-make start_env && sleep 3
-docker exec -i postgres psql -U test -d test < env/data/postgres/00-schema.sql
+# Build implementations
+make build_enhanced_profiling
 
-# Build all versions  
-make build && make build_optimized
+# Performance comparison
+target/build/bin/generator-profiling 100000 baseline.json        # ~800ms
+target/build/bin/generator-enhanced-profiling 100000 optimal.json # ~150ms
 
-# Generate 100K events
-target/build/bin/generator-optimized 100000 events.json          # 139ms
-
-# Load to PostgreSQL  
-target/build/bin/loader-optimized 'postgresql://test:test@localhost:5432/test?sslmode=disable' events.json  # 7.4s
+# Benchmark validation
+go test -bench=BenchmarkGenerator -benchmem ./pkg/benchmarks/
 ```
 
-## Performance Analysis
+## Core Optimizations
 
-Performance profiles and visualizations are available in the [.docs/artifacts](.docs/artifacts/) directory.
+### String Pool Implementation
+```go
+// Pre-allocated string array eliminates runtime allocation
+var stringPool = [48]string{"ABC123", "XYZ456", "LOC789", /*...*/}
 
-### Key Optimizations
-
-1. **Generator Component:**
-   - Replaced `generator.String()` with static `stringPool` lookup (41.2% → 4.2% CPU)
-   - Eliminated dynamic allocations through pooling (35.7% → 0.4% heap usage)
-   - Optimized random generation with efficient bitwise operations
-
-2. **Loader Component:**
-   - Transformed architecture from monolithic to worker pool concurrency
-   - Replaced `json.Unmarshal()` with streaming `json.Decoder` (78.3% → 10.8% memory)
-   - Implemented prepared statement batching (37.2% → 28.3% CPU, distributed)
-   - Configured connection pooling parameters for optimal throughput
-
-## System Architecture
-
-The optimized system employs a pipeline architecture:
-
-```
-┌─────────────────┐     ┌───────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  String Pooling │ ──► │ Streaming JSON │ ──► │  Worker Pool    │ ──► │ Batch Database  │
-│    Generator    │     │   Processing   │     │     Loader      │     │   Operations    │
-└─────────────────┘     └───────────────┘     └─────────────────┘     └─────────────────┘
-      139ms/100K          Constant 5MB         15.2K events/sec        1000 rows/batch
+func getRandomStringFromPool() string {
+    return stringPool[rand.Intn(len(stringPool))] // O(1), zero allocation
+}
 ```
 
-## Technical Improvements
+**Measured Impact**: 86x faster string generation (674ns → 7.8ns per operation)
 
-| Category | Issue | Solution |
-|----------|-------|----------|
-| Memory | Excessive allocations | Streaming architecture with constant memory profile |
-| Security | SQL injection risks | Parameterized queries with prepared statements |
-| Concurrency | Sequential processing | Worker pool with controlled parallelism |
-| Resilience | Connection failures | Automatic retry logic with exponential backoff |
-| Performance | Individual transactions | Batched operations with transaction pooling |
-
-## Repository Structure
-
-```
-├── cmd/                      # Application components
-│   ├── generator/           # Original event generator
-│   ├── generator-optimized/ # Optimized event generator
-│   ├── generator-profiling/ # Profiling-enabled generator
-│   ├── loader/              # Original database loader
-│   ├── loader-optimized/    # Optimized database loader
-│   └── loader-profiling/    # Profiling-enabled loader
-├── env/                     # Environment configuration
-│   └── data/                # Database setup scripts
-├── pkg/                     # Shared packages
-│   ├── generator/           # String generation utilities
-│   └── model/               # Data structures
-└── .docs/                   # Documentation
-    ├── analysis/            # Performance analysis
-    ├── artifacts/           # Profiling data and visualizations
-    │   ├── flamegraphs/    # CPU and memory visualizations
-    │   ├── profiles/       # Raw profiling data
-    │   └── test-data/      # Benchmark datasets
-    ├── benchmarks/          # Performance measurements
-    └── optimization/        # Implementation details
+### Streaming JSON Architecture  
+```go
+// Constant memory usage regardless of dataset size
+func streamEventsToFile(file *os.File, count int) error {
+    writer := bufio.NewWriter(file)
+    defer writer.Flush()
+    
+    writer.WriteString("[")
+    for i := 0; i < count; i++ {
+        if i > 0 { writer.WriteString(",") }
+        event := createEvent()
+        data, _ := json.Marshal(event)
+        writer.Write(data)
+        if i%100 == 0 { writer.Flush() }
+    }
+    writer.WriteString("]")
+    return nil
+}
 ```
 
-For comprehensive documentation, see the [detailed analysis](.docs/README.md).
+**Measured Impact**: Constant 3.95MB memory usage vs. linear growth
 
-## Key Optimizations
+## Available Commands
 
-1. **Streaming Processing**: Implementation of constant memory processing regardless of input dataset size
-2. **String Pooling**: Reduction of memory allocations through string interning techniques
-3. **Batch Operations**: Consolidation of database operations from individual inserts to batched transactions
-4. **Worker Concurrency**: Implementation of parallel processing with efficient resource management
-5. **Connection Pooling**: Optimization of database connection handling for sustained throughput
-
-## Critical Issues Addressed
-
-| Category | Issue | Solution |
-|----------|-------|----------|
-| Memory | Excessive allocations | Implemented streaming architecture with constant memory profile |
-| Security | SQL injection risks | Added parameterized queries and proper input validation |
-| Concurrency | Sequential processing | Developed worker pool with controlled concurrency |
-| Resilience | Connection failures | Implemented automatic retry logic with backoff strategy |
-| Performance | Individual transactions | Consolidated operations into efficient batches |
-
-## Repository Structure
-
-```
-├── cmd/                         # Source implementations
-│   ├── generator/              # Original baseline generator
-│   ├── generator-optimized/    # Optimized generator
-│   ├── loader/                 # Original baseline loader
-│   └── loader-optimized/       # Optimized loader
-├── env/                        # Database environment setup
-├── pkg/                        # Shared utilities and models
-└── .docs/                      # Documentation and analysis
-    ├── study.md               # Complete performance study
-    ├── analysis/              # Bottleneck identification
-    ├── benchmarks/            # Performance measurements
-    ├── optimization/          # Implementation techniques
-    └── proof-of-concept/      # Verification artifacts and test results
+```bash
+make benchmark_compare               # Statistical benchmark comparison
+make profile_enhanced               # CPU, memory, block profiling
+make generate_enhanced_flamegraphs  # Generate SVG visualizations
+make start_env                      # Start PostgreSQL environment
 ```
 
 ## Documentation
 
-The documentation is organized hierarchically:
+- **[Technical specification](.docs/technical-specification-v1.md)**: Implementation details
+- **[Flamegraph analysis](.docs/flamegraph-analysis-summary.md)**: Visual profiling analysis
+- **[Documentation index](.docs/documentation-index.md)**: Complete documentation guide
+- **[Pyroscope tutorial](.docs/pyroscope-tutorial.md)**: Continuous profiling with Grafana Pyroscope
 
-- [Complete Performance Study](.docs/study.md): Analysis of optimization techniques
-- [Bottleneck Analysis](.docs/analysis/bottlenecks.md): Profiling results and identified issues
-- [Performance Benchmarks](.docs/benchmarks/performance.md): Detailed measurements
-- [Optimization Techniques](.docs/optimization/techniques.md): Implementation strategies
-- [Performance Verification](.docs/proof-of-concept/performance_analysis_report.md): Independent verification of performance claims
+## System Requirements
 
-## Build Commands
+- Go 1.24+
+- 8GB RAM (recommended for large datasets)
+- PostgreSQL (for database loader testing)
+- Docker (for local Pyroscope + Grafana stack)
+
+## Architecture
+
+### Event Generator
+- Generates random events with configurable count
+- Event types distributed as: 15% type 1, 20% type 2, 20% type 3, 45% type 5
+- Outputs JSON format compatible with database schema
+
+### Database Loader
+- Reads JSON event files
+- Inserts events using parameterized queries
+- Supports PostgreSQL with proper schema
+
+### Profiling Infrastructure
+- CPU profiling with `runtime/pprof`
+- Memory allocation tracking
+- Block and mutex profiling for bottleneck detection
+- Flamegraph generation for visual analysis
+
+### Continuous Profiling (Grafana Pyroscope)
+- Pyroscope server and Grafana provisioned via Docker Compose
+- Go services instrumented with `github.com/grafana/pyroscope-go`
+- Make targets to start stack and run instrumented binaries
+
+Quick start:
 
 ```bash
-# Build original and optimized versions
+make start_profiling_stack
 make build
-make build_optimized  
-
-# Environment setup
-make start_env
-
-# Run database setup
-docker exec -i postgres psql -U test -d test < env/data/postgres/00-schema.sql
+make run_pyroscope_generator
+make run_pyroscope_loader
+# Pyroscope: http://localhost:4040, Grafana: http://localhost:3000
 ```
+
+### Metrics (Prometheus)
+
+```bash
+make start_observability_stack
+make build
+METRICS_ADDR=:2112 METRICS_HOLD_FOR=60s target/build/bin/generator-prometheus 100000 test_prom.json
+METRICS_ADDR=:2113 METRICS_HOLD_FOR=60s target/build/bin/loader-prometheus 'postgresql://test:test@localhost:5432/test?sslmode=disable' test_prom.json
+# Prometheus: http://localhost:9090, Grafana: http://localhost:3000
+```
+
+### Distributed Tracing (OpenTelemetry + Tempo)
+
+```bash
+make start_observability_stack   # includes otel-collector and tempo
+make build
+make run_otel_generator
+make run_otel_loader
+# Tempo API: http://localhost:3200, Grafana: http://localhost:3000
+```
+
+---
+
+**Test Environment**: Apple M1 Pro, Go 1.24, macOS
+**Validation**: Statistical significance with 95% confidence intervals

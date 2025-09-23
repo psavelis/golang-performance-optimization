@@ -1,0 +1,61 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 75
+    spike_limit_percentage: 25
+  batch:
+    timeout: 1s
+    send_batch_size: 8192
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: dev
+        action: upsert
+
+exporters:
+  logging:
+    loglevel: info
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  # Enable one or more of the below by adding them to the traces pipeline exporters and providing credentials via env.
+  # Datadog (via contrib datadog exporter)
+  # datadog:
+  #   api:
+  #     key: "${DD_API_KEY}"
+  #   site: "${DD_SITE:datadoghq.com}"
+  #   service: "${OTEL_SERVICE_NAME:interviewing-golang}"
+  #   metrics:
+  #     report_quantiles: true
+  # New Relic (via contrib newrelic exporter)
+  # newrelic:
+  #   apikey: "${NEW_RELIC_API_KEY}"
+  #   region: "${NEW_RELIC_REGION:US}"
+  # Splunk (via contrib splunk_hec exporter)
+  # splunk_hec:
+  #   token: "${SPLUNK_HEC_TOKEN}"
+  #   endpoint: "${SPLUNK_HEC_ENDPOINT}"
+  #   source: "otel"
+  #   sourcetype: "otel"
+  #   index: "${SPLUNK_INDEX:otel}"
+
+extensions:
+  health_check: {}
+  pprof: {}
+
+service:
+  extensions: [health_check, pprof]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [logging, otlp/tempo]

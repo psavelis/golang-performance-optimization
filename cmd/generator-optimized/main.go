@@ -8,7 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/dmgo1014/interviewing-golang.git/pkg/model"
+	"github.com/dmgo1014/interviewing-golang/pkg/metrics"
+	"github.com/dmgo1014/interviewing-golang/pkg/model"
 	"github.com/google/uuid"
 )
 
@@ -33,6 +34,9 @@ const (
 
 // Optimized generator with streaming JSON, pre-allocated buffers, and efficient random generation
 func main() {
+	// optional metrics server (env-driven)
+	stopMetrics := metrics.StartFromEnv()
+	defer stopMetrics()
 	start := time.Now()
 	defer func() {
 		fmt.Println("================")
@@ -80,6 +84,9 @@ func main() {
 	if _, err := file.Write(content); err != nil {
 		panic(fmt.Errorf("unable to write file : %+v", err))
 	}
+
+	// optionally hold for scraping in short-lived runs
+	metrics.HoldFromEnv()
 }
 
 // Optimized event generation with pre-allocated buffers and efficient random generation

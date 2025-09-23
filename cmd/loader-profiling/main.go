@@ -8,7 +8,7 @@ import (
 	"runtime/pprof"
 	"time"
 
-	"github.com/dmgo1014/interviewing-golang.git/pkg/model"
+	"github.com/dmgo1014/interviewing-golang/pkg/model"
 	"github.com/xo/dburl"
 
 	_ "github.com/lib/pq"

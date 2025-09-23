@@ -4,7 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/dmgo1014/interviewing-golang.git/pkg/model"
+	"github.com/dmgo1014/interviewing-golang/pkg/metrics"
+	"github.com/dmgo1014/interviewing-golang/pkg/model"
 	"github.com/xo/dburl"
 	"os"
 	"time"
@@ -17,6 +18,10 @@ import (
 // arg 1 is DB URL for database to load data
 // atg 2 is path to file to load
 func main() {
+
+	// start optional metrics server (no-op unless env enables it)
+	stopMetrics := metrics.StartFromEnv()
+	defer stopMetrics()
 
 	// log time duration on application shutdown
 	start := time.Now()
@@ -80,6 +85,9 @@ func main() {
 	}
 
 	fmt.Printf("sucessfully loaded %d events\n", len(events))
+
+	// optionally hold to let Prometheus scrape in short-lived runs
+	metrics.HoldFromEnv()
 
 }
 

@@ -1,0 +1,18 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/dmgo1014/interviewing-golang.git/pkg/benchmarks
+cpu: Apple M1 Pro
+BenchmarkGeneratorOriginal
+BenchmarkGeneratorOriginal-8    	     145	   8000661 ns/op	 4851652 B/op	  187651 allocs/op
+BenchmarkGeneratorOriginal-8    	     151	   7961635 ns/op	 4787160 B/op	  187573 allocs/op
+BenchmarkGeneratorOriginal-8    	     146	   7876236 ns/op	 4876248 B/op	  187583 allocs/op
+BenchmarkGeneratorOptimized
+BenchmarkGeneratorOptimized-8   	     854	   1495488 ns/op	 1526564 B/op	    3033 allocs/op
+BenchmarkGeneratorOptimized-8   	     822	   1498630 ns/op	 1539488 B/op	    3033 allocs/op
+BenchmarkGeneratorOptimized-8   	     812	   1492661 ns/op	 1498569 B/op	    3032 allocs/op
+BenchmarkGeneratorStreaming
+BenchmarkGeneratorStreaming-8   	     138	   8631876 ns/op	 3952899 B/op	  189467 allocs/op
+BenchmarkGeneratorStreaming-8   	     135	   8693790 ns/op	 3955445 B/op	  189499 allocs/op
+BenchmarkGeneratorStreaming-8   	     138	   8640901 ns/op	 3958792 B/op	  189656 allocs/op
+PASS
+ok  	github.com/dmgo1014/interviewing-golang.git/pkg/benchmarks	16.541s

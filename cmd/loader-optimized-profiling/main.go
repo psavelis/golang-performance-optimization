@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dmgo1014/interviewing-golang.git/pkg/model"
+	"github.com/dmgo1014/interviewing-golang/pkg/model"
 	_ "github.com/lib/pq"
 	"github.com/xo/dburl"
 )
